@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velojol - Карта велодорожек Алматы</title>
+
+    <link href="style/reset.css" rel="stylesheet">
+    <link href="style/mapbox-gl.css" rel='stylesheet'/>
+    <link href="style/styles.css" rel="stylesheet">
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    
+        ym(95219611, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/95219611" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+     <!--Lottie-->
+     <script src="https://cdn.jsdelivr.net/npm/lottie-web/build/player/lottie.min.js"></script>
+</head>
+
+<body>
+    
+
+    <!-- Добавление контейнера для карты -->
+    <div id='map'></div>
+
+    <!--City label-->
+    <div class="city-label" id="cityBtn">
+        <h3>Алматы</h3>
+        <h3 class="labelcity">4.1</h3>
+    </div>
+
+
+    <!--Menu-->
+    <button class="MenuButton">
+        <img src="src/icon/menu.svg" alt="menu">
+    </button>
+
+    <div class="menu">
+        <div class="menu-content">
+
+            <!--Head-->
+            <span class="menu-head">
+                <img class="menu-logo" src="src/logo.svg" alt="logo">
+                <button class="close-menu">
+                    <img src="src/icon/cross.svg" alt="close">
+                </button>
+            </span>
+
+            <!--City-->
+            <div class="dropdown">
+                <button class="dropbtn" id="dropdownBtn">
+                        <p>Алматы</p>
+                        <img src="src/icon/shevron.svg" alt="shevron">
+                </button>
+            
+                <div class="dropdown-content" id="dropdownContent">
+                    <a href="#"><p>Алматы</p></a>
+                    <a href="https://tally.so/r/3lO0pV" target="_blank"><p>Хочу свой город</p></a>
+                </div>
+            </div>
+            
+
+            <!--Lang-->
+            <!--div class="group">
+                <h3 class="bold w50">Язык</h3>
+
+                <div class="chips">
+                    <a href="" class="button selected"><p>Рус</p></a>
+                    <a href="" class="button ghost"><p>Қаз</p></a>
+                    <a href="" class="button ghost"><p>Eng</p></a>
+                </div>
+            </div-->
+
+            <!--Others-->
+            <div class="group">
+                <!-- Кнопка для открытия попапа "about" -->
+                <button class="link" id="aboutBtn"><h3 class="bold w50">О проекте</h3></button>
+
+                <!-- Кнопка для открытия попапа "donate" -->
+                <button class="link" id="donateBtn"><h3 class="bold w50">Поддержать</h3></button>
+            </div>
+
+            <a href="https://t.me/velojol" target="_blank" class="button selected">
+                <img src="src/icon/telegram.svg">
+                <p class="w50">Телеграм-канал</p>
+            </a>
+              
+            <a href="#" class="changelog">
+                <p class="w20">V1</p>
+                <p class="w20">2023</p>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Попап "about" -->
+    <div id="aboutPopup" class="popup">
+        <div class="popup-content">
+            <span class="menu-head">
+                <h3>О проекте Velojol</h3>
+                <button class="close-menu" id="closeAboutBtn">
+                <img src="src/icon/cross.svg" alt="close">
+                </button>
+            </span>
+
+            <img class="aboutgif" src="src/velo_about.gif" alt="velojol">
+            <p>Velojol – это результат страсти к велосипедам и стремления сделать городскую жизнь Алматы более устойчивой и зеленой. Наш проект начался как идея: предоставить жителям и гостям города актуальную и подробную информацию о велосипедных маршрутах в Алматы. Со временем он вырос в сообщество велолюбителей, цель которых – сделать город дружелюбным к велосипедистам.</p>
+
+            <span class="article">
+                <h3>Наша миссия</h3>
+                <p>Мы стремимся создать интегрированную карту велодорожек города Алматы, которая будет доступна каждому. Наша миссия – сделать велосипедные поездки удобными, безопасными и увлекательными. Мы хотим вдохновить людей на активный образ жизни, способствуя развитию велосипедной культуры и снижению воздействия на окружающую среду</p>
+            </span>
+
+            <span class="article">
+                <h3>Команда</h3>
+                <div class="qr-stack">
+
+                    <span class="person">
+                        <img  src="src/person/ruslan.jpg" alt="ruslan">
+                        <p class="bold">Руслан</p>
+                        <h5 class="w50">Дизайн, разработка</h5>
+                    </span>
+
+                    <span class="person">
+                        <img  src="src/person/luiza.jpg" alt="luiza">
+                        <p class="bold">Луиза</p>
+                        <h5 class="w50">Редактура, тестирование</h5>
+                    </span>
+
+                </div>
+            </span>
+
+            <span class="article">
+                <h3>Контакты</h3>
+                <a class="link w50" href="https://t.me/fuzlan" target="_blank"><p>Написать в Telegram</p></a>
+                <a class="link w50" href="mailto:hello@ruslanfatikhov.ru"><p>hello@ruslanfatikhov.ru</p></a>
+            </span>
+
+        </div>
+    </div>
+
+    <!-- Попап "donate" -->
+    <div id="donatePopup" class="popup">
+        <div class="popup-content">
+            <span class="menu-head">
+                <h3>Как вы можете помочь?</h3>
+                <button class="close-menu" id="closeDonateBtn">
+                    <img src="src/icon/cross.svg" alt="close">
+                </button>   
+            </span>
+            <span>
+                <p class="bold">Поделитесь опытом</p>
+                <p>Если у вас есть информация о новых велодорожках, важных событиях или изменениях в инфраструктуре города, делитесь этой информацией с нами. Это поможет нам сохранять карту актуальной и информативной</p>
+            </span>
+
+            <span>
+                <p class="bold">Популяризация велосипедной культуры</p>
+                <p>Расскажите друзьям и семье о нашем проекте. Помогите нам распространить идею безопасного велосипедного движения и сделать город более вело-дружелюбным</p>
+            </span>
+
+            <span>
+                <p class="bold">Финансовая поддержка</p>
+                <p>Ваши пожертвования помогут нам обновлять и расширять карту велодорожек, обеспечивая актуальные данные и информацию о новых маршрутах. Даже небольшой взнос может сделать большую разницу.</p>
+
+                <span class="qr-stack">
+                    <img src="src/qr/tinkoff.png" alt="tinkoff-qr">
+                    <img src="src/qr/kaspi.png" alt="4400 4302 2974 4666">
+                    <img src="src/qr/btc.png" alt="Bitcoin">
+                </span>
+            </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Попап "city" -->
+    <div id="cityPopup" class="popup">
+        <div class="popup-content">
+
+            <!--head-->
+            <span class="menu-head">
+                <h3>Общая оценка города</h3>
+                <button class="close-menu" id="closeCityBtn">
+                    <img src="src/icon/cross.svg" alt="close">
+                </button>   
+            </span>
+
+            <img src="src/4-1.svg" alt="4.1 point">
+            <p>Велодорожки в Алматы представляют собой разнообразную инфраструктуру, которая простирается по всему городу. Они включают в себя обособленные и совмещенные с тротуарами маршруты, проложенные вдоль бывших трамвайных путей и парков. Обширная сеть велодорожек обозначена яркой разметкой и знаками, обеспечивая безопасность для велосипедистов.</p>
+            <p>Покрытие велодорожек в основном качественное, однако имеются отдельные участки с нестабильным или стертым покрытием, что может создать неудобства для велосипедистов. Некоторые участки также испытывают проблемы с освещением, что делает их менее безопасными в темное время суток.</p>
+            <p>Велодорожки в Алматы простираются от центральных улиц до удаленных районов, обеспечивая удобство и доступность для многих жителей города. Они пересекаются с другими велосипедными маршрутами и параллельными улицами, что обеспечивает велосипедистам разнообразие в выборе маршрутов.</p>
+            <p>Несмотря на некоторые недочеты, велодорожки в Алматы играют важную роль в развитии велосипедной культуры в городе. С постоянным вниманием к улучшению качества покрытия и обеспечению безопасности, они продолжают служить удобным средством передвижения для многих жителей, способствуя активному и здоровому образу жизни.</p>
+        </div>
+    </div>
+
+    <!--Hello-->
+    <div class="hello ">
+        <div class="hello-content">
+            <div id="lottie-animation"></div>
+            <span>
+                <img class="hello-logo" src="src/logo.svg" alt="logo">
+                <h5>– ваш гид по велодорожкам в Алматы!</h5>
+            </span>
+
+            <h5>Ищите идеальное место для велопрогулок, изучайте интересные места и наслаждайтесь велосипедными приключениями</h5>
+            <button class="close-hello" id="closeHelloBtn">
+                <p>Отлично</p>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Подключение библиотеки Mapbox и файла JavaScript -->
+    <script src="hello.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <script src="mapbox-script.js"></script>
+    <script src="menu.js"></script>
+    <script src="dropdown.js"></script>
+    <script src="popups.js"></script>
+    <script src="hello-onb.js"></script>
+
+</body>
+
+</html>

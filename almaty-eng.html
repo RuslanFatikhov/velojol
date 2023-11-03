@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velojol - Map of bicycle lanes in Almaty</title>
+
+    <link href="style/reset.css" rel="stylesheet">
+    <link href="style/mapbox-gl.css" rel='stylesheet'/>
+    <link href="style/styles.css" rel="stylesheet">
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    
+        ym(95219611, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/95219611" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+     <!--Lottie-->
+     <script src="https://cdn.jsdelivr.net/npm/lottie-web/build/player/lottie.min.js"></script>
+</head>
+
+<body>
+    
+
+    <!-- Добавление контейнера для карты -->
+    <div id='map'></div>
+
+    <!--City label-->
+    <div class="city-label" id="cityBtn">
+        <h3>Almaty</h3>
+        <h3 class="labelcity">4.1</h3>
+    </div>
+
+
+    <!--Menu-->
+    <button class="MenuButton">
+        <img src="src/icon/menu.svg" alt="menu">
+    </button>
+
+    <div class="menu">
+        <div class="menu-content">
+
+            <!--Head-->
+            <span class="menu-head">
+                <img class="menu-logo" src="src/logo.svg" alt="logo">
+                <button class="close-menu">
+                    <img src="src/icon/cross.svg" alt="close">
+                </button>
+            </span>
+
+            <!--City-->
+            <div class="dropdown">
+                <button class="dropbtn" id="dropdownBtn">
+                        <p>Almaty</p>
+                        <img src="src/icon/shevron.svg" alt="shevron">
+                </button>
+            
+                <div class="dropdown-content" id="dropdownContent">
+                    <a href="#"><p>Almaty</p></a>
+                    <a href="https://tally.so/r/3joqVY" target="_blank"><p>I want my own town</p></a>
+                </div>
+            </div>
+            
+
+            <!--Lang-->
+            <div class="group">
+                <h3 class="bold w50">Language</h3>
+
+                <div class="chips">
+                    <a href="almaty-rus.html" class="button ghost"><p>Рус</p></a>
+                    <a href="almaty-kz.html" class="button ghost"><p>Қаз</p></a>
+                    <a href="" class="button selected"><p>Eng</p></a>
+                </div>
+            </div>
+
+            <!--Others-->
+            <div class="group">
+                <!-- Кнопка для открытия попапа "about" -->
+                <button class="link" id="aboutBtn"><h3 class="bold w50">About the project</h3></button>
+
+                <!-- Кнопка для открытия попапа "donate" -->
+                <button class="link" id="donateBtn"><h3 class="bold w50">Support</h3></button>
+            </div>
+
+            <a href="https://t.me/velojol" target="_blank" class="button selected">
+                <img src="src/icon/telegram.svg">
+                <p class="w50">Telegram channel</p>
+            </a>
+              
+            <a id="changeBtn" class="changelog">
+                <p class="w20">V1</p>
+                <p class="w20">2023</p>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Попап "about" -->
+    <div id="aboutPopup" class="popup">
+        <div class="popup-content">
+            <span class="menu-head">
+                <h3>About Velojol</h3>
+                <button class="close-menu" id="closeAboutBtn">
+                <img src="src/icon/cross.svg" alt="close">
+                </button>
+            </span>
+
+            <img class="aboutgif" src="src/velo_about.gif" alt="velojol">
+            <p>Velojol is the result of a passion for bicycles and a desire to make Almaty's urban life more sustainable and green. Our project started as an idea: to provide residents and guests of the city with up-to-date and detailed information about bicycle routes in Almaty. Over time, it grew into a community of bicycle enthusiasts whose goal is to make the city bicycle friendly</p>
+
+            <span class="article">
+                <h3>Our mission</h3>
+                <p>We aim to create an integrated map of bicycle lanes in Almaty that will be accessible to everyone. Our mission is to make cycling convenient, safe and fun. We want to inspire people to live an active lifestyle by promoting cycling culture and reducing environmental impact</p>
+            </span>
+
+            <span class="article">
+                <h3>Team</h3>
+                <div class="qr-stack">
+
+                    <span class="person">
+                        <img  src="src/person/ruslan.jpg" alt="ruslan">
+                        <p class="bold">Ruslan</p>
+                        <h5 class="w50">Design, development</h5>
+                    </span>
+
+                    <span class="person">
+                        <img  src="src/person/luiza.jpg" alt="luiza">
+                        <p class="bold">Luiza</p>
+                        <h5 class="w50">Editing, testing</h5>
+                    </span>
+
+                </div>
+            </span>
+
+            <span class="article">
+                <h3>Contacts</h3>
+                <a class="link w50" href="https://t.me/fuzlan" target="_blank"><p>Write in Telegram</p></a>
+                <a class="link w50" href="mailto:hello@ruslanfatikhov.ru"><p>hello@ruslanfatikhov.ru</p></a>
+            </span>
+
+        </div>
+    </div>
+
+    <!-- Попап "donate" -->
+    <div id="donatePopup" class="popup">
+        <div class="popup-content">
+            <span class="menu-head">
+                <h3>Как вы можете помочь?</h3>
+                <button class="close-menu" id="closeDonateBtn">
+                    <img src="src/icon/cross.svg" alt="close">
+                </button>   
+            </span>
+            <span>
+                <p class="bold">Share your experience</p>
+                <p>If you have information about new bicycle lanes, important events or changes to the city's infrastructure, please share this information with us. This will help us keep the map up to date and informative</p>
+            </span>
+
+            <span>
+                <p class="bold">Popularization of cycling culture</p>
+                <p>Tell your friends and family about our project. Help us spread the message of safe bicycling and make the city more bicycle friendly</p>
+            </span>
+
+            <span>
+                <p class="bold">Financial support</p>
+                <p>Your donations will help us update and expand our bicycle lane map, providing up-to-date data and information on new routes. Even a small contribution can make a big difference</p>
+
+                <span class="qr-stack">
+                    <img src="src/qr/tinkoff.png" alt="tinkoff-qr">
+                    <img src="src/qr/kaspi.png" alt="4400 4302 2974 4666">
+                    <img src="src/qr/btc.png" alt="Bitcoin">
+                </span>
+            </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Попап "city" -->
+    <div id="cityPopup" class="popup">
+        <div class="popup-content">
+
+            <!--head-->
+            <span class="menu-head">
+                <h3>Overall assessment of the city</h3>
+                <button class="close-menu" id="closeCityBtn">
+                    <img src="src/icon/cross.svg" alt="close">
+                </button>   
+            </span>
+
+            <img src="src/4-1.svg" alt="4.1 point">
+            <p>Bicycle lanes in Almaty represent a diverse infrastructure that extends throughout the city. They include separated and sidewalk routes along former streetcar tracks and parks. The extensive network of bicycle lanes is marked with brightly colored markings and signs, ensuring safety for cyclists.</p>
+            <p>The bicycle lane surfaces are mostly of good quality, but there are some sections with unstable or worn pavement, which can be inconvenient for cyclists. Some sections also have lighting problems, making them less safe at night.</p>
+            <p>Bicycle lanes in Almaty extend from main streets to outlying areas, providing convenience and accessibility for many of the city's residents. They intersect with other bicycle routes and parallel streets, providing cyclists with a variety of routes to choose from.</p>
+            <p>Despite some shortcomings, bicycle lanes in Almaty play an important role in the development of cycling culture in the city. With a constant focus on improving pavement quality and safety, they continue to serve as a convenient means of transportation for many residents, promoting an active and healthy lifestyle.</p>
+        </div>
+    </div>
+
+    <!--Hello-->
+    <div class="hello ">
+        <div class="hello-content">
+            <div id="lottie-animation"></div>
+            <span>
+                <img class="hello-logo" src="src/logo.svg" alt="logo">
+                <h5>- your guide to bicycle lanes in Almaty!</h5>
+            </span>
+
+            <h5>Look for the perfect place to bike, explore interesting places and enjoy cycling adventures</h5>
+            <button class="close-hello" id="closeHelloBtn">
+                <p>That's great.</p>
+            </button>
+        </div>
+    </div>
+
+    <!--Changelog-->
+    <div id="changePopup" class="popup">
+        <div class="changelog-content">
+            <!--head-->
+            <span class="menu-head">
+                <h3>Version history</h3>
+                <button class="close-menu" id="closeChangeBtn">
+                    <img src="src/icon/cross.svg" alt="close">
+                </button>   
+            </span>
+
+            <span>
+                <p class="bold">1.2</p>
+                <ul>
+                    <li><img src="src/icon/bicycle.svg"><p>New bicycle lanes have been added</p></li>
+                    <li><img src="src/icon/camera.svg"><p>New photos have been added to existing bicycle lanes</p></li>
+                    <li><img src="src/icon/bug.svg"><p>Fixed some bugs and errors</p></li>
+                    <li><img src="src/icon/letters.svg"><p>Kazakh and English languages added</p></li>
+                </ul>
+            </span>
+        </div>
+    </div>
+
+
+    <!-- Подключение библиотеки Mapbox и файла JavaScript -->
+    <script src="hello.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <script src="mapbox-script.js"></script>
+    <script src="menu.js"></script>
+    <script src="dropdown.js"></script>
+    <script src="popups.js"></script>
+    <script src="hello-onb.js"></script>
+
+</body>
+
+</html>
