@@ -2,7 +2,7 @@
     {
         "id": 1,
         "city": "Алматы",
-        "country": "Kazakhstan",
+        "country": "Казахстан",
         "coat": "almaty.png",
         "coordinates": [76.94574641542022,43.236338918420984],
         "rating": 4.5
@@ -10,8 +10,8 @@
     {
         "id": 2,
         "city": "Астана",
-        "country": "Kazakhstan",
-        "coat": "Astana.png",
+        "country": "Казахстан",
+        "coat": "astana.png",
         "coordinates": [71.43051329105131,51.1282839046317],
         "rating": 3.2
     },
@@ -42,7 +42,7 @@
     {
         "id": 6,
         "city": "Павлодар",
-        "country": "Russia",
+        "country": "Казахстан",
         "coat": "moscow.png",
         "coordinates": [76.95968925438177,52.275521803599815],
         "rating": 3.2
