@@ -1,0 +1,17 @@
+:root {
+    --dark-prime-invert-25: #FFFFFF40;
+    --dark-prime-invert-50: #FFFFFF80;
+    --dark-prime-invert-100: #fff;
+    --dark-prime-invert-200: #F2F2F2;
+    --dark-prime-invert-300: #D9D9D9;
+  
+    --dark-prime-25: #1A1A1A40;
+    --dark-prime-50: #1A1A1A80;
+    --dark-prime-100: #000000;
+    --dark-prime-200: #1A1A1A;
+    --dark-prime-300: #262626;
+    --dark-prime-400: #333333;
+  
+    --dark-accent-100: #CCFF00;
+  }
+  

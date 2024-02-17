@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_dark.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/imageview.css') }}">
+
+
+
+    <title>{{ city.city }}</title>
+    
+
+</head>
+<body>
+
+    <div id="loading" style="position:fixed; width:100%; height:100%; background:white">
+        <p>Загрузка</p>
+    </div>
+
+    <main>
+        <div id="imageModal" class="modal">
+            <span class="size_s close"><img src="../static/images/icon/close.svg"></span>
+            <img class="modal-image">
+            <!-- Кнопки навигации -->
+            <a class="prev size_s"><img src="../static/images/icon/arrow-left-white.svg"></a>
+            <a class="next size_s"><img src="../static/images/icon/arrow-right-white.svg"></a>
+            <!-- Порядковый номер фото -->
+            <div class="image-counter">1 / 1</div>
+        </div>
+        
+        <div id="customPopup" class="bgprime300"></div>
+
+        <div class="block bgprime300">
+
+            <div class="navhead">
+                <button class="size_s" onclick="goToHomePage()">
+                    <img src="../static/images/icon/left-arrow-white.svg" alt="Go back">
+                </button>
+
+                <h6 class="dark-prime-invert-200">{{ city.city }}</h6>
+            <span class="h34"></span>
+            </div>
+
+            <div id="bikeLanesList">
+                <!-- Здесь будет динамически сгенерированный список велодорожек -->
+            </div>
+        </div>
+            
+        <div id='map'></div>
+    </main>
+
+    <script>
+        var cityCoordinates = {{ city.coordinates | tojson }};
+        var cityName = '{{ city.city.lower() }}'; // Используйте Flask, чтобы передать название города
+    </script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/imageview.js') }}"></script>
+    <script>
+        function goToHomePage() {
+        window.location.href = "/"; // Updated the path to the root of the website
+        }
+    </script>
+    <script>
+        window.onload = function() {
+    // Задержка перед началом анимации исчезновения
+    setTimeout(function() {
+        var loadingElement = document.getElementById('loading');
+        loadingElement.style.opacity = 0;
+
+        // Дополнительная задержка для скрытия после анимации
+        setTimeout(function() {
+            loadingElement.style.display = 'none';
+        }, 1500); // Длительность анимации исчезновения
+    }, 1500); // Задержка перед началом анимации
+};
+
+    </script>
+
+</body>
+</html>

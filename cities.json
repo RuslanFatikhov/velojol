@@ -1,0 +1,59 @@
+[
+    {
+        "id": 1,
+        "city": "Алматы",
+        "country": "Kazakhstan",
+        "coat": "almaty.png",
+        "coordinates": [76.94574641542022,43.236338918420984],
+        "rating": 4.5
+    },
+    {
+        "id": 2,
+        "city": "Астана",
+        "country": "Kazakhstan",
+        "coat": "Astana.png",
+        "coordinates": [71.43051329105131,51.1282839046317],
+        "rating": 3.2
+    },
+    {
+        "id": 3,
+        "city": "Иннополис",
+        "country": "Russia",
+        "coat": "innopolis.png",
+        "coordinates": [48.74556,55.751158],
+        "rating": 3.2
+    },
+    {
+        "id": 4,
+        "city": "Казань",
+        "country": "Russia",
+        "coat": "kazan.png",
+        "coordinates": [49.12422777616422,55.78235028276288],
+        "rating": 3.2
+    },
+    {
+        "id": 5,
+        "city": "Москва",
+        "country": "Russia",
+        "coat": "moscow.png",
+        "coordinates": [37.62029733191338,55.75411381726224],
+        "rating": 3.2
+    },
+    {
+        "id": 6,
+        "city": "Павлодар",
+        "country": "Russia",
+        "coat": "moscow.png",
+        "coordinates": [76.95968925438177,52.275521803599815],
+        "rating": 3.2
+    },
+    {
+        "id": 7,
+        "city": "Павлодар",
+        "country": "Russia",
+        "coat": "moscow.png",
+        "coordinates": [76.95968925438177,52.275521803599815],
+        "rating": 3.2
+    }
+    
+]

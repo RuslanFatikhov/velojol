@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Velojol</title>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_dark.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cities.css') }}">
+</head>
+<body>
+    <main>
+        <!--Cover-->
+
+        <!--Banner-->
+
+        <!--Cities-->
+        <div class="block bgprime300">
+            <h4 class="bold dark-prime-invert-200">Города</h4>
+            <ul class="cities">
+                
+                {% for city in cities %}
+                    <a class="citycard" href="{{ url_for('map', city_name=city.city.lower()) }}" class="city-link">
+                        <li>
+                            <img src="{{ url_for('static', filename='images/coat/' + city.coat) }}" alt="Coat of {{ city.city }}">
+                            <h5>{{ city.city }}</h5>
+                            <p>{{ city.country }}</p>
+                        </li>
+                    </a>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!--Tell-->
+
+        <!--Support-->
+
+        <!--Contacts-->
+    </main>
+</body>
+</html>
