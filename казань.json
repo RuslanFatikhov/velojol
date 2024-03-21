@@ -40,10 +40,10 @@
                                 [49.090246, 55.852727]
                 ],
                 "photos":[
-                    "src/street/pks/pks1.jpeg",
-                                "src/street/pks/pks2.jpeg",
-                                "src/street/pks/pks3.jpeg",
-                                "src/street/pks/pks4.jpeg"
+                    "https://velojol.kz/src/kazan/pks/pks1.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks2.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks3.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks4.jpeg"
                     
                 ],
                 "source":"Velojol",
@@ -62,9 +62,9 @@
                                 [49.100377, 55.813689]
                 ],
                 "photos":[
-                    "src/street/ms/ms1.jpg",
-                                "src/street/ms/ms2.jpg",
-                                "src/street/ms/ms3.jpg"
+                    "https://velojol.kz/src/kazan/ms/ms1.jpg",
+                                "https://velojol.kz/src/kazan/ms/ms2.jpg",
+                                "https://velojol.kz/src/kazan/ms/ms3.jpg"
                 ],
                 "source":"Velojol",
                 "date": "28.10.23"
@@ -93,8 +93,8 @@
                     [49.102112, 55.812864]
                 ],
                 "photos":[
-                    "src/street/dek/dek2.jpg",
-                    "src/street/dek/dek1.jpg"
+                    "https://velojol.kz/src/kazan/dek/dek2.jpg",
+                    "https://velojol.kz/src/kazan/dek/dek1.jpg"
                 ],
                 "source":"KazVel",
                 "date": "28.10.23"
@@ -149,8 +149,8 @@
                                     [49.124092, 55.802838]
                 ],
                 "photos":[
-                    "src/street/kn/kn1.jpg",
-                    "src/street/kn/kn2.jpg"
+                    "https://velojol.kz/src/kazan/kn/kn1.jpg",
+                    "https://velojol.kz/src/kazan/kn/kn2.jpg"
                 ],
                 "source":"KazVel",
                 "date": "28.10.23"
@@ -184,9 +184,9 @@
                     [49.109165, 55.799601]
                 ],
                 "photos":[
-                    "src/street/ms/ms1.jpg",
-                    "src/street/ms/ms2.jpg",
-                    "src/street/ms/ms3.jpg"
+                    "https://velojol.kz/src/kazan/ms/ms1.jpg",
+                    "https://velojol.kz/src/kazan/ms/ms2.jpg",
+                    "https://velojol.kz/src/kazan/ms/ms3.jpg"
                 ],
                 "source":"Velojol",
                 "date": "28.10.23"
@@ -202,9 +202,9 @@
                             [49.107932, 55.801091]
                 ],
                 "photos":[
-                    "src/street/dek/dej1.jpg",
-                                "src/street/dek/dek2.jpg",
-                                "src/street/dek/dek3.jpg"
+                    "https://velojol.kz/src/kazan/dek/dej1.jpg",
+                                "https://velojol.kz/src/kazan/dek/dek2.jpg",
+                                "https://velojol.kz/src/kazan/dek/dek3.jpg"
                 ],
                 "source":"Velojol",
                 "date": "28.10.23"
@@ -229,10 +229,10 @@
                     [49.107502, 55.802220]
                 ],
                 "photos":[
-                    "src/street/pks/pks1.jpeg",
-                    "src/street/pks/pks2.jpeg",
-                    "src/street/pks/pks3.jpeg",
-                    "src/street/pks/pks4.jpeg"
+                    "https://velojol.kz/src/kazan/pks/pks1.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks2.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks3.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks4.jpeg"
                     
                 ],
                 "source":"Velojol",
@@ -254,10 +254,10 @@
                     [49.109452, 55.798943]
                 ],
                 "photos":[
-                    "src/street/bk/bk1.jpg",
-                    "src/street/bk/bk5.jpg",
-                    "src/street/bk/bk6.jpg",
-                    "src/street/bk/bk10.jpg"            
+                    "https://velojol.kz/src/kazan/bk/bk1.jpg",
+                    "https://velojol.kz/src/kazan/bk/bk5.jpg",
+                    "https://velojol.kz/src/kazan/bk/bk6.jpg",
+                    "https://velojol.kz/src/kazan/bk/bk10.jpg"            
                 ],
                 "source":"KazVel, Казан Урбанчы, Кояш",
                 "date": "28.10.23"
@@ -274,8 +274,8 @@
                     [49.121261, 55.793829]
                 ],
                 "photos":[
-                    "src/street/dz/dz1.jpg",
-                    "src/street/dz/dz2.jpg"        
+                    "https://velojol.kz/src/kazan/dz/dz1.jpg",
+                    "https://velojol.kz/src/kazan/dz/dz2.jpg"        
                 ],
                 "source":"KazVel",
                 "date": "28.10.23"
@@ -294,11 +294,11 @@
                     [49.112806, 55.794874]
                 ],
                 "photos":[
-                    "src/street/krems/krems1.jpg",
-                    "src/street/krems/krems2.jpg",
-                    "src/street/krems/krems3.jpg",
-                    "src/street/krems/krems4.jpg",
-                    "src/street/krems/krems5.jpg"
+                    "https://velojol.kz/src/kazan/krems/krems1.jpg",
+                    "https://velojol.kz/src/kazan/krems/krems2.jpg",
+                    "https://velojol.kz/src/kazan/krems/krems3.jpg",
+                    "https://velojol.kz/src/kazan/krems/krems4.jpg",
+                    "https://velojol.kz/src/kazan/krems/krems5.jpg"
                     
                 ],
                 "source":"Velojol",
@@ -316,9 +316,9 @@
                     [49.109796, 55.796066]
                 ],
                 "photos":[
-                    "src/street/ms/ms1.jpg",
-                    "src/street/ms/ms2.jpg",
-                    "src/street/ms/ms3.jpg"
+                    "https://velojol.kz/src/kazan/ms/ms1.jpg",
+                    "https://velojol.kz/src/kazan/ms/ms2.jpg",
+                    "https://velojol.kz/src/kazan/ms/ms3.jpg"
                 ],
                 "source":"Velojol",
                 "date": "28.10.23"
@@ -377,11 +377,11 @@
                     [49.218748, 55.775545]
                 ],
                 "photos":[
-                    "src/street/vzt/vzt1.jpg",
-                    "src/street/vzt/vzt2.jpg",
-                    "src/street/vzt/vzt3.jpg",
-                    "src/street/vzt/vzt4.jpg",
-                    "src/street/vzt/vzt5.jpg"
+                    "https://velojol.kz/src/kazan/vzt/vzt1.jpg",
+                    "https://velojol.kz/src/kazan/vzt/vzt2.jpg",
+                    "https://velojol.kz/src/kazan/vzt/vzt3.jpg",
+                    "https://velojol.kz/src/kazan/vzt/vzt4.jpg",
+                    "https://velojol.kz/src/kazan/vzt/vzt5.jpg"
                 ],
                 "source":"Кояш",
                 "date": "28.10.23"
@@ -400,12 +400,12 @@
                     [49.174376, 55.795613]
                 ],
                 "photos":[
-                    "src/street/ersh/ersh1.jpg",
-                    "src/street/ersh/ersh2.jpg",
-                    "src/street/ersh/ersh3.jpg",
-                    "src/street/ersh/ersh4.jpg",
-                    "src/street/ersh/ersh5.jpg",
-                    "src/street/ersh/ersh6.jpg"
+                    "https://velojol.kz/src/kazan/ersh/ersh1.jpg",
+                    "https://velojol.kz/src/kazan/ersh/ersh2.jpg",
+                    "https://velojol.kz/src/kazan/ersh/ersh3.jpg",
+                    "https://velojol.kz/src/kazan/ersh/ersh4.jpg",
+                    "https://velojol.kz/src/kazan/ersh/ersh5.jpg",
+                    "https://velojol.kz/src/kazan/ersh/ersh6.jpg"
                     
                 ],
                 "source":"Velojol",
@@ -421,12 +421,12 @@
                 [49.177915, 55.798087]
             ],
             "photos":[
-                "src/street/ersh/ersh1.jpg",
-                "src/street/ersh/ersh2.jpg",
-                "src/street/ersh/ersh3.jpg",
-                "src/street/ersh/ersh4.jpg",
-                "src/street/ersh/ersh5.jpg",
-                "src/street/ersh/ersh6.jpg"
+                "https://velojol.kz/src/kazan/ersh/ersh1.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh2.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh3.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh4.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh5.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh6.jpg"
                 
             ],
             "source":"Velojol",
@@ -446,13 +446,13 @@
                 [49.185027, 55.802028]
             ],
             "photos":[
-                "src/street/ersh/ersh1.jpg",
-                "src/street/ersh/ersh2.jpg",
-                "src/street/ersh/ersh3.jpg",
-                "src/street/ersh/ersh4.jpg",
-                "src/street/ersh/ersh5.jpg",
-                "src/street/ersh/ersh6.jpg",
-                "src/street/ersh/ersh7.jpg"
+                "https://velojol.kz/src/kazan/ersh/ersh1.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh2.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh3.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh4.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh5.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh6.jpg",
+                "https://velojol.kz/src/kazan/ersh/ersh7.jpg"
                 
             ],
             "source":"Velojol",
@@ -496,7 +496,7 @@
                     [49.115882, 55.816374]
                 ],
                 "photos":[
-                    "src/street/sh/sh1.jpg"
+                    "https://velojol.kz/src/kazan/sh/sh1.jpg"
                 ],
                 "source":"KazVel",
                 "date": "28.10.23"
@@ -532,13 +532,13 @@
                     [49.218506, 55.761355]
                 ],
                 "photos":[
-                    "src/street/gol/gol1.jpeg",
-                    "src/street/gol/gol2.jpeg",
-                    "src/street/gol/gol3.jpeg",
-                    "src/street/gol/gol4.jpeg",
-                    "src/street/gol/gol5.jpeg",
-                    "src/street/gol/gol6.jpeg",
-                    "src/street/gol/gol7.jpeg"
+                    "https://velojol.kz/src/kazan/gol/gol1.jpeg",
+                    "https://velojol.kz/src/kazan/gol/gol2.jpeg",
+                    "https://velojol.kz/src/kazan/gol/gol3.jpeg",
+                    "https://velojol.kz/src/kazan/gol/gol4.jpeg",
+                    "https://velojol.kz/src/kazan/gol/gol5.jpeg",
+                    "https://velojol.kz/src/kazan/gol/gol6.jpeg",
+                    "https://velojol.kz/src/kazan/gol/gol7.jpeg"
                 ],
                 "source":"Velojol",
                 "date": "28.10.23"
@@ -585,9 +585,9 @@
                     [49.245619, 55.792301]
                 ],
                 "photos":[
-                    "src/street/pvsn/pvsn1.jpg",
-                    "src/street/pvsn/pvsn2.jpg",
-                    "src/street/pvsn/pvsn3.jpg"
+                    "https://velojol.kz/src/kazan/pvsn/pvsn1.jpg",
+                    "https://velojol.kz/src/kazan/pvsn/pvsn2.jpg",
+                    "https://velojol.kz/src/kazan/pvsn/pvsn3.jpg"
                     
                 ],
                 "source":"Velojol",
@@ -610,10 +610,10 @@
                     [49.245972, 55.790930]
                 ],
                 "photos":[
-                    "src/street/pks/pks1.jpeg",
-                    "src/street/pks/pks2.jpeg",
-                    "src/street/pks/pks3.jpeg",
-                    "src/street/pks/pks4.jpeg"
+                    "https://velojol.kz/src/kazan/pks/pks1.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks2.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks3.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks4.jpeg"
                     
                 ],
                 "source":"Velojol",
@@ -648,10 +648,10 @@
                     [49.244934, 55.792747]
                 ],
                 "photos":[
-                    "src/street/pks/pks1.jpeg",
-                    "src/street/pks/pks2.jpeg",
-                    "src/street/pks/pks3.jpeg",
-                    "src/street/pks/pks4.jpeg"
+                    "https://velojol.kz/src/kazan/pks/pks1.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks2.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks3.jpeg",
+                    "https://velojol.kz/src/kazan/pks/pks4.jpeg"
                     
                 ],
                 "source":"Velojol",
@@ -669,10 +669,10 @@
                     [49.137331, 55.761763]
                 ],
                 "photos":[
-                    "src/street/kht/kht1.jpeg",
-                    "src/street/kht/kht2.jpeg",
-                    "src/street/kht/kht3.jpeg",
-                    "src/street/kht/kht4.jpeg"         
+                    "https://velojol.kz/src/kazan/kht/kht1.jpeg",
+                    "https://velojol.kz/src/kazan/kht/kht2.jpeg",
+                    "https://velojol.kz/src/kazan/kht/kht3.jpeg",
+                    "https://velojol.kz/src/kazan/kht/kht4.jpeg"         
                 ],
                 "source":"Velojol",
                 "date": "28.10.23"
@@ -688,7 +688,7 @@
                     [49.190104, 55.750690]
                 ],
                 "photos":[
-                    "src/street/khm/khm1.jpg"
+                    "https://velojol.kz/src/kazan/khm/khm1.jpg"
                 ],
                 "source":"Velojol",
                 "date": "28.10.23"
@@ -703,8 +703,8 @@
                 [49.118539, 55.780265]
             ],
             "photos":[
-                "src/street/smr/smr1.jpg",
-                "src/street/smr/smr2.jpg"
+                "https://velojol.kz/src/kazan/smr/smr1.jpg",
+                "https://velojol.kz/src/kazan/smr/smr2.jpg"
             ],
             "source":"KazVel",
             "date": "28.10.23"
@@ -730,9 +730,9 @@
                 [49.126859, 55.778561]
             ],
             "photos":[
-                "src/street/mars/mars1.jpg",
-                "src/street/mars/mars2.jpg",
-                "src/street/mars/mars3.jpg"
+                "https://velojol.kz/src/kazan/mars/mars1.jpg",
+                "https://velojol.kz/src/kazan/mars/mars2.jpg",
+                "https://velojol.kz/src/kazan/mars/mars3.jpg"
             ],
             "source":"KazVel",
             "date": "28.10.23"
@@ -747,10 +747,10 @@
                 [49.127258, 55.768106]
             ],
             "photos":[
-                "src/street/naz/naz1.jpg",
-                "src/street/naz/naz2.jpg",
-                "src/street/naz/naz3.jpg",
-                "src/street/naz/naz4.jpg"
+                "https://velojol.kz/src/kazan/naz/naz1.jpg",
+                "https://velojol.kz/src/kazan/naz/naz2.jpg",
+                "https://velojol.kz/src/kazan/naz/naz3.jpg",
+                "https://velojol.kz/src/kazan/naz/naz4.jpg"
             ],
             "source":"KazVel, Казан Урбанчы, Кояш",
             "date": "28.10.23"
@@ -772,11 +772,11 @@
                 [49.142850, 55.794667]
             ],
             "photos":[
-                "src/street/marx/marx1.jpg",
-                "src/street/marx/marx2.jpg",
-                "src/street/marx/marx3.jpg",
-                "src/street/marx/marx4.jpg",
-                "src/street/marx/marx5.jpg"
+                "https://velojol.kz/src/kazan/marx/marx1.jpg",
+                "https://velojol.kz/src/kazan/marx/marx2.jpg",
+                "https://velojol.kz/src/kazan/marx/marx3.jpg",
+                "https://velojol.kz/src/kazan/marx/marx4.jpg",
+                "https://velojol.kz/src/kazan/marx/marx5.jpg"
             ],
             "source":"KazVel, Казан Урбанчы",
             "date": "28.10.23"
@@ -856,7 +856,7 @@
                 [49.075458, 55.822190]
             ],
             "photos":[
-                "src/street/ser/ser1.jpg"
+                "https://velojol.kz/src/kazan/ser/ser1.jpg"
             ],
             "source":"Velojol",
             "date": "28.10.23"
@@ -884,10 +884,10 @@
                 [49.124926, 55.797705]
             ],
             "photos":[
-                "src/street/tea/tea1.jpg",
-                "src/street/tea/tea2.jpg",
-                "src/street/tea/tea3.jpg",
-                "src/street/tea/tea4.jpg"
+                "https://velojol.kz/src/kazan/tea/tea1.jpg",
+                "https://velojol.kz/src/kazan/tea/tea2.jpg",
+                "https://velojol.kz/src/kazan/tea/tea3.jpg",
+                "https://velojol.kz/src/kazan/tea/tea4.jpg"
             ],
             "source":"Velojol",
             "date": "28.10.23"
@@ -930,13 +930,13 @@
                 [49.126240, 55.797310]
             ],
             "photos":[
-                "src/street/bk/bk2.jpg",
-                "src/street/bk/bk3.jpg",
-                "src/street/bk/bk4.jpg",
-                "src/street/bk/bk7.jpg",
-                "src/street/bk/bk8.jpg",
-                "src/street/bk/bk9.jpg",
-                "src/street/bk/bk11.jpg"
+                "https://velojol.kz/src/kazan/bk/bk2.jpg",
+                "https://velojol.kz/src/kazan/bk/bk3.jpg",
+                "https://velojol.kz/src/kazan/bk/bk4.jpg",
+                "https://velojol.kz/src/kazan/bk/bk7.jpg",
+                "https://velojol.kz/src/kazan/bk/bk8.jpg",
+                "https://velojol.kz/src/kazan/bk/bk9.jpg",
+                "https://velojol.kz/src/kazan/bk/bk11.jpg"
             ],
             "source":"KazVel, Казан Урбанчы, Кояш",
             "date": "28.10.23"
@@ -965,9 +965,9 @@
                 [49.123893, 55.794721]
             ],
             "photos":[
-                "src/street/lns/lns1.jpg",
-                "src/street/lns/lns2.jpg",
-                "src/street/lns/lns3.jpg"
+                "https://velojol.kz/src/kazan/lns/lns1.jpg",
+                "https://velojol.kz/src/kazan/lns/lns2.jpg",
+                "https://velojol.kz/src/kazan/lns/lns3.jpg"
 
             ],
             "source":"Velojol",
@@ -986,7 +986,7 @@
                 [49.191433, 55.750702]
             ],
             "photos":[
-                "src/street/gar/gar1.jpg"
+                "https://velojol.kz/src/kazan/gar/gar1.jpg"
 
             ],
             "source":"Кояш",
@@ -1024,8 +1024,8 @@
                 [49.101835, 55.809003]
             ],
             "photos":[
-                "src/street/krd/krd1.jpg",
-                "src/street/krd/krd2.jpg"
+                "https://velojol.kz/src/kazan/krd/krd1.jpg",
+                "https://velojol.kz/src/kazan/krd/krd2.jpg"
 
             ],
             "source":"KazVel",
@@ -1041,8 +1041,8 @@
                 [49.113144, 55.795136]
             ],
             "photos":[
-                "src/street/cher/cher1.jpg",
-                "src/street/cher/cher2.jpg"
+                "https://velojol.kz/src/kazan/cher/cher1.jpg",
+                "https://velojol.kz/src/kazan/cher/cher2.jpg"
             ],
             "source":"Velojol",
             "date": "28.10.23"
@@ -1063,7 +1063,7 @@
                 [49.073350, 55.829874]
             ],
             "photos":[
-                "src/street/shu/shu1.jpg"
+                "https://velojol.kz/src/kazan/shu/shu1.jpg"
             ],
             "source":"Velojol",
             "date": "11.11.23"
