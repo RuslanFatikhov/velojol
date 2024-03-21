@@ -13,32 +13,5 @@
     --dark-prime-400: #333333;
   
     --dark-accent-100: #CCFF00;
-}
-
-
-.dark-prime-200{
-  color: var(--dark-prime-200);
-}
-
-
-.dark-prime-300{
-  color: var(--dark-prime-300);
-}
-
-.dark-prime-invert-50{
-  color: var(--dark-prime-invert-50);
-}
-
-.dark-prime-invert-200{
-  color: var(--dark-prime-invert-200);
-}
-
-.dark-prime-invert-300{
-  color: var(--dark-prime-invert-300);
-}
-
-
-
-.bgprime300{
-   background-color: var(--dark-prime-300);
-}
+  }
+  

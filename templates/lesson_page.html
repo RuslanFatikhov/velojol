@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уроки</title>
+</head>
+<body>
+    <h1>Список уроков</h1>
+    {% for lesson in lessons %}
+        <div>
+            <h2>{{ lesson.title }}</h2>
+            <p>{{ lesson.description }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>

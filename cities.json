@@ -13,7 +13,7 @@
         "country": "Казахстан",
         "coat": "astana.png",
         "coordinates": [71.43051329105131,51.1282839046317],
-        "rating": 3.2
+        "rating": 4
     },
     {
         "id": 3,
@@ -49,11 +49,12 @@
     },
     {
         "id": 7,
-        "city": "Павлодар",
-        "country": "Russia",
-        "coat": "moscow.png",
-        "coordinates": [76.95968925438177,52.275521803599815],
+        "city": "Тюмень",
+        "country": "Россия",
+        "coat": "tumen.png",
+        "coordinates": [65.636363,57.1501764],
         "rating": 3.2
     }
+
     
 ]
