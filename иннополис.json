@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "улица Спортивная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.74601, 55.75702],
@@ -15,16 +15,14 @@
             [48.74369, 55.75255],
             [48.74351, 55.75259]
         ],
-        "photos":[
-            
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 2,
         "name": "улица Спортивная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.74037, 55.74720],
@@ -34,16 +32,14 @@
             [48.74293, 55.74975],
             [48.74302, 55.74980]
         ],
-        "photos":[
-            
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 3,
         "name": "улица Университетская",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.74573, 55.75209],
@@ -61,16 +57,14 @@
             [48.75371, 55.75081],
             [48.75378, 55.75083]
         ],
-        "photos":[
-            
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 4,
         "name": "улица Университетская",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.74405, 55.75105],
@@ -84,16 +78,14 @@
             [48.75309, 55.75009],
             [48.75331, 55.74984]
         ],
-        "photos":[
-            
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 5,
         "name": "улица Университетская",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.74146, 55.75252],
@@ -101,16 +93,14 @@
             [48.74332, 55.75212],
             [48.74348, 55.75192]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 6,
         "name": "Парковая",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.73934, 55.74651],
@@ -123,16 +113,14 @@
             [48.74799, 55.74353],
             [48.74803, 55.74318]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 7,
         "name": "Парковая",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.74896, 55.74396],
@@ -143,16 +131,14 @@
             [48.74045, 55.74696],
             [48.74036, 55.74725]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 8,
         "name": "Центральная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.75378, 55.75083],
@@ -165,16 +151,14 @@
             [48.75421, 55.75242],
             [48.75423, 55.75308]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 9,
         "name": "Центральная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [48.74802, 55.74325],
@@ -184,16 +168,14 @@
             [48.73984, 55.73922],
             [48.73615, 55.73792]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 11,
         "name": "Центральная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -241,16 +223,14 @@
                 55.74395224654364
               ]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 12,
         "name": "улица Спортивная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -318,16 +298,14 @@
                 55.742942063382
               ]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     },
     {
         "id": 13,
         "name": "улица Спортивная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -355,9 +333,7 @@
                 55.74651184938068
               ]
         ],
-        "photos":[
-            ""
-        ],
+        "photos": ["../static/images/empty.jpg"],
         "source":"Velojol",
         "date": "04.10.23"
     }

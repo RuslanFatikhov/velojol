@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "Китайгородский проезд",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -26,14 +26,14 @@
                 55.751459206450164
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 2,
         "name": "Газетный переулок",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -65,14 +65,14 @@
                 55.75916656400784
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 3,
         "name": "Большая Никитская улица",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -136,14 +136,14 @@
                 55.75758933820691
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 4,
         "name": "Петровка",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -243,14 +243,14 @@
                 55.773031394217696
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 5,
         "name": "Неглинная",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -303,14 +303,14 @@
               ]
         ],
 
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 6,
         "name": "Соймоновский проезд",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -342,14 +342,14 @@
                 55.744657720181635
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 7,
         "name": "Гоголевский бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -429,14 +429,14 @@
                 55.75097165438257
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 8,
         "name": "Знаменка",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -460,14 +460,14 @@
                 55.751201238104386
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 9,
         "name": "Никитский бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -515,14 +515,14 @@
                 55.757586371426044
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 10,
         "name": "Тверской бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -566,14 +566,14 @@
                 55.764763905162624
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 11,
         "name": "Страстной бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -617,14 +617,14 @@
                 55.76797750106786
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 12,
         "name": "Петровский бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [[
             37.6138188317947,
@@ -662,14 +662,14 @@
             37.62185305588707,
             55.76686375999091
           ]],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 13,
         "name": "Рождественский бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -697,14 +697,14 @@
                 55.76636630003918
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 14,
         "name": "Сретенский бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -748,14 +748,14 @@
                 55.765161115706434
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 15,
         "name": "Чистопрудный бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -799,14 +799,14 @@
                 55.75990931822153
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 16,
         "name": "Покровский бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -870,14 +870,14 @@
                 55.75299613054318
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 17,
         "name": "Яузский бульвар",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -925,14 +925,14 @@
                 55.750573224458606
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 18,
         "name": "Устьинский Проезд",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -968,14 +968,14 @@
                 55.748956671332195
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 19,
         "name": "Большой Устьинский мост",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1007,14 +1007,14 @@
                 55.74549281803411
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
       "id": 20,
       "name": "Космодамианская набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1054,14 +1054,14 @@
           55.73659457469438
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 21,
       "name": "Космодамианская набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1077,14 +1077,14 @@
           55.73275719576486
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 22,
       "name": "улица Большая Ордынка",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1180,14 +1180,14 @@
           55.729966369308585
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 23,
       "name": "улица Большая Ордынка",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1283,14 +1283,14 @@
           55.73059086555347
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 24,
       "name": "улица Малая Бронная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1342,14 +1342,14 @@
           55.76565561701793
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 25,
       "name": "Соймоновский проезд",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1377,14 +1377,14 @@
           55.744240970958316
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 26,
       "name": "Гоголевский бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1444,14 +1444,14 @@
           55.7527474388051
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 27,
       "name": "Никитинский бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1511,14 +1511,14 @@
           55.75781633313781
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 28,
       "name": "Тверской бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1570,14 +1570,14 @@
           55.76638270033692
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 29,
       "name": "Страстной бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1617,14 +1617,14 @@
           55.76833131717012
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 30,
       "name": "Петровский бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1660,14 +1660,14 @@
           55.76703709995593
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 31,
       "name": "Рождественский бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1699,14 +1699,14 @@
           55.76693726775369
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 32,
       "name": "Сретенский бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1726,14 +1726,14 @@
           55.76536205363951
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 33,
       "name": "Чистопрудный бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1765,14 +1765,14 @@
           55.760300374760845
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 34,
       "name": "Покровский бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1812,14 +1812,14 @@
           55.75306628320044
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 35,
       "name": "Яузский бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1847,14 +1847,14 @@
           55.75056844214956
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 36,
       "name": "Устьинский Проезд",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1890,14 +1890,14 @@
           55.74878414003149
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 37,
       "name": "Большой Устьинский мост",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -1913,14 +1913,14 @@
           55.745412041619545
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 38,
       "name": "Большая Никитская улица",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -2000,14 +2000,14 @@
           55.757431937488064
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 39,
       "name": "Малая Никитская улица",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -2043,14 +2043,14 @@
           55.75758633009619
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 40,
       "name": "улица Малая Дмитровка",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -2066,14 +2066,14 @@
           55.77225861081908
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 41,
       "name": "улица Малая Дмитровка",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -2089,14 +2089,14 @@
           55.77225861081908
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 42,
       "name": "Крымская набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -2176,14 +2176,14 @@
           55.732849483313004
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 43,
       "name": "Крымская набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -2251,14 +2251,14 @@
           55.738934892164025
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     },
     {
       "id": 44,
       "name": "Крымская набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates": [
         [
@@ -2282,7 +2282,7 @@
           55.736799470600516
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "15.03.24"
     }

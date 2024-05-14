@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "проспект Нурсултана Назарбаева",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -202,14 +202,14 @@
                 52.237594570326905
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 2,
         "name": "проспект Нурсултана Назарбаева",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -350,14 +350,14 @@
               ]
         ],
 
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 3,
         "name": "парк имени Юрия Гагарина",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -381,14 +381,14 @@
                 52.269181042241826
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
       "id": 4,
       "name": "Набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -632,14 +632,14 @@
           52.284401330543915
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 5,
       "name": "Набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -663,14 +663,14 @@
           52.28671385030597
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 6,
       "name": "Набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -694,14 +694,14 @@
           52.28671385030597
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 6,
       "name": "Набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -717,14 +717,14 @@
           52.28103190273967
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 7,
       "name": "Набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -740,14 +740,14 @@
           52.28103190273967
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 8,
       "name": "Набережная",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -763,7 +763,7 @@
           52.29035489793159
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     }
