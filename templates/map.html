@@ -1,28 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>{{ city.city }}</title>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png ">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_dark.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/imageview.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
 
 
 
-    <title>{{ city.city }}</title>
     
-
 </head>
 <body>
 
-    <div id="loading" style="position:fixed; width:100%; height:100%; background:white">
-        <p>Загрузка</p>
+    <div id="loading">
+        <p class="dark-prime-invert-200">Загрузка</p>
     </div>
 
     <main>
+        <div class="bottomright">
+            <ul>
+                <p><a href="" class="button bgprime300 dark-prime-invert-200">Есть ошибка</a></p>
+                <p><a href="" class="button bgprime300 dark-prime-invert-200">Добавить велодорожку</a></p>
+            </ul>
+
+            <p><a href="" class="button bgprime300 dark-prime-invert-200">Что это</a></p>
+        </div>
+
         <div id="imageModal" class="modal">
             <span class="size_s close"><img src="../static/images/icon/close.svg"></span>
             <img class="modal-image">

@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 3: ratingLabel = 'Удовлетворительно'; break;
                 case 2: ratingLabel = 'Плохо'; break;
                 case 1: ratingLabel = 'Ужасно'; break;
+                case 0: ratingLabel = 'Неизвестно'; break;
             }
         }
 
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="info">
                 <h4 class="dark-prime-invert-200">${bikeLane.name}</h4>
                 <p class="dark-prime-invert-200">${bikeLane.description}</p>
-                <p class="dark-prime-invert-300">${ratingLabel}</p>
+                <!--p style="background-color: ${ratingLabel.color}"  class="dark-prime-invert-300">${ratingLabel}</p-->
                 <div class="photogrid">${photosHtml}</div>
                 <span class="hstack sb">
                     <p class="dark-prime-invert-50">Источник: ${bikeLane.source}</p>
@@ -87,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         case 3: color = 'orange'; ratingLabel = 'Удовлетворительно'; break;
                         case 2: color = 'red'; ratingLabel = 'Плохо'; break;
                         case 1: color = 'purple'; ratingLabel = 'Ужасно'; break;
+                        case 0: color = 'gray'; ratingLabel = 'Неизвестно'; break;
                     }
 
                     const layerId = `bikeLane-${bikeLane.id}`;
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         'paint': {
                             'line-color': color,
-                            'line-width': 5,
+                            'line-width': 6,
                             'line-opacity': 0.5
                         }
                     });

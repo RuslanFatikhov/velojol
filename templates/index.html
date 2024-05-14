@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Velojol</title>
+    <title>VELOJOL</title>
     
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_dark.css') }}">
@@ -20,81 +41,43 @@
         </div>
 
         <!--Banner-->
-        <div class="banner">
+        <!--div class="banner">
             <p class="dark-prime-25 ">БЕСПЛАТНЫЙ КУРС</p>
             <h4 class="dark-prime-200">Курс “Велосипед в городе”</h4>
             <h5><a href="" class="dark-prime-invert-200 size_l bgprime300">
                 Узнать подробнее
             </a></h5>
-        </div>
+        </div-->
 
         <!--Cities-->
         <div class="block bgprime300">
-            <h4 class="bold dark-prime-invert-200">Города</h4>
+            <h4 class="bold dark-prime-invert-200">Велодорожки в городах</h4>
             <ul class="cities">
                 
                 {% for city in cities %}
-                    <a class="citycard" href="{{ url_for('map', city_name=city.city.lower()) }}" class="city-link">
-                        <li>
+                    <a class="citycard gap8" href="{{ url_for('map', city_name=city.city.lower()) }}" class="city-link">
                             <img src="{{ url_for('static', filename='images/coat/' + city.coat) }}" alt="Coat of {{ city.city }}">
-                            <h5>{{ city.city }}</h5>
-                            <p>{{ city.country }}</p>
-                        </li>
+                            
+                            <li>
+                                <h5>{{ city.city }}</h5>
+                                <p>{{ city.country }}</p>
+                            </li>
                     </a>
                 {% endfor %}
+
+                <a href="https://tally.so/r/3lO0pV" target="_blank" class=" citycard gap8">
+                    <img src="static/images/icon/plus1.svg" alt="plus icon">
+                    <p class="dark-accent-100">Хочу свой город</p>
+                </a>
             </ul>
         </div>
 
-        <!--Tell-->
-        <div class="block mt100">
-            <h4 class="bold dark-prime-invert-200 center mb48">Показываем и рассказываем</h4>
-            
-            <div class="grid">
-                
-                <!--card-->
-                <div class="card bgprime300 ">
-                    <h4 class="dark-prime-invert-200 bold">Велодорожки и велополосы</h4>
-                </div>
+        
 
-                <!--card-->
-                <div class="card bgprime300">
-                    <h4 class="dark-prime-invert-200 bold">Точки ремонта и обслуживания</h4>
-                </div>
-
-                <!--card-->
-                <div class="card bgprime300">
-                    <h4 class="dark-prime-invert-200 bold">Туристические места</h4>
-                </div>
-
-                <!--card-->
-                <div class="card bgprime300">
-                    <h4 class="dark-prime-invert-200 bold">Советы и сообщества</h4>
-                </div>
-            </div>
-        </div>
-
-        <!--Support-->
-        <div class="block mt100">
-            <h4 class="bold dark-prime-invert-200 center mb48">Поддержать проект</h4>
-            
-            <div class="grid">
-                
-                <!--card-->
-                <div class="card bgprime300 ac">
-                </div>
-
-                <!--card-->
-                <div class="card bgprime300 ac">
-                </div>
-
-            </div>
-        </div>
-
-        <!--Contacts-->
-        <div class="hstack">
-            <a href=""><img src="" alt=""><h5 class="dark-prime-invert-200 bold">Написать в Telegram</h5></a>
-            <a href=""><img src="" alt=""><h5 class="dark-prime-invert-200 bold">Telegram-канал</h5></a>
-        </div>
+        <footer class="hstack">
+            <p class="dark-prime-invert-50">VELOJOL 1.3</p>
+            <p class="dark-prime-invert-50">2024</p>
+        </footer>
     </main>
 </body>
 </html>

@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -22,14 +22,14 @@
                 51.176415
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 2,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -45,14 +45,14 @@
                 51.174365
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 6,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -88,14 +88,14 @@
                 51.170307
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 7,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -119,14 +119,14 @@
                 51.170505
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 8,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -142,14 +142,14 @@
                 51.171240
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 9,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -161,14 +161,14 @@
                 51.177500
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 10,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -188,14 +188,14 @@
                 51.176830
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 11,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -219,14 +219,14 @@
                 51.173637
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 12,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -238,14 +238,14 @@
                 51.172395
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 13,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -257,14 +257,14 @@
                 51.171384
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 14,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -308,14 +308,14 @@
                 51.171664
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 15,
         "name": "улица Бейбарыс Султан",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -335,14 +335,14 @@
                 51.172189
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 16,
         "name": "Зелёный пояс Астаны",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -518,14 +518,14 @@
                 51.115777
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 17,
         "name": "Зелёный пояс Астаны",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -561,14 +561,14 @@
                 51.114455
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 18,
         "name": "Зелёный пояс Астаны",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -592,14 +592,14 @@
                 51.112646
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 19,
         "name": "Зелёный пояс Астаны",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1063,14 +1063,14 @@
                 51.107278
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 20,
         "name": "Зелёный пояс Астаны",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1178,14 +1178,14 @@
                 51.049909
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 21,
         "name": "Зелёный пояс Астаны",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1557,14 +1557,14 @@
                 51.050814
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 22,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1624,14 +1624,14 @@
                 51.10812344246264
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 23,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1643,14 +1643,14 @@
                 51.10427241703195
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 24,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1662,14 +1662,14 @@
                 51.10596793107135
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 25,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1681,14 +1681,14 @@
                 51.10810840647096
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 26,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1700,14 +1700,14 @@
                 51.10810840647096
             ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 27,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1759,14 +1759,14 @@
                 51.10918681929749
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 28,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1778,14 +1778,14 @@
                 51.109541145214564
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 29,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates": [
             [
@@ -1833,14 +1833,14 @@
                 51.1083662118767
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 30,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -1868,14 +1868,14 @@
                 51.10949655200085
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 31,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -1903,14 +1903,14 @@
                 51.10312708739974
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 32,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -1938,14 +1938,14 @@
                 51.10312708739974
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 33,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -1957,14 +1957,14 @@
                 51.10577726651417
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 34,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2012,14 +2012,14 @@
                 51.110466549255904
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 35,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2031,14 +2031,14 @@
                 51.109073356232926
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 36,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2082,14 +2082,14 @@
                 51.10324642546951
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 37,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2145,14 +2145,14 @@
                 51.10796506550568
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 37,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2200,14 +2200,14 @@
             51.10473955814015
           ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 38,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2275,14 +2275,14 @@
                 51.10954453665909
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 39,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2350,14 +2350,14 @@
                 51.1047518091556
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 40,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2425,14 +2425,14 @@
                 51.10363627463528
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 41,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2484,14 +2484,14 @@
                 51.108418242742914
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 42,
         "name": "Ботанический сад",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2627,14 +2627,14 @@
                 51.10474666783355
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 43,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2870,14 +2870,14 @@
                 51.128758002863094
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 44,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2901,14 +2901,14 @@
                 51.117728647023085
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 45,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -2996,14 +2996,14 @@
                 51.10976792630959
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 45,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3047,14 +3047,14 @@
                 51.10653720037999
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 46,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3086,14 +3086,14 @@
                 51.10976188345728
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 47,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3113,14 +3113,14 @@
                 51.106613114959515
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 48,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3140,14 +3140,14 @@
                 51.106613114959515
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 49,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3259,14 +3259,14 @@
                 51.106348910424316
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 50,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3314,14 +3314,14 @@
                 51.10677878762016
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 51,
         "name": "Президентский парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3333,14 +3333,14 @@
                 51.10602644253831
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 52,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3416,14 +3416,14 @@
                 51.13863175127469
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 53,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3455,14 +3455,14 @@
                 51.138307485349145
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 54,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3490,14 +3490,14 @@
                 51.138057328656544
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 55,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3525,14 +3525,14 @@
                 51.1369991625036
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 56,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3904,14 +3904,14 @@
                 51.13565347755741
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 57,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3971,14 +3971,14 @@
                 51.13573200872207
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 58,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -3998,14 +3998,14 @@
                 51.13428690298852
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 59,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -4057,14 +4057,14 @@
                 51.1332192372885
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 60,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -4096,14 +4096,14 @@
                 51.13297255510864
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 61,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -4131,14 +4131,14 @@
                 51.13169847916251
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
         "id": 61,
         "name": "Студенческий парк",
-        "safetyLevel": 5,
+        "safetyLevel": 0,
         "description": "",
         "coordinates":[
             [
@@ -4166,14 +4166,14 @@
                 51.13169847916251
               ]
         ],
-        "photos": [],
+        "photos": ["../static/images/empty.jpg"],
         "source": "Velojol",
         "date": "16.02.24"
     },
     {
       "id": 62,
       "name": "Центральный столичный парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4197,14 +4197,14 @@
           51.156934808099805
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 64,
       "name": "Центральный столичный парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4248,14 +4248,14 @@
           51.156401102418045
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 65,
       "name": "Центральный столичный парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4291,14 +4291,14 @@
           51.155130013560324
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 66,
       "name": "Центральный столичный парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4346,14 +4346,14 @@
           51.15403168156547
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 67,
       "name": "Центральный столичный парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4457,14 +4457,14 @@
           51.15178775588811
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 68,
       "name": "Центральный столичный парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4604,14 +4604,14 @@
           51.15938154367001
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 69,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4631,14 +4631,14 @@
           51.129890532734095
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 70,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4650,14 +4650,14 @@
         51.12863271986356
       ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 71,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4669,14 +4669,14 @@
           51.12815200487918
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 72,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4688,14 +4688,14 @@
           51.12799062062882
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 73,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4707,14 +4707,14 @@
           51.127701836416435
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 74,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4726,14 +4726,14 @@
           51.12741340048103
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 75,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4753,14 +4753,14 @@
           51.12665747915514
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 76,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4772,14 +4772,14 @@
           51.12638964099813
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 77,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4791,14 +4791,14 @@
           51.12587105471235
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 78,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4810,14 +4810,14 @@
           51.12568056940441
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 79,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4829,14 +4829,14 @@
           51.1252413999853
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 80,
       "name": "улица Достык",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4848,14 +4848,14 @@
           51.12498475698257
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 81,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4871,14 +4871,14 @@
           51.12915597914784
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 82,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4902,14 +4902,14 @@
           51.13115303343915
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     }, 
     {
       "id": 83,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4921,14 +4921,14 @@
           51.11769952494154
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 84,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4952,14 +4952,14 @@
           51.11549321716217
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 85,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -4995,14 +4995,14 @@
           51.113403243940155
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 86,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5018,14 +5018,14 @@
           51.10897642822516
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 87,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5113,14 +5113,14 @@
           51.100255153896825
         ]
     ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 88,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5136,14 +5136,14 @@
           51.09688833520238
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 90,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5163,14 +5163,14 @@
           51.09587103928979
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 91,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5206,14 +5206,14 @@
           51.09149439087443
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 92,
       "name": "Мангилек Ел | Запад",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5266,14 +5266,14 @@
         ]
       ],
 
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 89,
       "name": "Мангилек Ел | Восток",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5313,14 +5313,14 @@
           51.09513169506167
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 93,
       "name": "Мангилек Ел | Восток",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5348,14 +5348,14 @@
           51.09830248507211
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 94,
       "name": "Мангилек Ел | Восток",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5367,14 +5367,14 @@
           51.09960972736144
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 95,
       "name": "Мангилек Ел | Восток",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5438,14 +5438,14 @@
           51.10845531473353
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 96,
       "name": "Мангилек Ел | Восток",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5481,14 +5481,14 @@
           51.11278473822128
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 96,
       "name": "Мангилек Ел | Восток",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5524,14 +5524,14 @@
           51.11731627253195
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 97,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5543,14 +5543,14 @@
           51.13012192137032
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 98,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5562,14 +5562,14 @@
           51.13070905554602
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 99,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5581,14 +5581,14 @@
           51.13302372334951
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 100,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5600,14 +5600,14 @@
           51.13335062330589
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 101,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5619,14 +5619,14 @@
           51.133838696794754
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 102,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5686,14 +5686,14 @@
           51.13104881902041
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 103,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5717,14 +5717,14 @@
           51.13050547232709
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 104,
       "name": "Кунаева",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5752,14 +5752,14 @@
           51.129513340779994
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 105,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5835,14 +5835,14 @@
           51.13863175127469
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 106,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5870,14 +5870,14 @@
           51.138057328656544
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 106,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -5905,14 +5905,14 @@
           51.1369991625036
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 107,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6284,14 +6284,14 @@
           51.13565347755741
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 108,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6351,14 +6351,14 @@
           51.13573200872207
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 109,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6378,14 +6378,14 @@
           51.13428690298852
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 110,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6437,14 +6437,14 @@
           51.1332192372885
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 111,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6476,14 +6476,14 @@
           51.13297255510864
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 112,
       "name": "Триталон парк",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6511,14 +6511,14 @@
           51.13169847916251
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 113,
       "name": "Парк жетису",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6678,14 +6678,14 @@
           51.134036232591995
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 114,
       "name": "Парк жетису",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6725,14 +6725,14 @@
           51.134093376464335
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 115,
       "name": "Парк жетису",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -6804,14 +6804,14 @@
           51.13404201580397
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 116,
       "name": "Центральная мечеть",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7007,14 +7007,14 @@
           51.07567865599492
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 117,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7045,14 +7045,14 @@
         71.45180588517249,
         51.09667110011006
       ]],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 118,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7072,14 +7072,14 @@
           51.09283091453855
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 119,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7103,14 +7103,14 @@
           51.0845969217842
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 120,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7142,14 +7142,14 @@
           51.092108569883294
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 121,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7177,14 +7177,14 @@
           51.10333924322589
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 122,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7196,14 +7196,14 @@
           51.0877488563481
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 123,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7215,14 +7215,14 @@
           51.08801750157184
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 124,
       "name": "проспект Аль-Фараби",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7234,14 +7234,14 @@
           51.08801750157184
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 125,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7253,14 +7253,14 @@
           51.084867809655435
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 126,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7272,14 +7272,14 @@
           51.084867809655435
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 127,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7291,14 +7291,14 @@
           51.083406656222394
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 128,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7310,14 +7310,14 @@
           51.08422406447042
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 129,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7329,14 +7329,14 @@
           51.085086621812934
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 130,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7348,14 +7348,14 @@
           51.086412950642284
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 131,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7367,14 +7367,14 @@
           51.085818400619246
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 132,
       "name": "улица Фаризы Онгарсыновой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7386,14 +7386,14 @@
           51.083900952476796
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 133,
       "name": "улица Орынбор",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7405,14 +7405,14 @@
           51.11325670938541
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 134,
       "name": "улица Орынбор",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7424,14 +7424,14 @@
           51.11446689471907
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 135,
       "name": "улица Орынбор",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7443,14 +7443,14 @@
           51.1116074875286
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 136,
       "name": "улица Орынбор",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7462,14 +7462,14 @@
           51.113221118160936
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 137,
       "name": "улица Розы Баглановой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7481,14 +7481,14 @@
           51.117384084851125
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 138,
       "name": "улица Розы Баглановой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7500,14 +7500,14 @@
           51.11585024234526
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 139,
       "name": "улица Розы Баглановой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7519,14 +7519,14 @@
           51.11764511459245
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 140,
       "name": "улица Розы Баглановой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7542,14 +7542,14 @@
           51.12016977323091
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 141,
       "name": "улица Розы Баглановой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7573,14 +7573,14 @@
           51.12779348893187
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 142,
       "name": "улица Розы Баглановой",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7592,14 +7592,14 @@
           51.123597024786534
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 142,
       "name": "улица Е-308",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7611,14 +7611,14 @@
           51.12984579799101
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 142,
       "name": "улица Е-308",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7646,14 +7646,14 @@
           51.132924372268434
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 143,
       "name": "улица Бейбитшилик",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7669,14 +7669,14 @@
           51.167871884489614
           ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 144,
       "name": "улица Бейбитшилик",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7688,14 +7688,14 @@
           51.166712990905324
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 145,
       "name": "улица Бейбитшилик",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7707,14 +7707,14 @@
           51.16494846210577
         ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 146,
       "name": "улица Омарова",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7734,14 +7734,14 @@
           51.16954826833043
           ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     },
     {
       "id": 147,
       "name": "Театральный Бульвар",
-      "safetyLevel": 5,
+      "safetyLevel": 0,
       "description": "",
       "coordinates":[
         [
@@ -7753,7 +7753,7 @@
           51.169638172150115
           ]
       ],
-      "photos": [],
+      "photos": ["../static/images/empty.jpg"],
       "source": "Velojol",
       "date": "16.02.24"
     }
