@@ -1,15 +1,19 @@
 import os
 import sys
 import json
-sys.path.append('/home/c/cc91451/velojol.kz/venv/lib/python3.10/site-packages/')
 from flask import Flask, render_template, jsonify, url_for
+
+# Убедитесь, что путь к библиотекам Python указан правильно
+sys.path.append('/home/c/cc91451/velojol.kz/venv/lib/python3.10/site-packages/')
+
 app = Flask(__name__)
 application = app
+
 # Загрузка данных городов из файла
 def load_cities():
     with open('/home/c/cc91451/velojol.kz/public_html/cities.json', 'r', encoding='utf-8') as f:
         return json.load(f)
-        return render_template("posts.html", articles=articles)
+
 # Маршрут для главной страницы
 @app.route('/')
 def index():
@@ -30,13 +34,18 @@ def map(city_name):
 
 @app.route('/bike-lanes/<city_name>')
 def bike_lanes(city_name):
-    try:
-        with open(f'{city_name}.json', 'r') as f:
+    try:             
+        filepath = '/home/c/cc91451/velojol.kz/public_html/{city_name}.json'
+        if not os.path.isfile(filepath):
+            return jsonify({'error': 'File not found'}), 404
+
+        with open(filepath, 'r', encoding='utf-8') as f:
             bike_lanes = json.load(f)
         return jsonify(bike_lanes)
-    except FileNotFoundError:
-        return jsonify({'error': 'File not found'}), 404
+    except json.JSONDecodeError as e:
+        return jsonify({'error': 'Error decoding JSON'}), 500
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
-
