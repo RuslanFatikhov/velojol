@@ -160,11 +160,16 @@ main{
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
+    pointer-events: none;
 }
 
 .bottomright ul{
     display: flex;
     flex-direction: row;
+}
+
+.bottomright a{
+    pointer-events: auto;
 }
 
 
@@ -175,15 +180,21 @@ main{
     }
 
     .block{
-        max-width: calc(100vw - 64px);
-        height: 48vh;
+        height: 50vh;
     }
 
     #map{
         height: 40vh;
     }
 
+    .bottomright{
+        bottom: 0;
+        align-items: flex-end;
+    }
+
     #customPopup{
-        max-width: calc(100vw - 64px);
+        max-width: none;
+
+        width: calc(100% - 32px);
     }
 }

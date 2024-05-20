@@ -24,6 +24,10 @@
   color: var(--dark-prime-300);
 }
 
+.dark-prime-invert-25{
+  color: var(--dark-prime-invert-25);
+}
+
 .dark-prime-invert-50{
   color: var(--dark-prime-invert-50);
 }

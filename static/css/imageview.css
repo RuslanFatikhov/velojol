@@ -27,9 +27,16 @@
     display: flex;
     flex-direction: column;
 
-    width: 100%;
+    max-width: 100%;
     height: 80%;
     object-fit: contain;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.modal-image img{
+    border-radius: 16px;
+    overflow: hidden;
 }
 
 .close {
@@ -91,6 +98,19 @@
     font-weight: 500;
     line-height: 21px;
     letter-spacing: -0.2px;
+}
+
+@media screen and (max-width: 920px){
+
+    .modal-image {
+        height: auto;
+        width: calc(100% - 32px);
+    }
+
+    .prev, .next {
+        top: 95%;
+        width: 100%;
+    }
 }
 
 

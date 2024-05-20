@@ -30,6 +30,7 @@ a{
     gap: 32px;
 }
 
+
 .sb{
     width: 100%;
     justify-content: space-between;
@@ -165,4 +166,13 @@ a{
     .hstack{
         flex-direction: column;
     }
+
+    .info .hstack{
+        flex-direction: row;
+    }
+
+    .hide540{
+        display: none;
+    }
 }
+
