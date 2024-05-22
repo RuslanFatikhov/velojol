@@ -1,20 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiZnV6bGFuIiwiYSI6ImNsc2N3dnhuNTBrZXYya28xeG1mb3k3N3AifQ.bLjMuXA5JfgBW0pwtjQxxA';
-
-    const cityName = 'алматы'; // Замените на нужное название города или сделайте его динамическим
-    const bikeLanesUrl = `https://velojol.kz/${cityName}.json`;
-
+    
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/dark-v11',
-        center: cityCoordinates, 
+        center: cityCoordinates, // Установите реальные координаты центра карты
         zoom: 11
     });
 
     const initialCenter = cityCoordinates;
     const initialZoom = 12;
 
-    let bikeLanesData = [];
+    let bikeLanesData = []; // Для хранения данных о велодорожках
 
     function setLayerOpacity(exceptId = "") {
         const mapStyle = map.getStyle();
@@ -29,13 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.closeCustomPopup = function() {
         document.getElementById('customPopup').style.display = 'none';
-        setLayerOpacity();
-        map.flyTo({center: initialCenter, zoom: initialZoom});
+        setLayerOpacity(); // Восстанавливаем прозрачность для всех слоев
+        map.flyTo({center: initialCenter, zoom: initialZoom}); // Возвращаем карту к начальному виду
     };
 
     function createPopUpHtml(bikeLane) {
         let photosHtml = bikeLane.photos?.map(photo => `<img src="${photo}" data-imageview alt="Фото велодорожки">`).join('') || '';
-        let ratingLabel = 'Неизвестно';
+        let ratingLabel = 'Неизвестно'; // Предварительное значение
         if (typeof bikeLane.safetyLevel === 'number' && bikeLane.safetyLevel >= 1 && bikeLane.safetyLevel <= 5) {
             switch (bikeLane.safetyLevel) {
                 case 5: ratingLabel = 'Отлично'; break;
@@ -46,85 +43,109 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 0: ratingLabel = 'Неизвестно'; break;
             }
         }
+
         return `
-            <div class="popup-content">
-                <h3>${bikeLane.name}</h3>
-                <p>Уровень безопасности: ${ratingLabel}</p>
-                <div class="photos">${photosHtml}</div>
+            <div class="info">
+                <h4 class="dark-prime-invert-200">${bikeLane.name}</h4>
+                <p class="dark-prime-invert-200">${bikeLane.description}</p>
+                <!--p style="background-color: ${ratingLabel.color}"  class="dark-prime-invert-300">${ratingLabel}</p-->
+                <div class="photogrid">${photosHtml}</div>
+                <span class="hstack sb">
+                    <p class="dark-prime-invert-50">Источник: ${bikeLane.source}</p>
+                    <p class="dark-prime-invert-50">${bikeLane.date}</p>
+                </span>
+                <button class="size_s absolute_rt" onclick="closeCustomPopup();">
+                    <img src="../static/images/icon/close.svg" alt="Закрыть">
+                </button>
             </div>
         `;
     }
 
     function handleBikeLaneClick(bikeLane) {
-        const popup = document.getElementById('customPopup');
-        popup.innerHTML = createPopUpHtml(bikeLane);
-        popup.style.display = 'block';
         setLayerOpacity(`bikeLane-${bikeLane.id}`);
-        map.flyTo({center: bikeLane.coordinates, zoom: 14});
+        map.flyTo({center: bikeLane.coordinates[0], zoom: 14});
+        const customPopup = document.getElementById('customPopup');
+        customPopup.innerHTML = createPopUpHtml(bikeLane);
+        initImageView(); // Инициализация обработчиков событий для новых изображений
+        customPopup.style.display = 'block';
+        window.images = bikeLane.photos;
     }
 
-    console.log(`Attempting to fetch bike lanes from URL: ${bikeLanesUrl}`);
-    fetch(bikeLanesUrl)
-        .then(response => {
-            console.log(`HTTP response status: ${response.status}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error(`Expected JSON, got ${contentType}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            bikeLanesData = data;
-            data.forEach(bikeLane => {
-                const color = bikeLane.color || 'blue';
-                map.addLayer({
-                    'id': `bikeLane-${bikeLane.id}`,
-                    'type': 'line',
-                    'source': {
-                        'type': 'geojson',
-                        'data': bikeLane.geojson
-                    },
-                    'layout': {
-                        'line-join': 'round',
-                        'line-cap': 'round'
-                    },
-                    'paint': {
-                        'line-color': color,
-                        'line-width': 6,
-                        'line-opacity': 0.5
+    map.on('load', function() {
+        fetch(`https://velojol.kz/${cityName}.json`)
+            .then(response => response.json())
+            .then(data => {
+                bikeLanesData = data; // Сохраняем данные о велодорожках
+                
+                const bikeLanesList = document.getElementById('bikeLanesList');
+                bikeLanesList.innerHTML = '';
+
+                data.forEach(bikeLane => {
+                    let color, ratingLabel = 'Неизвестно';
+                    switch (bikeLane.safetyLevel) {
+                        case 5: color = 'green'; ratingLabel = 'Отлично'; break;
+                        case 4: color = 'yellow'; ratingLabel = 'Хорошо'; break;
+                        case 3: color = 'orange'; ratingLabel = 'Удовлетворительно'; break;
+                        case 2: color = 'red'; ratingLabel = 'Плохо'; break;
+                        case 1: color = 'purple'; ratingLabel = 'Ужасно'; break;
+                        case 0: color = 'gray'; ratingLabel = 'Неизвестно'; break;
                     }
+
+                    const layerId = `bikeLane-${bikeLane.id}`;
+                    map.addLayer({
+                        'id': layerId,
+                        'type': 'line',
+                        'source': {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'Feature',
+                                'properties': bikeLane,
+                                'geometry': {
+                                    'type': 'LineString',
+                                    'coordinates': bikeLane.coordinates
+                                }
+                            }
+                        },
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        },
+                        'paint': {
+                            'line-color': color,
+                            'line-width': 6,
+                            'line-opacity': 0.5
+                        }
+                    });
+
+                    const bikeLaneItem = document.createElement('div');
+                    bikeLaneItem.classList.add('bike-lane-item');
+                    bikeLaneItem.innerHTML = `
+                        <img src="${bikeLane.photos[0]}" alt="${bikeLane.name}">
+                        <span>
+                            <div>
+                                <h6 style="margin-bottom:8px;">${bikeLane.name}</h6>
+                                <span style="background-color: ${color}; color: ${color === 'yellow' ? 'black' : 'white'}; padding: 0px 5px; border-radius: 4px;">${ratingLabel}</span>
+                            </div>
+                        </span>
+                    `;
+                    bikeLaneItem.onclick = function() {
+                        handleBikeLaneClick(bikeLane);
+                    };
+                    bikeLanesList.appendChild(bikeLaneItem);
                 });
 
-                const bikeLaneItem = document.createElement('div');
-                bikeLaneItem.classList.add('bike-lane-item');
-                bikeLaneItem.innerHTML = `
-                    <img src="${bikeLane.photos[0]}" alt="${bikeLane.name}">
-                    <span>
-                        <div>
-                            <h6 style="margin-bottom:8px;">${bikeLane.name}</h6>
-                            <span style="background-color: ${color}; color: ${color === 'yellow' ? 'black' : 'white'}; padding: 0px 5px; border-radius: 4px;">${ratingLabel}</span>
-                        </div>
-                    </span>
-                `;
-                bikeLaneItem.onclick = function() {
-                    handleBikeLaneClick(bikeLane);
-                };
-                bikeLanesList.appendChild(bikeLaneItem);
-            });
-
-            map.on('click', function(e) {
-                const features = map.queryRenderedFeatures(e.point, { layers: data.map(bikeLane => `bikeLane-${bikeLane.id}`) });
-                if (features.length) {
-                    const clickedBikeLaneId = features[0].properties.id;
-                    const clickedBikeLane = bikeLanesData.find(bikeLane => bikeLane.id === clickedBikeLaneId);
-                    if (clickedBikeLane) {
-                        handleBikeLaneClick(clickedBikeLane);
+                // Внешний клик для закрытия customPopup
+                map.on('click', function(e) {
+                    const features = map.queryRenderedFeatures(e.point, { layers: data.map(bikeLane => `bikeLane-${bikeLane.id}`) });
+                    if (features.length) {
+                        const clickedBikeLaneId = features[0].properties.id;
+                        const clickedBikeLane = bikeLanesData.find(bikeLane => bikeLane.id === clickedBikeLaneId);
+                        if (clickedBikeLane) {
+                            handleBikeLaneClick(clickedBikeLane);
+                        }
                     }
-                }
-            });
-        })
-        .catch(error => console.error('Error loading bike lanes:', error));
+                });
+            })
+            .catch(error => console.error('Error loading bike lanes:', error));
+    });
 });
