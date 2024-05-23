@@ -30,44 +30,58 @@ document.addEventListener('DOMContentLoaded', function() {
         map.flyTo({center: initialCenter, zoom: initialZoom}); // Возвращаем карту к начальному виду
     };
 
-    function createPopUpHtml(bikeLane) {
-        let photosHtml = bikeLane.photos?.map(photo => `<img src="${photo}" data-imageview alt="Фото велодорожки">`).join('') || '';
-        let ratingLabel = 'Неизвестно'; // Предварительное значение
-        if (typeof bikeLane.safetyLevel === 'number' && bikeLane.safetyLevel >= 1 && bikeLane.safetyLevel <= 5) {
-            switch (bikeLane.safetyLevel) {
-                case 5: ratingLabel = 'Отлично'; break;
-                case 4: ratingLabel = 'Хорошо'; break;
-                case 3: ratingLabel = 'Удовлетворительно'; break;
-                case 2: ratingLabel = 'Плохо'; break;
-                case 1: ratingLabel = 'Ужасно'; break;
-                case 0: ratingLabel = 'Неизвестно'; break;
-            }
+    window.closeCustomPopup = function() {
+        const customPopup = document.getElementById('customPopup');
+        if (customPopup) {
+            customPopup.style.display = 'none';
         }
+        setLayerOpacity(); // Восстанавливаем прозрачность для всех слоев
+        map.flyTo({center: initialCenter, zoom: initialZoom}); // Возвращаем карту к начальному виду
+    };
 
-        return `
-            <div class="info">
-                <h4 class="dark-prime-invert-200">${bikeLane.name}</h4>
-                <p class="dark-prime-invert-200">${bikeLane.description}</p>
-                <!--p style="background-color: ${ratingLabel.color}"  class="dark-prime-invert-300">${ratingLabel}</p-->
-                <div class="photogrid">${photosHtml}</div>
-                <span class="hstack sb">
-                    <p class="dark-prime-invert-50">Источник: ${bikeLane.source}</p>
-                    <p class="dark-prime-invert-50">${bikeLane.date}</p>
-                </span>
-                <button class="size_s absolute_rt" onclick="closeCustomPopup();">
-                    <img src="../static/images/icon/close.svg" alt="Закрыть">
-                </button>
-            </div>
-        `;
+    function createPopUpHtml(bikeLane) {
+    let photosHtml = bikeLane.photos?.map(photo => `<img src="${photo}" data-imageview alt="Фото велодорожки">`).join('') || '';
+    let ratingLabel = 'Неизвестно'; // Предварительное значение
+    let color = 'gray'; // Цвет по умолчанию
+
+    if (typeof bikeLane.safetyLevel === 'number' && bikeLane.safetyLevel >= 1 && bikeLane.safetyLevel <= 5) {
+        switch (bikeLane.safetyLevel) {
+            case 5: color = '#64C750'; ratingLabel = 'Отлично'; break;
+            case 4: color = '#FFBD3F'; ratingLabel = 'Хорошо'; break;
+            case 3: color = '#FF8552'; ratingLabel = 'Удовлетворительно'; break;
+            case 2: color = '#E55D47'; ratingLabel = 'Плохо'; break;
+            case 1: color = '#772613'; ratingLabel = 'Ужасно'; break;
+        }
     }
+
+    return `
+        <div class="info">
+            <h4 class="dark-prime-invert-200">${bikeLane.name}</h4>
+            <p class="dark-prime-invert-200">${bikeLane.description}</p>
+            <p style="background-color: ${color};color: #121212;padding: 2px 8px;border-radius: 8px; class="dark-prime-invert-300">${ratingLabel}</p>
+            <div class="photogrid">${photosHtml}</div>
+            <span class="hstack sb">
+                <p class="dark-prime-invert-50">Источник: ${bikeLane.source}</p>
+                <p class="dark-prime-invert-50">${bikeLane.date}</p>
+            </span>
+            <button class="size_s absolute_rt" onclick="closeCustomPopup();">
+                <img src="../static/images/icon/close.svg" alt="Закрыть">
+            </button>
+        </div>
+    `;
+}
+
+
 
     function handleBikeLaneClick(bikeLane) {
         setLayerOpacity(`bikeLane-${bikeLane.id}`);
         map.flyTo({center: bikeLane.coordinates[0], zoom: 14});
         const customPopup = document.getElementById('customPopup');
-        customPopup.innerHTML = createPopUpHtml(bikeLane);
-        initImageView(); // Инициализация обработчиков событий для новых изображений
-        customPopup.style.display = 'block';
+        if (customPopup) {
+            customPopup.innerHTML = createPopUpHtml(bikeLane);
+            initImageView(); // Инициализация обработчиков событий для новых изображений
+            customPopup.style.display = 'block';
+        }
         window.images = bikeLane.photos;
     }
 
@@ -81,58 +95,57 @@ document.addEventListener('DOMContentLoaded', function() {
                 bikeLanesList.innerHTML = '';
 
                 data.forEach(bikeLane => {
-                    let color, ratingLabel = 'Неизвестно';
-                    switch (bikeLane.safetyLevel) {
-                        case 5: color = 'green'; ratingLabel = 'Отлично'; break;
-                        case 4: color = 'yellow'; ratingLabel = 'Хорошо'; break;
-                        case 3: color = 'orange'; ratingLabel = 'Удовлетворительно'; break;
-                        case 2: color = 'red'; ratingLabel = 'Плохо'; break;
-                        case 1: color = 'purple'; ratingLabel = 'Ужасно'; break;
-                        case 0: color = 'gray'; ratingLabel = 'Неизвестно'; break;
-                    }
+                        let color = 'gray', ratingLabel = 'Неизвестно';
+                        switch (bikeLane.safetyLevel) {
+                            case 5: color = '#64C750'; ratingLabel = 'Отлично'; break;
+                            case 4: color = '#FFBD3F'; ratingLabel = 'Хорошо'; break;
+                            case 3: color = '#FF8552'; ratingLabel = 'Удовлетворительно'; break;
+                            case 2: color = '#E55D47'; ratingLabel = 'Плохо'; break;
+                            case 1: color = '#772613'; ratingLabel = 'Ужасно'; break;
+                        }
 
                     const layerId = `bikeLane-${bikeLane.id}`;
-                    map.addLayer({
-                        'id': layerId,
-                        'type': 'line',
-                        'source': {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'Feature',
-                                'properties': bikeLane,
-                                'geometry': {
-                                    'type': 'LineString',
-                                    'coordinates': bikeLane.coordinates
+                        map.addLayer({
+                            'id': layerId,
+                            'type': 'line',
+                            'source': {
+                                'type': 'geojson',
+                                'data': {
+                                    'type': 'Feature',
+                                    'properties': bikeLane,
+                                    'geometry': {
+                                        'type': 'LineString',
+                                        'coordinates': bikeLane.coordinates
+                                    }
                                 }
+                            },
+                            'layout': {
+                                'line-join': 'round',
+                                'line-cap': 'round'
+                            },
+                            'paint': {
+                                'line-color': color,
+                                'line-width': 6,
+                                'line-opacity': 0.5
                             }
-                        },
-                        'layout': {
-                            'line-join': 'round',
-                            'line-cap': 'round'
-                        },
-                        'paint': {
-                            'line-color': color,
-                            'line-width': 6,
-                            'line-opacity': 0.5
-                        }
                     });
 
                     const bikeLaneItem = document.createElement('div');
-                    bikeLaneItem.classList.add('bike-lane-item');
-                    bikeLaneItem.innerHTML = `
-                        <img src="${bikeLane.photos[0]}" alt="${bikeLane.name}">
-                        <span>
-                            <div>
-                                <h6 style="margin-bottom:8px;">${bikeLane.name}</h6>
-                                <span style="background-color: ${color}; color: ${color === 'yellow' ? 'black' : 'white'}; padding: 0px 5px; border-radius: 4px;">${ratingLabel}</span>
-                            </div>
-                        </span>
-                    `;
-                    bikeLaneItem.onclick = function() {
-                        handleBikeLaneClick(bikeLane);
-                    };
-                    bikeLanesList.appendChild(bikeLaneItem);
-                });
+                        bikeLaneItem.classList.add('bike-lane-item');
+                        bikeLaneItem.innerHTML = `
+                            <img src="${bikeLane.photos[0]}" alt="${bikeLane.name}">
+                            <span>
+                                <div>
+                                    <h6 style="margin-bottom:8px;">${bikeLane.name}</h6>
+                                    <span style="background-color: ${color}; color: #121212;font-weight:bold; letter-spacing:-2%; padding: 2px 8px 2px 8px; border-radius: 4px;">${ratingLabel}</span>
+                                </div>
+                            </span>
+                        `;
+                        bikeLaneItem.onclick = function() {
+                            handleBikeLaneClick(bikeLane);
+                        };
+                        bikeLanesList.appendChild(bikeLaneItem);
+                    });
 
                 // Внешний клик для закрытия customPopup
                 map.on('click', function(e) {
