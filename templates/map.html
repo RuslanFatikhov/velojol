@@ -1,28 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>{{ city.city }}</title>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png ">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_dark.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/imageview.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
 
 
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+     
+        ym(95219611, "init", {
+             clickmap:true,
+             trackLinks:true,
+             accurateTrackBounce:true,
+             webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/95219611" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
 
-    <title>{{ city.city }}</title>
+
     
-
 </head>
 <body>
 
-    <div id="loading" style="position:fixed; width:100%; height:100%; background:white">
-        <p>Загрузка</p>
+    <div id="loading">
+        <p class="dark-prime-invert-200">Загрузка</p>
     </div>
 
     <main>
+        <div class="bottomright">
+            <ul class="gap8">
+                <a href="https://tally.so/r/mKx66k" target="_blank" class="button border bgprime300 dark-prime-invert-200 gap8">
+                    <img src="../static/images/icon/warning.svg" alt="warning">
+                    <p >Есть ошибка</p>
+                </a>
+
+                <a href="https://tally.so/r/w7dV16" target="_blank" class="button border bgprime300 dark-prime-invert-200 gap8">
+                    <img src="../static/images/icon/plus1.svg" alt="plus icon">
+                    <p>Добавить велодорожку</p>
+                </a>
+
+            </ul>
+
+            <a href="https://fatikhov.notion.site/Velojol-e83a5c646a8d4648a366d5b8e60f8a05?pvs=4" target="_blank" class="button border bgprime300 dark-prime-invert-200 gap8">
+                <img src="../static/images/icon/question.svg" alt="question">
+                <p class="hide540">Что это</p>
+            </a>
+        </div>
+
         <div id="imageModal" class="modal">
             <span class="size_s close"><img src="../static/images/icon/close.svg"></span>
             <img class="modal-image">

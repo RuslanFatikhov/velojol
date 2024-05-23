@@ -27,9 +27,16 @@
     display: flex;
     flex-direction: column;
 
-    width: 100%;
+    max-width: 100%;
     height: 80%;
     object-fit: contain;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.modal-image img{
+    border-radius: 16px;
+    overflow: hidden;
 }
 
 .close {
@@ -56,13 +63,26 @@
 }
 
 .prev {
+    width: 48px;
+    height: 48px;
+
     left: 24px;
-    border-radius: 3px 0 0 3px;
+    border-radius: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .next {
     right: 24px;
-    border-radius: 0 3px 3px 0;
+    width: 48px;
+    height: 48px;
+
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Стили для счетчика изображений */
@@ -79,4 +99,18 @@
     line-height: 21px;
     letter-spacing: -0.2px;
 }
+
+@media screen and (max-width: 920px){
+
+    .modal-image {
+        height: auto;
+        width: calc(100% - 32px);
+    }
+
+    .prev, .next {
+        top: 95%;
+        width: 100%;
+    }
+}
+
 

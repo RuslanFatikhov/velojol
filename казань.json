@@ -183,11 +183,7 @@
                     [49.109161, 55.799572],
                     [49.109165, 55.799601]
                 ],
-                "photos":[
-                    "https://velojol.kz/src/kazan/ms/ms1.jpg",
-                    "https://velojol.kz/src/kazan/ms/ms2.jpg",
-                    "https://velojol.kz/src/kazan/ms/ms3.jpg"
-                ],
+                "photos": ["../static/images/empty.jpg"],
                 "source":"Velojol",
                 "date": "28.10.23"
             },
@@ -201,11 +197,7 @@
                             [49.108154, 55.800757],
                             [49.107932, 55.801091]
                 ],
-                "photos":[
-                    "https://velojol.kz/src/kazan/dek/dej1.jpg",
-                                "https://velojol.kz/src/kazan/dek/dek2.jpg",
-                                "https://velojol.kz/src/kazan/dek/dek3.jpg"
-                ],
+                "photos": ["../static/images/empty.jpg"],
                 "source":"Velojol",
                 "date": "28.10.23"
             },
@@ -315,11 +307,7 @@
                     [49.109703, 55.795990],
                     [49.109796, 55.796066]
                 ],
-                "photos":[
-                    "https://velojol.kz/src/kazan/ms/ms1.jpg",
-                    "https://velojol.kz/src/kazan/ms/ms2.jpg",
-                    "https://velojol.kz/src/kazan/ms/ms3.jpg"
-                ],
+                "photos": ["../static/images/empty.jpg"],
                 "source":"Velojol",
                 "date": "28.10.23"
             },
@@ -833,8 +821,7 @@
                 [49.110712, 55.826411],
                 [49.110712, 55.826834]
             ],
-            "photos":[
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "28.10.23"
         },
@@ -908,9 +895,7 @@
                 [49.124477, 55.797369],
                 [49.124783, 55.797325]
             ],
-            "photos":[
-                
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"KazVel, Казан Урбанчы, Кояш",
             "date": "28.10.23"
         },
@@ -1023,11 +1008,7 @@
                 [49.101892, 55.808842],
                 [49.101835, 55.809003]
             ],
-            "photos":[
-                "https://velojol.kz/src/kazan/krd/krd1.jpg",
-                "https://velojol.kz/src/kazan/krd/krd2.jpg"
-
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"KazVel",
             "date": "28.10.23"
         },
@@ -1041,8 +1022,7 @@
                 [49.113144, 55.795136]
             ],
             "photos":[
-                "https://velojol.kz/src/kazan/cher/cher1.jpg",
-                "https://velojol.kz/src/kazan/cher/cher2.jpg"
+                "https://velojol.kz/src/kazan/empty.jpg"
             ],
             "source":"Velojol",
             "date": "28.10.23"
@@ -1071,7 +1051,7 @@
         {
             "id": 39,
             "name": "Круг возле ОБИ",
-            "safetyLevel": 3,
+            "safetyLevel": 0,
             "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
             "coordinates": [
                 [49.21610, 55.77733],
@@ -1086,48 +1066,42 @@
                 [49.21468, 55.77732],
                 [49.21610, 55.77733]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 40,
             "name": "ВД возле автобусной остановки",
-            "safetyLevel": 3,
+            "safetyLevel": 0,
             "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
             "coordinates": [
                 [49.21668, 55.77907],
                 [49.21668, 55.77965]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 41,
             "name": "ХЗ1",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21117, 55.77976],
                 [49.21122, 55.77966],
                 [49.21122, 55.77885]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 42,
             "name": "ХЗ2",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21074, 55.77917],
                 [49.21075, 55.77872],
@@ -1135,96 +1109,84 @@
                 [49.21070, 55.77838],
                 [49.21071, 55.77830]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 43,
             "name": "ХЗ3",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21077, 55.77871],
                 [49.20898, 55.77869],
                 [49.20874, 55.77877],
                 [49.20865, 55.77878]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 44,
             "name": "ХЗ4",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21077, 55.77871],
                 [49.20898, 55.77869],
                 [49.20874, 55.77877],
                 [49.20865, 55.77878]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 45,
             "name": "ХЗ5",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21075, 55.77911],
                 [49.21122, 55.77911]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 46,
             "name": "ХЗ6",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21075, 55.77886],
                 [49.21122, 55.77886]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 47,
             "name": "ХЗ7",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21075, 55.77886],
                 [49.21122, 55.77886]
               ],
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         },
         {
             "id": 48,
             "name": "ХЗ8",
-            "safetyLevel": 3,
-            "description": "Двухполосная велодорожка в виде разметки на тротуаре. Иногда используется как парковка для авто",
+            "safetyLevel": 0,
+            "description": "Нет данных",
             "coordinates": [
                 [49.21122, 55.77886],
                 [49.21122, 55.77882],
@@ -1253,9 +1215,7 @@
                 [49.21637, 55.77891],
                 [49.21666, 55.77878]
               ],              
-            "photos":[
-               
-            ],
+            "photos": ["../static/images/empty.jpg"],
             "source":"Velojol",
             "date": "3.12.23"
         }

@@ -19,7 +19,7 @@
         "id": 3,
         "city": "Иннополис",
         "country": "Russia",
-        "coat": "innopolis.png",
+        "coat": "inno.png",
         "coordinates": [48.74556,55.751158],
         "rating": 3.2
     },
@@ -43,7 +43,7 @@
         "id": 6,
         "city": "Павлодар",
         "country": "Казахстан",
-        "coat": "moscow.png",
+        "coat": "pavlodar.png",
         "coordinates": [76.95968925438177,52.275521803599815],
         "rating": 3.2
     },
@@ -52,7 +52,7 @@
         "city": "Тюмень",
         "country": "Россия",
         "coat": "tumen.png",
-        "coordinates": [65.636363,57.1501764],
+        "coordinates": [65.54212086273839,57.15341521265273],
         "rating": 3.2
     }
 
