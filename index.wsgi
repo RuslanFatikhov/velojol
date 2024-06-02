@@ -1,10 +1,8 @@
 import os
 import sys
 import json
-from flask import Flask, render_template, jsonify, url_for
-
-# Убедитесь, что путь к библиотекам Python указан правильно
 sys.path.append('/home/c/cc91451/velojol.kz/venv/lib/python3.10/site-packages/')
+from flask import Flask, render_template, jsonify, url_for
 
 app = Flask(__name__)
 application = app
@@ -34,18 +32,12 @@ def map(city_name):
 
 @app.route('/bike-lanes/<city_name>')
 def bike_lanes(city_name):
-    try:             
-        filepath = '/home/c/cc91451/velojol.kz/public_html/{city_name}.json'
-        if not os.path.isfile(filepath):
-            return jsonify({'error': 'File not found'}), 404
-
-        with open(filepath, 'r', encoding='utf-8') as f:
+    try:
+        with open(f'/home/c/cc91451/velojol.kz/public_html/{city_name}.json', 'r', encoding='utf-8') as f:
             bike_lanes = json.load(f)
         return jsonify(bike_lanes)
-    except json.JSONDecodeError as e:
-        return jsonify({'error': 'Error decoding JSON'}), 500
-    except Exception as e:
-        return jsonify({'error': 'Internal server error'}), 500
+    except FileNotFoundError:
+        return jsonify({'error': 'File not found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)

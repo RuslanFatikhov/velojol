@@ -4,6 +4,7 @@
         "city": "Алматы",
         "country": "Казахстан",
         "coat": "almaty.png",
+        "zoom": 12,
         "coordinates": [76.94574641542022,43.236338918420984],
         "rating": 4.5
     },
@@ -18,7 +19,7 @@
     {
         "id": 3,
         "city": "Иннополис",
-        "country": "Russia",
+        "country": "Россия",
         "coat": "inno.png",
         "coordinates": [48.74556,55.751158],
         "rating": 3.2
@@ -26,7 +27,7 @@
     {
         "id": 4,
         "city": "Казань",
-        "country": "Russia",
+        "country": "Россия",
         "coat": "kazan.png",
         "coordinates": [49.12422777616422,55.78235028276288],
         "rating": 3.2
@@ -34,7 +35,7 @@
     {
         "id": 5,
         "city": "Москва",
-        "country": "Russia",
+        "country": "Россия",
         "coat": "moscow.png",
         "coordinates": [37.62029733191338,55.75411381726224],
         "rating": 3.2
@@ -49,12 +50,18 @@
     },
     {
         "id": 7,
+        "city": "Шымкент",
+        "country": "Казахстан",
+        "coat": "shimkent.png",
+        "coordinates": [69.58832219962483,42.314688628509856],
+        "rating": 3.2
+    },
+    {
+        "id": 8,
         "city": "Тюмень",
         "country": "Россия",
         "coat": "tumen.png",
         "coordinates": [65.54212086273839,57.15341521265273],
         "rating": 3.2
     }
-
-    
 ]

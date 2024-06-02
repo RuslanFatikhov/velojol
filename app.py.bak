@@ -1,11 +1,12 @@
 from flask import Flask, render_template, jsonify, url_for
 import json
+import os
 
 app = Flask(__name__)
 
 # Загрузка данных городов из файла
 def load_cities():
-    with open('cities.json', 'r') as f:
+    with open('/home/c/cc91451/velojol.kz/public_html/cities.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
 # Маршрут для главной страницы
@@ -29,12 +30,20 @@ def map(city_name):
 @app.route('/bike-lanes/<city_name>')
 def bike_lanes(city_name):
     try:
-        with open(f'{city_name}.json', 'r') as f:
+        filepath = f'/home/c/cc91451/velojol.kz/public_html/{city_name}.json'
+        if not os.path.isfile(filepath):
+            app.logger.error(f'File not found: {filepath}')
+            return jsonify({'error': 'File not found'}), 404
+
+        with open(filepath, 'r', encoding='utf-8') as f:
             bike_lanes = json.load(f)
         return jsonify(bike_lanes)
-    except FileNotFoundError:
-        return jsonify({'error': 'File not found'}), 404
+    except json.JSONDecodeError as e:
+        app.logger.error(f'Error decoding JSON from {filepath}: {e}')
+        return jsonify({'error': 'Error decoding JSON'}), 500
+    except Exception as e:
+        app.logger.error(f'Unexpected error: {e}')
+        return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
-

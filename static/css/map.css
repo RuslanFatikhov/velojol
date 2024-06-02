@@ -73,6 +73,9 @@ main{
     display: none;
     padding: 16px;
 
+    overflow-x: hidden;
+    overflow-y: scroll;
+
     position: absolute;
     left: 16px;
     top: 16px;
@@ -98,7 +101,7 @@ main{
     margin-top: 30px;
 }
 
-.info img{
+.photogrid img{
     width: 120px;
     height: 120px;
     border-radius: 8px;
@@ -127,6 +130,8 @@ main{
     width: 100%;
     cursor: pointer;
     transition: 0.25s ease-in-out;
+    width: 114px;
+    height: 120px;
 }
 
 .photogrid img:hover{
@@ -180,7 +185,9 @@ main{
     }
 
     .block{
-        height: 50vh;
+        max-width: 100%;
+        height: calc(57vh - 16px);
+        margin:0px;
     }
 
     #map{
@@ -197,4 +204,9 @@ main{
 
         width: calc(100% - 32px);
     }
+
+    .photogrid img{
+        width: 100%;
+    }
+    
 }
