@@ -7,18 +7,25 @@
 
 .citycard{
     background-color: var(--dark-prime-invert-25);
-    padding: 16px;
+    padding: 8px;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
-    border-radius: 24px;
+    border-radius: 16px;
 
-    height: 230px;
-    align-items: flex-start;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: flex-start;
     cursor: pointer;
+    transition: 0.15s;
 }
+
+.citycard:hover{
+    transform: scale(0.98);
+    transition: 0.15s;
+}
+
+
 
 .citycard h5{
     color: var(--dark-prime-invert-200);

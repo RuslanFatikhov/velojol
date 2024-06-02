@@ -1,3 +1,7 @@
+*{
+    box-sizing: border-box;
+}
+
 body{
     background-color: var(--dark-prime-200);
 }
@@ -16,13 +20,16 @@ a{
     padding: 16px;
     border-radius: 16px;
     width: 100%;
+    overflow-x: hidden;
 }
 
 .hstack{
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 32px;
 }
+
 
 .sb{
     width: 100%;
@@ -67,7 +74,13 @@ a{
     /* Продолжение вашего CSS */
 }
 
+.gap8{
+    gap: 8px;
+}
 
+.gap16{
+    gap: 16px;
+}
 
 /* Скрыть стандартный скроллбар */
 ::-webkit-scrollbar {
@@ -129,3 +142,37 @@ a{
 .mb48{
     margin-bottom: 48px;
 }
+
+.px120{
+    width: 120px;
+    height: 120px;
+}
+
+@media screen and (max-width: 1200px) {
+    .cover img{
+        width: 100%;
+        overflow: hidden;
+        margin-top: -25%;
+    }
+
+    .block{
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+@media screen and (max-width: 540px) {
+
+    .hstack{
+        flex-direction: column;
+    }
+
+    .info .hstack{
+        flex-direction: row;
+    }
+
+    .hide540{
+        display: none;
+    }
+}
+
