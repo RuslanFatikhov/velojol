@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Курс: Как стать велосипедистом</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город, велодорожка, велополоса, велосипед">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_light.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flex.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/course.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
+
+</head>
+
+
+<body>
+</body>
+
+    <!--Course-menu-->
+    <div class="course-menu">
+        
+       
+        <ul class="gap8 column mt24">
+            {% for lesson in courses %}
+            <li>
+                <a class="lesson-link bgprime200" href="{{ url_for('course_lesson', lesson_url=lesson['url']) }}">
+
+                    <img src="{{ lesson['image'] }}" alt="{{ lesson['title'] }}">
+
+                    <span class="gap4 column">
+                    <p class="dark-prime-invert-50">
+                    {% if lesson['subtitle'] %}{{ lesson['subtitle'] }}
+                    {% endif %}
+                    </p>
+
+                    <h5 class="bold dark-prime-invert-100"> {{ lesson['title'] }} </h5>
+                    </span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+
+    </div>
+
+    <main class="course-main">
+        <h1 class="dark-prime-invert-100 mb16">Введение</h1>
+        <p class="p1 dark-prime-invert-100">Часто наша жизнь напоминает бесконечный поток обязательств, задач и рутины. Словно мы идем по проторенной дороге, делая одно и то же, день за днем. Но внутри каждого из нас живет стремление к переменам, новым ощущениям, впечатлениям и приключениям. Иногда нам всего лишь не хватает того первого шага, чтобы ощутить живую энергию жизни. Существует множество способов изменить повседневность. Некоторые обогащают свою жизнь хобби, такие как рисование или гончарное дело, другие находят радость в посещении кружков по литературе или вокалу. Есть те, кто предпочитает физическую активность, будь то тренировки в спортзале или практика йоги. А некоторым достаточно просто прогулки по парку, чтобы перезагрузиться и расслабиться.
+        В данном курсе мы предлагаем вам рассмотреть велопрогулки как один из таких способов. Вероятно, многие из нас катались на велосипеде в прошлом, но задумывались ли вы о том, как можно внедрить этот велосипед в вашу современную жизнь? 
+        Вспомните ощущения от вашей первой поездки на велосипеде. Ваши вдохи становятся глубже, ваши руки крепко удерживают руль, и ваше сердце бьется в ожидании чего-то нового. Каждый новый поворот дороги открывает перед вами новые возможности и горизонты, словно страницы открытой книги приключений.</p>
+
+        
+        <hr class="mb16 mt16">
+
+        <img class="course-img mb16" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2Fc99c86c2-b64a-4eac-b957-966127f0409e%2FUntitled.jpeg?table=block&id=89a58820-04b1-47eb-913a-bdb3d927ea74&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=2000&userId=&cache=v2" alt="Lisa">
+
+        <p class="p1 dark-prime-invert-200 mb8">Это Лиза. Несколько лет назад она чувствовала, что ее жизнь стала однообразной и тяжелой. Работа, дом, обязанности – все это забирало ее время и энергию. Однако, однажды Лиза решила попробовать велосипед, вдохновленная рассказами друзей о своих приключениях на двух колесах.</p>
+            
+        <p class="p1 dark-prime-invert-200 mb8">Первая поездка была нелегкой, но она почувствовала ветер в волосах и радость от свободы передвижения. Медленно, но верно, она освоила навыки езды. Велосипед стал для нее не просто средством передвижения, но и источником вдохновения и радости.</p>
+
+        <p class="p1 dark-prime-invert-200 mb8">Лиза нашла друзей по общему увлечению и стала частью местного велосипедного сообщества. Они проводили совместные поездки по городу, и каждая поездка была приключением. Лиза не только улучшила свое физическое состояние, но и нашла новых друзей, открыла для себя скрытые уголки своего города и даже начала участвовать в велосипедных мероприятиях. Велосипед изменил жизнь Лизы, придав ей свежий взгляд на мир. Это стало источником вдохновения, энергии и новых возможностей. И так, Лиза стала не только более активной и здоровой, но и счастливее, полнее живущей жизнью</p>
+
+        <p class="p1 dark-prime-invert-200 mt32 mb8">Теперь представьте, что у вас есть шанс привнести это ощущение в вашу повседневную жизнь. Велосипед может стать не только способом быстро перемещаться по городу, избегая пробок, но и настоящим источником вдохновения, зарядом энергии и новым взглядом на привычные вещи.</p>
+
+        <hr class="mb16 mt16">
+
+        <ul class="column gap32">
+            <li class="column gap16">
+                <h3 class="dark-prime-invert-200">Зачем вам этот курс?</h3>
+                <p class="p1 dark-prime-invert-300">Может быть, вы давно хотели начать кататься на велосипеде, но не знали с чего начать. Или вы уже являетесь опытным велосипедистом, но хотите получить больше знаний и понимания о безопасности движения и техническом обслуживании велосипеда. А может быть, вы просто ищете новый способ сделать свою жизнь ярче и интереснее.</p>
+            </li>
+
+            <li class="column gap16">
+                <h3 class="dark-prime-invert-200">Зачем вам этот курс?</h3>
+                <p class="p1 dark-prime-invert-300">Может быть, вы давно хотели начать кататься на велосипеде, но не знали с чего начать. Или вы уже являетесь опытным велосипедистом, но хотите получить больше знаний и понимания о безопасности движения и техническом обслуживании велосипеда. А может быть, вы просто ищете новый способ сделать свою жизнь ярче и интереснее.</p>
+            </li>
+
+            <li class="column gap16">
+                <h3 class="dark-prime-invert-200">Для кого этот курс? </h3>
+                <p class="p1 dark-prime-invert-300">Для всех, кто хочет сделать свою жизнь насыщеннее, здоровее и интереснее с помощью велосипеда. Для тех, кто устал от ежедневной рутины и хочет привнести в свою жизнь что-то новое.</p>
+            </li>
+
+            <li class="column gap16">
+                <h3 class="dark-prime-invert-200">Цель этого курса </h3>
+                <p class="p1 dark-prime-invert-300">Превратить новичков в уверенных, компетентных и безопасных городских велосипедистов, которые могут использовать велосипед как средство транспорта и средство повышения качества жизни.</p>
+            </li>
+        </ul>
+
+        <p class="p1 dark-prime-invert-200">урс состоит из 8 уроков, каждый из которых можно завершить не более чем за 10 минут. Уроки можете проходить в любом удобном для вас порядке. В конце некоторых уроков представлены небольшие задания или тесты, а в завершении курса вас ожидает экзамен.
+            <br><br>
+            Поскольку этот курс разработан для тех, кто стремится приобрести уверенность и навыки в городском велосипедизме, он предоставит вам возможность глубже понять и полностью оценить следующие ключевые аспекты:</p>
+        
+            
+    </main>
+</html>

@@ -1,0 +1,198 @@
+body{
+    background-color: var(--bg1) !important;
+}
+
+.routescover{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+
+    padding-top: 200px;
+    padding-bottom: 140px;
+}
+
+.navigation{
+    display: flex;
+    flex-direction: column;
+    padding: 24px 8px 16px 8px;
+    border-radius: 16px;
+    background-color: var(--dark-prime-100);
+
+    width: 100%;
+    max-width: 390px;
+    max-height: 620px;
+
+    position: sticky;
+    top: 10px;
+}
+
+.routecell{
+    display: flex;
+    padding: 24px;
+    position: relative;
+    border-top: 1px solid var(--dark-prime-invert-25);
+}
+
+.routecell h5{
+    padding-right: 100px;
+}
+
+.routegroup{
+    width: 100%;
+    border-radius: 16px;
+}
+
+.routegroup h4{
+    position: sticky;
+    top: 0px;
+    background-color: var(--dark-prime-50);
+    padding: 24px;
+    backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Для поддержки в WebKit браузерах */
+  border-radius: 16px 16px 0px 0px;
+  z-index: 100;
+}
+
+.routegroup ul{
+    width: 100%;
+    border-radius: 0px 0px 16px 16px;
+    background-color: var(--dark-prime-100);
+    overflow: hidden;
+}
+
+.icon20{
+    width: 20px;
+    height: 20px;
+}
+
+.maproute{
+    width: 100%;
+    height: 500px;
+    border-radius: 16px;
+    background-color: var(--dark-prime-100);
+}
+
+.island{
+    background-color: var(--dark-prime-100);
+    border-radius: 16px;
+    width: 100%;
+    padding: 24px;
+}
+
+.leftinfo{
+    padding: 24px;
+}
+
+.rightinfo{
+    padding: 24px 8px 8px 8px !important;  
+    min-width: 430px;
+    position: sticky;
+    top: 16px;
+}
+
+.rightinfo h4, .rightinfo ul{
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.routeimg{
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+}
+
+.routecell .label{
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    background-color: var(--dark-prime-200);
+    padding: 4px 8px;
+    border-radius: 8px;
+    color: var(--dark-prime-invert-100);
+}
+
+.easy{
+    background-color: var(--bronze) !important;
+    color: var(--dark-prime-200) !important;
+}
+
+.medium{
+    background-color: var(--silver) !important;
+    color: var(--dark-prime-invert-200) !important;
+}
+
+.expert{
+    background-color: var(--gold) !important;
+    color: var(--dark-prime-200) !important;
+}
+
+/* Стили для мобильной навигации */
+.mobnavigation {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    min-height: 320px;
+    padding: 24px 16px 100px 16px;
+    box-shadow: 0px -5px 50px var(--dark-prime-invert-25);
+    border-radius: 16px 16px 0px 0px;
+    transition: bottom 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+#mobilenavigation.show {
+    bottom: 0px;
+}
+
+@media (min-width: 768px) {
+    .mobnavigation {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .navigation{
+        display: none;
+    }
+
+    .routescover{
+        padding-left:16px;
+        padding-right:16px;
+        height: 400px;
+    }
+
+    
+   .routescover h1{
+    font-size: 36px;
+    line-height: 40px;
+    text-align: center;
+  }
+
+    .routescover h2{
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
+
+  main{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
+}
+
+#routesnavigationmobile{
+    border: 1px solid var(--dark-prime-invert-50);
+    background-color: var(--dark-prime-100);
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+}
+
+@media screen and (max-width: 1200px) {
+    main{
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+}

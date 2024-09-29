@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Курс: Как стать велосипедистом</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город, велодорожка, велополоса, велосипед">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_light.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flex.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/course.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
+
+</head>
+<body style="box-sizing: border-box;">
+
+    <div class="coursefloat">
+        <a style="max-width: 230px; margin-left: auto; margin-right: auto;" href="/course/introduction" class="button bgaccent100 center"><p class="bold accent200">Начать бесплатно</p></a>
+    </div>
+
+    <!--Header-->
+
+    <!--Cover-->
+    <div class="mt8" style="display: flex; flex-direction: column; align-items: center;" class="cover">
+        <span class="cover-img"></span>
+        <div style="max-width: 960px; margin-top: -80px;" class="block bgprime100 center gap16 column">
+            <span class="column gap16">
+                <h2 class="bold dark-prime-invert-200">Велосипед в городе</h2>
+                <p class="dark-prime-invert-200">Бесплатный курс о том, как безопасно и комфортно передвигаться в городе на велосипеде</p>
+            </span>
+
+            <a style="max-width: 230px; margin-left: auto; margin-right: auto;" href="/course/introduction" class="button bgaccent100 center"><p class="bold accent200">Начать бесплатно</p></a>
+        </div>
+    </div>
+
+    <main class="course-main">
+        <span class="mt24 mb24 gap16 column">
+            <h4 class="bold dark-prime-invert-200">Велосипеды – это не только прогулки в парке, но и городской транспорт</h4>
+            <p class="dark-prime-invert-200">В современном городе велосипед позволяет вам экономить время, поддерживать физическую форму и заботиться об экологии. Наш курс поможет вам стать уверенным городским велосипедистом, способным безопасно и эффективно передвигаться по любым улицам</p>
+        </span>
+
+        <div class="block bgprime100">
+            <h4 class="dark-prime-invert-200">Программа курса</h4>
+            <p class="dark-prime-invert-200 mt8">Семь текстовых уроков с иллюстрациями и итоговый экзамен в конце курса</p>
+
+
+            <!--Lessons list-->
+            <ul class="gap8 column mt24">
+                {% for lesson in courses %}
+                <li>
+                    <a class="lesson-link bgprime200" href="{{ url_for('course_lesson', lesson_url=lesson['url']) }}">
+
+                        <img src="{{ lesson['image'] }}" alt="{{ lesson['title'] }}">
+
+                        <span class="gap4 column">
+                        <p class="dark-prime-invert-50">
+                        {% if lesson['subtitle'] %}{{ lesson['subtitle'] }}
+                        {% endif %}
+                        </p>
+
+                        <h5 class="bold dark-prime-invert-100"> {{ lesson['title'] }} </h5>
+                        </span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!--pdf banner-->
+        <div class="pdfbanner mt24 bgaccent200">
+            <h4 class="bold dark-prime-200">Можете скачать курс в виде PDF файла</h4>
+            <p class="dark-prime-200 mt16 mb32">Чтобы прочитать его, когда вам будет удобно</p>
+            <a style="max-width: 200px;" class="button bgprime100" href=""><p class="p2 accent200">Скачать бесплатно</p></a>
+        </div>
+
+        <span>
+            <h4 class="bold dark-prime-invert-200 mt32 mb8">Преимущества курса</h4>
+            <p class="p2 dark-prime-invert-200 mb16">После завершения курса вы сможете</p>
+
+            <div class="cards-grid-2">
+                <div class="card200 bgaccent200">
+                    <p class="center p1 dark-prime-200">С уверенностью передвигаться<br> на велосипеде по городу</p>
+                </div>
+
+                <div class="card200 bgaccent200">
+                    <p class="center p1 dark-prime-200">Избегать<br>опасных ситуаций</p>
+                </div>
+
+                <div class="card200 bgaccent200">
+                    <p class="center p1 dark-prime-200">Сохранять физическое<br>и ментальное здоровье</p>
+                </div>
+
+                <div class="card200 bgaccent200">
+                    <p class="center p1 dark-prime-200">Экономить время<br>на передвижение</p>
+                </div>
+            </div>
+
+        </span>
+
+        <span>
+            <h4 class="bold dark-prime-invert-200 mt32 mb16">Кто ведет курс</h4>
+
+            <div class="cards-grid-2">
+                <div class="card400 bgaccent200">
+                    <h4 class="dark-prime-100 mb16">Луиза Мифтахова</h4>
+                    <p class="p1 dark-prime-200">Методолог курса, отвечала за написание текста и подготовку материалов </p>
+                </div>
+
+                <div class="card400 bgaccent200">
+                    <h4 class="dark-prime-100 mb16">Руслан Фатихов</h4>
+                    <p class="p1 dark-prime-200">Консультировал курс по правилам дорожного двжиения, создавал дизайн и занимался версткой</p>
+                </div>
+            </div>
+            
+        </span>
+
+        <span>
+            <h4 class="bold dark-prime-invert-200 mt32 mb16">Кому подойдет курс</h4>
+            
+            <ul class="gap8 column">
+                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Этот курс идеален для новичков и для опытных велосипедистов, которые хотят повысить свою безопасность и улучшить навыки</p></li>
+                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Повышение своей безопасности и улучшение навыков</p></li>
+                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Текст</p></li>
+                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Текст</p></li>
+            </ul>
+        </span>
+
+        <!--Banner-->
+        <div class="banner mt32">
+            <p class="dark-prime-200 ">ТЕЛЕГРАМ КАНАЛ VELOJOL</p>
+            <h3 class="dark-prime-100">Подписывайтесь, чтобы быть<br>в курсе всех новостей</h3>
+            <h5><a href="https://t.me/velojol" target="_blank" class="dark-prime-invert-200 size_l bgprime100">
+                Подписаться
+            </a></h5>
+            <img src="../static/images/icon/telegram.svg" alt="Telegram">
+        </div>
+
+        <span>
+            <h4 class="bold dark-prime-invert-200 mt32 mb8">Есть вопросы</h4>
+            <p class="dark-prime-invert-200">Напишите нам на <a class="dark-accent-200" href="mailto:fuzlan@icloud.com">на почту</a> или в <a class="dark-accent-200" href="https://t.me/velojol" target="_blank">телеграм канале</a>. Мы ответим на все ваши интересующие вопросы как можно скорее</p>
+        </span>
+
+    </main>
+    <!--Footer-->
+
+    <script>
+    document.addEventListener("scroll", function() {
+    // Находим элемент с классом 'coursefloat'
+    var courseFloat = document.querySelector(".coursefloat");
+
+    // Проверяем, сколько пикселей было прокручено
+    if (window.scrollY > 600) {
+        // Показываем блок, если он прокручен более чем на 600 пикселей
+        if (courseFloat && courseFloat.style.display !== "block") {
+            courseFloat.style.display = "block";
+        }
+    } else {
+        // Скрываем блок, если прокручено меньше 600 пикселей
+        if (courseFloat && courseFloat.style.display !== "none") {
+            courseFloat.style.display = "none";
+        }
+        }
+    });
+
+    // Изначально скрываем блок
+    document.addEventListener("DOMContentLoaded", function() {
+        var courseFloat = document.querySelector(".coursefloat");
+        if (courseFloat) {
+            courseFloat.style.display = "none";
+        }
+    });
+
+    </script>
+</body>
+</html>

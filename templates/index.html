@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VELOJOL</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город, велодорожка, велополоса, велосипед">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_dark.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cities.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flex.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2M7C2FWEP4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-2M7C2FWEP4');
+    </script>
+
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+     
+        ym(95219611, "init", {
+             clickmap:true,
+             trackLinks:true,
+             accurateTrackBounce:true,
+             webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/95219611" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+</head>
+<body>
+    <main>
+        <!--Cover-->
+        <div class="cover">
+            <img src="{{ url_for('static', filename='images/landing/logo.svg') }}" alt="Logo">
+        </div>
+        <!--Banner-->
+        <div class="banner">
+            <p class="dark-prime-invert-200 ">ТЕЛЕГРАМ КАНАЛ VELOJOL</p>
+            <h3 class="dark-prime-invert-100">Подписывайтесь, чтобы быть<br>в курсе всех новостей</h3>
+            <h5><a href="https://t.me/velojol" target="_blank" class="dark-prime-invert-200 size_l bgprime300">
+                Подписаться
+            </a></h5>
+            <img src="../static/images/icon/telegram.svg" alt="Telegram">
+        </div>
+        <!--Cities-->
+        <div class="block bgprime300">
+            <h4 class="bold dark-prime-invert-200">Велодорожки в городах</h4>
+            {% for country, cities in cities_by_country.items() %}
+                <div class="country-group mt24">
+                    <h5 class="bold dark-prime-invert-300">{{ country }}</h5>
+                    <ul class="cities">
+                        {% for city in cities %}
+                            <a class="citycard sb gap8" href="{{ url_for('map', city_name=transliterate_city_name(city.city)) }}" class="city-link">
+                                <div class="hstack_important gap8">
+                                <img src="{{ url_for('static', filename='images/coat/' + city.coat) }}" alt="Coat of {{ city.city }}">
+                                <li>
+                                    <h5>{{ city.city }}</h5>
+                                </li>
+                                </div>
+
+                                <div class="citycardright">
+                                    <p class="p2 dark-prime-invert-200 distance">{{ city.distance }}</p>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+            <a href="https://tally.so/r/3lO0pV" target="_blank" class="mt24 center citycard gap8">
+                <img src="static/images/icon/plus1.svg" alt="plus icon">
+                <p class="dark-accent-100">Хочу свой город</p>
+            </a>
+        </div>
+
+        <!--About-->
+        <div class="mt100 mb100 block">
+            <h4 class="dark-prime-invert-100 regular">VELOJOL – это некоммерческий проект, представляющий информацию о велодорожках в разных городах. На сайте каждая велодорожка имеет описание, оценку и фотографии. Проект создан для показа состояния велоинфраструктуры и формирования выводов о ее развитии и улучшении</h4>
+        </div>
+    </main>
+    <footer>
+        <div class="footer_grid">
+            <a href="/">
+                <img class="footer_logo" src="../static/images/landing/logo.svg" alt="Velojol Logo">
+            </a>
+            <div class="column gap12">
+                <p class="dark-prime-invert-50 gap12">Подписывайтесь</p>
+                <a href="https://t.me/velojol" class="dark-prime-invert-300 gap8 link_s">
+                    <img src="../static/images/icon/telegram.svg" alt="Telegram">
+                    <p>Telegram-канал</p>
+                </a>
+            </div>
+            <div class="column gap12">
+                <p class="dark-prime-invert-50">Для всех желающих</p>
+                <ul class="column gap10">
+                    <p><a href="https://tally.so/r/mKx66k" class="dark-prime-invert-300">Я нашел ошибку</a></p>
+                    <p><a href="https://tally.so/r/w7dV16" class="dark-prime-invert-300">Добавить велодорожку</a></p>
+                    <p><a href="https://tally.so/r/3lO0pV" class="dark-prime-invert-300">Хочу свой город</a></p>
+                    <p><a href="https://t.me/fuzlan" class="dark-prime-invert-300">Сотрудничество</a></p>
+                </ul>
+            </div>
+        </div>
+        <div class="row gap12">
+            <p>
+                <a class="dark-prime-invert-50" href="https://velojol.notion.site/1-3-aeace216190b4ffd9bfe8226886616fa?pvs=4" target="_blank">
+                VELOJOL 1.3
+                </a>
+            </p>
+            <p class="dark-prime-invert-50 regular">2024</p>
+        </div>
+    </footer>
+</body>
+</html>

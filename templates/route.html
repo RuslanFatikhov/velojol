@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ route.name_ru }} - VELOJOL</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная информация о веломаршруте">
+    <meta name="keywords" content="Веломаршрут, велосипед, Алматы">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_light.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/routes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flex.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <style>
+        #map { height: 400px; width: 100%; }
+    </style>
+</head>
+<body>
+    <main class="mb100">
+
+        <!--Breadcrumb-->
+        <div class="breadcrumb row mt24 mb24 aic">
+            <a href="/almaty_routes" class="button ghost dark-prime-invert-50"><p>Маршруты Алматы</p></a>
+            <p class="dark-prime-invert-200">•</p>
+            <p class="button ghost dark-prime-invert-200">{{ route.name_ru }}</p>
+        </div>
+
+        <!--Map-->
+        <div id="map" class="maproute mb24"></div>
+
+        <!--Content-->
+        <div class="row gap24 aifs">
+            <div class="column gap24">
+                <div class="leftinfo island">
+                    <h5 class="bold dark-prime-invert-200 mb16">Описание</h5>
+                    <p class="p0 dark-prime-invert-200">{{ route.description_ru }}</p>
+                </div>
+
+                {% if route.photo %}
+                <div id="photos" class="island">
+                    {% for photo in route.photo.split(',') %}
+                        <img src="{{ url_for('static', filename='images/routes/' ~ photo ~ '.jpg') }}" alt="Фото маршрута">
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div id="nophotos" class="island">
+                    <span class="column aic gap12">
+                        <img class="icon100" src="{{ url_for('static', filename='images/camera.png') }}" alt="Нет фото">
+                        <p class="dark-prime-invert-50 tac">Здесь пока нет фотографий.<br>Добавьте фото в маршрут, чтобы показать, какой он замечательный</p>
+                        <a href="" class="button bgaccent100"><p class="accent200">Добавить фото</p></a>
+                    </span>
+                </div>
+                {% endif %}
+
+                <div class="column routegroup">
+                    <h4 class="bold dark-prime-invert-200 pt24 pb24">Другие маршруты в этой группе</h4>
+                    <ul class="column gap12">
+                        {% for other_route in same_group_routes %}
+                        <a href="{{ url_for('route_detail', route_id=other_route.id) }}">
+                            <div id="{{ other_route.id }}" class="routecell column gap12">
+                                <h5 class="dark-prime-invert-200 bold">{{ other_route.name_ru }}</h5>
+
+                                <span class="row gap24">
+                                    <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/distance.svg') }}"><p class="dark-prime-invert-200"> {{ other_route.distance }} км</p></span>
+                                    <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/high.svg') }}"><p class="dark-prime-invert-200">{{ other_route.elevation }} м</p></span>
+                                </span>
+
+                                <p class="label">{{ other_route.difficilty }}</p>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="rightinfo island">
+                <h4 class="dark-prime-invert-200">{{ route.name_ru }}</h4>
+
+                <ul class="column gap24 mt24 mb24">
+                    <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/distance.svg') }}"><p class="dark-prime-invert-50">Дистанция :</p><p class="dark-prime-invert-200"> {{ route.distance }} км</p></span>
+                    <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/high.svg') }}"><p class="dark-prime-invert-50">Высота :</p><p class="dark-prime-invert-200">{{ route.elevation }} м</p></span>
+                    <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/surface.svg') }}"><p class="dark-prime-invert-50">Покрытие :</p><p class="dark-prime-invert-200">{{ route.surface }}</p></span>
+                    <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/difficilty.svg') }}"><p class="dark-prime-invert-50">Сложность :</p><p class="dark-prime-invert-200">{{ route.difficilty }}</p></span>
+                </ul>
+
+                <a  href="{{ url_for('static', filename='GPX/' ~ route.id ~ '.gpx') }}" class="button bgaccent100 jcc aic" download><h5 class="bold accent200">Скачать GPX</h5></a>
+            </div>
+        </div>
+
+    </main>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/@mapbox/togeojson@0.16.0"></script>
+    <script src="{{ url_for('static', filename='js/route.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const routeId = "{{ route_id }}";
+            initializeMap(routeId);
+        });
+    </script>
+</body>
+</html>

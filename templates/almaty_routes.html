@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VELOJOL</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город, велодорожка, велополоса, велосипед">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_light.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/routes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flex.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2M7C2FWEP4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-2M7C2FWEP4');
+    </script>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i].a||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(95219611, "init", {
+             clickmap:true,
+             trackLinks:true,
+             accurateTrackBounce:true,
+             webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/95219611" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+</head>
+<body>
+    <main class="mb100">
+        <!--Cover-->
+        <div class="routescover column gap16">
+            <h1 class="dark-prime-invert-200">Велосипедные маршруты</h1>
+            <h2 class="regular dark-prime-invert-200">в городе Алматы и окрестностях</h2>
+        </div>
+
+        <!--Main-->
+        <div class="row gap24 w100">
+
+            <div class="navigation bgprime100">
+                <h4 class="pl16 bold dark-prime-invert-200">Маршруты</h4>
+
+                <ul class="column mt16 gap4">
+                    {% for group, routes in groups.items() %}
+                        <a href="#{{ group | replace(' ', '-') }}" class="button ghost"><p class="dark-prime-invert-200">{{ group }}</p></a>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="column routegroup" id="{{ group | replace(' ', '-') }}">
+                {% for group, routes in groups.items() %}
+                    <h4 class="bold dark-prime-invert-100">{{ group }}</h4>
+                    <ul>
+                    {% for route in routes %}
+                    
+                        <a href="{{ url_for('route_detail', route_id=route.id) }}">
+                            <div id="{{ route.id }}" class="routecell row gap12">
+                                <img class="routeimg" src="{{ url_for('static', filename='images/routes/' ~ route.id ~ '.jpg') }}">
+
+                                <span class="column gap12">
+                                    <h5 class="dark-prime-invert-200 bold">{{ route.name_ru }}</h5>
+
+                                    <span class="row gap24">
+                                        <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/distance.svg') }}"><p class="dark-prime-invert-200"> {{ route.distance }} км</p></span>
+                                        <span class="row gap4"><img class="icon20" src="{{ url_for('static', filename='images/icon/high.svg') }}"><p class="dark-prime-invert-200">{{ route.elevation }} м</p></span>
+                                    </span>
+                                    
+                                    {% if route.difficilty == 'easy' %}
+                                        <p class="label easy">Легко</p>
+                                    {% elif route.difficilty == 'medium' %}
+                                        <p class="label medium">Средне</p>
+                                    {% elif route.difficilty == 'expert' %}
+                                        <p class="label expert">Эксперт</p>
+                                    {% else %}
+                                        <p class="label">{{ route.difficilty }}</p>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </a>
+                    
+                    {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <!--Mobile nav button-->
+        <button class="button_icon bgprime100 size_m" id="routesnavigationmobile">
+            <img src="{{ url_for('static', filename='images/icon/list.svg') }}">
+        </button>
+
+
+        <!--Mobile navigation-->
+        <div class="mobnavigation bgprime100" id="mobilenavigation">
+            <div class="row aic jc-sb">
+                <h4 class="bold dark-prime-invert-200 w100">Маршруты</h4>
+                <button class="button_icon bgprime100 size_m" id="closemobnav">
+                    <img src="{{ url_for('static', filename='images/icon/close2.svg') }}">
+                </button>
+            </div>
+
+            <ul class="column mt16 gap4">
+                {% for group, routes in groups.items() %}
+                    <a href="#{{ group | replace(' ', '-') }}" class="button ghost"><p class="dark-prime-invert-200">{{ group }}</p></a>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileNavButton = document.getElementById('routesnavigationmobile');
+            const mobileNav = document.getElementById('mobilenavigation');
+            const closeMobileNavButton = document.getElementById('closemobnav');
+            
+            mobileNavButton.addEventListener('click', function() {
+                mobileNav.classList.toggle('show');
+            });
+
+            closeMobileNavButton.addEventListener('click', function() {
+                mobileNav.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

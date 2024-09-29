@@ -1,0 +1,116 @@
+.modal {
+    
+    opacity: 0; /* Начальное состояние - полностью прозрачно */
+    visibility: hidden; /* Скрыто, но занимает пространство в layout */
+    transition: visibility 0s linear 0.15s, opacity 0.15s linear; /* Плавный переход для opacity и visibility */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal.visible {
+    opacity: 1; /* Полностью непрозрачно при показе */
+    visibility: visible; /* Сделать видимым */
+    transition: opacity 0.15s linear; /* Переход только для opacity */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.modal-image {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 100%;
+    height: 80%;
+    object-fit: contain;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.modal-image img{
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    cursor: pointer;
+}
+
+/* Стили для кнопок навигации */
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+}
+
+.prev {
+    width: 48px;
+    height: 48px;
+
+    left: 24px;
+    border-radius: 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.next {
+    right: 24px;
+    width: 48px;
+    height: 48px;
+
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Стили для счетчика изображений */
+.image-counter {
+    color: var(--dark-prime-invert-100);
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: -0.2px;
+}
+
+@media screen and (max-width: 920px){
+
+    .modal-image {
+        height: auto;
+        width: calc(100% - 32px);
+    }
+
+    .prev, .next {
+        top: 95%;
+        width: 100%;
+    }
+}
+
+

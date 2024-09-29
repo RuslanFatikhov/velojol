@@ -1,0 +1,16 @@
+Options +ExecCGI
+AddHandler wsgi-script .wsgi
+RewriteEngine On
+
+# Правило для переадрессации с /almaty-rus.html на корневой URL
+RewriteCond %{REQUEST_URI} ^/almaty-rus\.html$
+RewriteRule ^(.*)$ https://velojol.kz [R=301,L]
+
+# Правило для переадрессации с /almaty-rus.html на корневой URL
+RewriteCond %{REQUEST_URI} ^/kazan-rus\.html$
+RewriteRule ^(.*)$ https://velojol.kz/index.wsgi/map/казань [R=301,L]
+
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /index.wsgi/$1 [QSA,PT,L]

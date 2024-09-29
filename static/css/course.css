@@ -1,0 +1,149 @@
+.cover-img{
+    width: 100%;
+    height: 380px;
+    background-image: url("https://opis-cdn.tinkoffjournal.ru/mercury/how-to-google-assistant-out.png?preset=image_1280w_2x");
+    background-size: cover;
+    background-position: center center;
+    max-width: 1440px;
+    border-radius: 24px;
+}
+
+.course-main{
+    width: 100%;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+
+    padding-bottom: 100px;
+}
+
+.lesson-link{
+    display: flex;
+    flex-direction: row;
+    gap:8px;
+    padding: 10px;
+    border-radius: 16px;
+    align-items: center;
+}
+
+.lesson-link img{
+    width: 54px;
+    height: 54px;
+}
+
+.pdfbanner{
+    display: block;
+    width: 100%;
+    padding: 24px;
+    border-radius: 16px;
+    background-color: red;
+}
+
+.cards-grid-2{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.card200{
+    width: 100%;
+    height: 200px;
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.card400{
+    width: 100%;
+    height: 400px;
+    border-radius: 16px;
+    padding: 32px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.img48{
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 8px;
+}
+
+.coursefloat{
+    position: fixed;
+    bottom: 16px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    z-index: 100000;
+}
+
+.course-img{
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.course-img-bike{
+    width: 100%;
+    height: 100%;
+    max-height: 300px;
+    margin-bottom: 16px;
+    object-fit: contain;
+}
+
+.coursecard{
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.li-callout{
+    display: flex;
+    flex-direction: row;
+    padding: 24px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-sizing: border-box;
+}
+
+th{
+    text-align: left;
+    padding: 8px;
+    border: 1px solid var(--dark-prime-invert-25);
+}
+
+td{
+    padding: 8px;
+    border: 1px solid var(--dark-prime-invert-25);
+}
+
+.course-menu{
+    padding: 16px;
+    background-color: var(--dark-prime-100);
+    border-radius: 16px;
+
+    position: fixed;
+    left: 16px;
+    top: 16px;
+
+    width: 320px;
+}
+
+@media screen and (max-width: 960px) {
+    .cover-img{
+        height: 220px;
+    }
+
+    .course-main{
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    .cards-grid-2{
+        grid-template-columns: auto;
+    }
+}
