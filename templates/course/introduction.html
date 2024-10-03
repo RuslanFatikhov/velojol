@@ -39,28 +39,31 @@
 </body>
 
     <!--Course-menu-->
-    <div class="course-menu">
-        
-       
-        <ul class="gap8 column mt24">
-            {% for lesson in courses %}
-            <li>
-                <a class="lesson-link bgprime200" href="{{ url_for('course_lesson', lesson_url=lesson['url']) }}">
+    <div class="course-menu fs">
+        <a href="{{ url_for('course') }}" class="button fs">
+            
+            <img src="{{ url_for('static', filename='/images/icon/arrow-left-black.svg') }}" alt="back">
+            <p class="dark-prime-invert-100">Назад</p>
+        </a>
 
-                    <img src="{{ lesson['image'] }}" alt="{{ lesson['title'] }}">
+        <hr>
 
-                    <span class="gap4 column">
-                    <p class="dark-prime-invert-50">
-                    {% if lesson['subtitle'] %}{{ lesson['subtitle'] }}
-                    {% endif %}
-                    </p>
+        <span class="column gap2">
 
-                    <h5 class="bold dark-prime-invert-100"> {{ lesson['title'] }} </h5>
-                    </span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
+            <a href="" class="button fs dark-prime-invert-400">
+                <p>Текст кнопки</p>
+            </a>
+
+            <a href="" class="button fs dark-prime-invert-400">
+                <p>Текст кнопки</p>
+            </a>
+
+            <a href="" class="button fs dark-prime-invert-400">
+                <p>Текст кнопки</p>
+            </a>
+
+
+        </span>
 
     </div>
 

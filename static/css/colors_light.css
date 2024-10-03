@@ -1,10 +1,12 @@
 :root {
   --dark-prime-invert-5: rgba(26, 26, 26, 0.05);
+  --dark-prime-invert-10: rgba(0,0,10,0.1);
   --dark-prime-invert-25: #1A1A1A40;
   --dark-prime-invert-50: #1A1A1A80;
   --dark-prime-invert-100: #000000;
-  --dark-prime-invert-200: #262626;
-  --dark-prime-invert-300: #333333;
+  --dark-prime-invert-200: #1a1a1a;
+  --dark-prime-invert-300: #262626;
+  --dark-prime-invert-400: #333333;
 
   --dark-prime-25: #FFFFFF40;
   --dark-prime-50: #FFFFFF80;
@@ -23,6 +25,10 @@
   --bg1: #F2F2F7;
 }
 
+.dark-prime-50{
+  color: var(--dark-prime-50);
+}
+
 
 .dark-prime-100{
   color: var(--dark-prime-100);
@@ -36,6 +42,10 @@ color: var(--dark-prime-200);
 .dark-prime-300{
 color: var(--dark-prime-300);
 }
+
+.dark-prime-400{
+  color: var(--dark-prime-400);
+  }
 
 .dark-prime-invert-5{
   color: var(--dark-prime-invert-5);
@@ -61,6 +71,10 @@ color: var(--dark-prime-invert-200);
 color: var(--dark-prime-invert-300);
 }
 
+.dark-prime-invert-400{
+color: var(--dark-prime-invert-400);
+}
+
 .dark-accent-100{
 color: var(--dark-accent-100);
 }
@@ -68,6 +82,10 @@ color: var(--dark-accent-100);
 .dark-accent-200{
   color: var(--dark-accent-200);
   }
+
+.bgprime10{
+  background-color: var(--dark-prime-invert-10);
+}
 
 .bgaccent100{
   background-color: var(--dark-accent-100);
@@ -81,6 +99,14 @@ color: var(--dark-accent-100);
 
 .bgprimveinvert100{
 background-color: var(--dark-prime-invert-100);
+}
+
+.bgprimveinvert200{
+  background-color: var(--dark-prime-invert-200);
+}
+
+.bgprimveinvert300{
+  background-color: var(--dark-prime-invert-300);
 }
 
 .bgprime25{

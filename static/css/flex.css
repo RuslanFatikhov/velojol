@@ -8,6 +8,11 @@
     flex-direction: column !important;
 }
 
+.gap2{
+    display: flex;
+    gap: 2px;
+}
+
 .gap4{
     display: flex;
     gap: 4px;
