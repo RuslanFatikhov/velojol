@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Экзамен</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Подробная карта велодорожек и велополос города">
+    <meta name="keywords" content="Карта, велодорожки, город, велодорожка, велополоса, велосипед">
+    <meta name="author" content="Velojol">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="Russian">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/fav/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/fav/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/fav/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="static/images/fav/safari-pinned-tab.svg" color="#121212">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="theme-color" content="#121212">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://velojol.kz">
+    <meta property="og:title" content="VELOJOL">
+    <meta property="og:description" content="Подробная карта велодорожек и велополос города">
+    <meta property="og:image" content="static/images/landing/meta.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_light.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flex.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/course.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
+
+</head>
+
+<body>
+
+    <!--Navbar-->
+    <div class="navbar row bgprime100 aic">
+        <a style="position: absolute; left: 16px;" href="{{ url_for('course') }}" class="button fs">
+            
+            <img src="{{ url_for('static', filename='/images/icon/arrow-left-black.svg') }}" alt="back">
+
+        </a>
+
+        <p style="margin-left: auto; margin-right: auto;" class="dark-prime-invert-100 center bold">Велосипед и город</p>
+    </div>
+
+    <!--Course-menu-->
+    <div class="course-menu fs">
+        <a href="{{ url_for('course') }}" class="button fs">
+            
+            <img src="{{ url_for('static', filename='/images/icon/arrow-left-black.svg') }}" alt="back">
+            <p class="dark-prime-invert-100">Назад</p>
+        </a>
+    </div>
+
+    <main class="course-main">
+
+        <!--Cover-->
+        <div class="course-cover bgprime10">
+
+            <!--Badges-->
+            <h1 class="dark-prime-invert-100 mt16 mb8">Экзамен</h1>
+
+            <img src="{{ url_for('static', filename='/images/course/11cover.png') }}" alt="cover">
+        </div>
+
+        <!--Quiz-->
+        <div id="quiz-container" class="block bgprime100 column aic">
+            <p class="badge_m dark-prime-invert-100 bgprime200" id="question-counter"></p>
+            <!-- Здесь будут отображаться вопросы -->
+        </div>
+          
+        
+
+        <!--Results-->
+        <div id="result-container" style="display: none;" class="block bgprime100 column aic">
+            <p class="dark-prime-invert-100" id="result-text"></p>
+
+            <span class="column mt24">
+                <button class="button w100 bgaccent100" id="share-button">Поделиться</button>
+
+                <!--Sharebuttons-->
+                <div class="column gap4 mt4 gap4 mb16" id="social-share-buttons" style="display: none;">
+                  <button class="row gap4 button w100 bgprime10" data-network="vk"><img src="{{ url_for('static', filename='images/icon/vk.svg') }}">VK</button>
+                  <button class="row gap4 button w100 bgprime10" data-network="facebook"><img src="{{ url_for('static', filename='images/icon/facebook.svg') }}">Facebook</button>
+                  <button class="row gap4 button w100 bgprime10" data-network="twitter"><img src="{{ url_for('static', filename='images/icon/twitter.svg') }}">Twitter</button>
+                  <button class="row gap4 button w100 bgprime10" data-network="telegram"><img src="{{ url_for('static', filename='images/icon/telegram.svg') }}">Telegram</button>
+                  <button class="row gap4 button w100 bgprime10" data-network="whatsapp"><img src="{{ url_for('static', filename='images/icon/whatsapp.svg') }}">WhatsApp</button>
+                  <button class="row gap4 button w100 bgprime10" id="download-button"><img src="{{ url_for('static', filename='images/icon/instagram.svg') }}">Instagram</button>
+                </div>
+                
+                <button class="button w100 mt8 bgprimve200" id="restart-button">Начать заново</button>
+            </span>
+         </div>
+        
+          <!-- Exam.js -->
+          <script src="{{ url_for('static', filename='js/exam.js') }}"></script>
+
+        
+    </main>
+</body>
+</html>

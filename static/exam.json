@@ -1,0 +1,21 @@
+[
+  {
+    "question": "Какой язык используется для стилей веб-страниц?",
+    "image": "",
+    "options": ["HTML", "CSS", "JavaScript", "Python"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "Что такое HTML?",
+    "image": "",
+    "options": ["Язык программирования", "Язык разметки", "База данных", "Система управления контентом"],
+    "correctAnswer": 1
+  },
+  {
+    "question": "Как объявить переменную в JavaScript?",
+    "image": "",
+    "options": ["var myVar;", "int myVar;", "let myVar;", "variable myVar;"],
+    "correctAnswer": 0
+  }
+  // Добавьте остальные вопросы
+]

@@ -2,9 +2,10 @@ import os
 import sys
 import json
 from collections import defaultdict
-from flask import Flask, render_template, jsonify, url_for, abort
+from flask import Flask, render_template, jsonify, url_for, abort, send_from_directory
 
-# Добавляем путь к виртуальному окружению
+
+# Добавляем путь к виртуальному окружению (если необходимо)
 sys.path.append('/home/c/cc91451/velojol.kz/venv/lib/python3.10/site-packages/')
 
 app = Flask(__name__)
@@ -52,7 +53,10 @@ def index():
 @app.route('/<city_name>')
 def map(city_name):
     cities = load_cities()
-    city = next((item for country_cities in cities.values() for item in country_cities if transliterate_city_name(item["city"]) == city_name.lower()), None)
+    city = next(
+        (item for country_cities in cities.values() for item in country_cities if transliterate_city_name(item["city"]) == city_name.lower()),
+        None
+    )
     if city:
         return render_template('map.html', city=city)
     else:
@@ -96,17 +100,33 @@ def course():
 @app.route('/course/<lesson_url>')
 def course_lesson(lesson_url):
     courses = load_courses()
-    
     # Ищем нужный урок по URL
     lesson = next((lesson for lesson in courses if lesson['url'] == lesson_url), None)
-    
     # Если урок найден, рендерим его шаблон
     if lesson:
         return render_template(f'course/{lesson_url}.html', lesson=lesson)
     else:
         return render_template('404.html'), 404
 
+# ====== НОВЫЙ КОД ДЛЯ ЭКЗАМЕНА ======
 
+# Маршрут для страницы экзамена
+@app.route('/exam')
+def exam():
+    return render_template('exam.html')
+
+# Маршрут для получения данных exam.json
+@app.route('/exam_data')
+def exam_data():
+    filepath = os.path.join(app.root_path, 'exam.json')
+    if os.path.exists(filepath):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return jsonify(data)
+    else:
+        return jsonify({"error": "exam.json not found"}), 404
+
+# ====== КОНЕЦ НОВОГО КОДА ======
 
 if __name__ == "__main__":
     app.run(debug=True)

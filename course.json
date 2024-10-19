@@ -3,70 +3,77 @@
     "id": 1,
     "title": "Введение",
     "subtitle": "",
-    "image": "https://opis-cdn.tinkoffjournal.ru/urania-api/c242f039.1_what_is_friendship_minicover.png?preset=urania_icon_95x95_2x",
+    "image": "static/images/course/id-1.png",
     "url": "introduction"
   },
   {
     "id": 2,
     "title": "Велосипед и город",
     "subtitle": "1-ый урок",
-    "image": "src/course/img2.png",
+    "image": "static/images/course/id-2.png",
     "url": "bicycle-and-city"
   },
   {
     "id": 3,
     "title": "Основы технического обслуживания",
     "subtitle": "2-ой урок",
-    "image": "src/course/img3.png",
+    "image": "static/images/course/id-3.png",
     "url": "maintenance-basics"
   },
   {
     "id": 4,
     "title": "Безопасность велосипедиста",
     "subtitle": "3-ий урок",
-    "image": "src/course/img4.png",
+    "image": "static/images/course/id-4.png",
     "url": "cyclist-safety"
   },
   {
     "id": 5,
     "title": "Правила дорожного движения для велосипедистов",
     "subtitle": "4-ый урок",
-    "image": "src/course/img5.png",
+    "image": "static/images/course/id-5.png",
     "url": "cycling-traffic-rules"
   },
   {
     "id": 6,
     "title": "Взаимодействие на дороге",
     "subtitle": "5-ый урок",
-    "image": "src/course/img6.png",
+    "image": "static/images/course/id-6.png",
     "url": "road-interaction"
   },
   {
     "id": 7,
     "title": "Эффективное перемещение по городу",
     "subtitle": "6-ой урок",
-    "image": "src/course/img7.png",
+    "image": "static/images/course/id-7.png",
     "url": "efficient-city-movement"
   },
   {
     "id": 8,
     "title": "Велосипед как элемент образа жизни",
     "subtitle": "7-ой урок",
-    "image": "src/course/img8.png",
+    "image": "static/images/course/id-8.png",
     "url": "bicycle-as-lifestyle"
   },
   {
     "id": 9,
     "title": "Велосипедная культура и сообщество",
     "subtitle": "8-ой урок",
-    "image": "src/course/img9.png",
+    "image": "static/images/course/id-9.png",
     "url": "bicycle-culture-and-community"
   },
   {
     "id": 10,
     "title": "Заключение и следующие шаги",
     "subtitle": "",
-    "image": "src/course/img10.png",
+    "image": "static/images/course/id-10.png",
     "url": "conclusion-and-next-steps"
+  },
+  {
+    "id": 11,
+    "title": "Экзамен",
+    "subtitle": "",
+    "image": "static/images/course/id-11.png",
+    "url": "exam"
   }
 ]

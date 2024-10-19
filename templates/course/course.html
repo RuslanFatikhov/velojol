@@ -43,8 +43,11 @@
 
     <!--Cover-->
     <div class="mt8" style="display: flex; flex-direction: column; align-items: center;" class="cover">
-        <span class="cover-img"></span>
-        <div style="max-width: 960px; margin-top: -80px;" class="block bgprime100 center gap16 column">
+        
+        <div style="max-width: 960px;" class="block bgprime100 center gap16 column">
+
+            <img class="main-course-cover" src="{{ url_for('static', filename='images/course/course-cover.jpg') }}" alt="Курс: Как стать велосипедистом">
+
             <span class="column gap16">
                 <h2 class="bold dark-prime-invert-200">Велосипед в городе</h2>
                 <p class="dark-prime-invert-200">Бесплатный курс о том, как безопасно и комфортно передвигаться в городе на велосипеде</p>
@@ -88,33 +91,39 @@
         </div>
 
         <!--pdf banner-->
-        <div class="pdfbanner mt24 bgaccent200">
+        <!--div class="pdfbanner mt24 bgaccent200">
             <h4 class="bold dark-prime-200">Можете скачать курс в виде PDF файла</h4>
             <p class="dark-prime-200 mt16 mb32">Чтобы прочитать его, когда вам будет удобно</p>
             <a style="max-width: 200px;" class="button bgprime100" href=""><p class="p2 accent200">Скачать бесплатно</p></a>
-        </div>
+        </div-->
 
         <span>
             <h4 class="bold dark-prime-invert-200 mt32 mb8">Преимущества курса</h4>
-            <p class="p2 dark-prime-invert-200 mb16">После завершения курса вы сможете</p>
+            <p class="dark-prime-invert-200 mb16">После завершения курса вы сможете</p>
 
-            <div class="cards-grid-2">
-                <div class="card200 bgaccent200">
-                    <p class="center p1 dark-prime-200">С уверенностью передвигаться<br> на велосипеде по городу</p>
-                </div>
-
-                <div class="card200 bgaccent200">
-                    <p class="center p1 dark-prime-200">Избегать<br>опасных ситуаций</p>
-                </div>
-
-                <div class="card200 bgaccent200">
-                    <p class="center p1 dark-prime-200">Сохранять физическое<br>и ментальное здоровье</p>
-                </div>
-
-                <div class="card200 bgaccent200">
-                    <p class="center p1 dark-prime-200">Экономить время<br>на передвижение</p>
-                </div>
-            </div>
+            <ul class="column gap16">
+                <li class="row gap12 aic">
+                    <img class="bgprime100" style="width: 48px; height: 48px; object-fit: contain; border-radius: 16px; padding: 2px;" src="{{ url_for('static', filename='/images/course/pro-1.png') }}" alt="next-cover">
+                    <p class="p1 dark-prime-invert-200">С уверенностью передвигаться на велосипеде по городу</p>
+                </li>
+            
+                <li class="row gap12 aic">
+                    <img class="bgprime100" style="width: 48px; height: 48px; object-fit: contain; border-radius: 16px; padding: 2px" src="{{ url_for('static', filename='/images/course/pro-2.png') }}" alt="next-cover">
+                    <p class="p1 dark-prime-invert-200">Избегать опасных ситуаций</p>
+                </li>
+            
+                <li class="row gap12 aic">
+                    <img class="bgprime100" style="width: 48px; height: 48px; object-fit: contain; border-radius: 16px; padding: 2px" src="{{ url_for('static', filename='/images/course/pro-3.png') }}" alt="next-cover">
+                    <p class="p1 dark-prime-invert-200">Сохранять физическое и ментальное здоровье</p>
+                </li>
+            
+                <li class="row gap12 aic">
+                    <img class="bgprime100" style="width: 48px; height: 48px; object-fit: contain; border-radius: 16px; padding: 2px" src="{{ url_for('static', filename='/images/course/pro-4.png') }}" alt="next-cover">
+                    <p class="p1 dark-prime-invert-200">Экономить время на передвижение</p>
+                </li>
+            </ul>
+            
+            
 
         </span>
 
@@ -122,29 +131,22 @@
             <h4 class="bold dark-prime-invert-200 mt32 mb16">Кто ведет курс</h4>
 
             <div class="cards-grid-2">
-                <div class="card400 bgaccent200">
+                <div class="card400">
                     <h4 class="dark-prime-100 mb16">Луиза Мифтахова</h4>
                     <p class="p1 dark-prime-200">Методолог курса, отвечала за написание текста и подготовку материалов </p>
+                    <img style="object-fit: cover;" src="{{ url_for('static', filename='images/course/luiza.jpg') }}" alt="luiza">
                 </div>
 
-                <div class="card400 bgaccent200">
+                <div class="card400">
                     <h4 class="dark-prime-100 mb16">Руслан Фатихов</h4>
-                    <p class="p1 dark-prime-200">Консультировал курс по правилам дорожного двжиения, создавал дизайн и занимался версткой</p>
+                    <p class="p1 dark-prime-200">Консультант по ПДД, создавал дизайн и занимался версткой</p>
+                    <img style="object-fit: cover;" src="{{ url_for('static', filename='images/course/ruslan.jpg') }}" alt="ruslan">
                 </div>
             </div>
             
         </span>
 
-        <span>
-            <h4 class="bold dark-prime-invert-200 mt32 mb16">Кому подойдет курс</h4>
-            
-            <ul class="gap8 column">
-                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Этот курс идеален для новичков и для опытных велосипедистов, которые хотят повысить свою безопасность и улучшить навыки</p></li>
-                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Повышение своей безопасности и улучшение навыков</p></li>
-                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Текст</p></li>
-                <li class="gap12 aic"><img class="img48" src="" alt=""><p class="dark-prime-invert-200">Текст</p></li>
-            </ul>
-        </span>
+        
 
         <!--Banner-->
         <div class="banner mt32">

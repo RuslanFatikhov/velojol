@@ -35,6 +35,47 @@
 </head>
 
 <body>
+
+    <!--Navbar-->
+    <div class="navbar row bgprime100 aic">
+        <a style="position: absolute; left: 16px;" href="{{ url_for('course') }}" class="button fs">
+            
+            <img src="{{ url_for('static', filename='/images/icon/arrow-left-black.svg') }}" alt="back">
+
+        </a>
+
+        <p style="margin-left: auto; margin-right: auto;" class="dark-prime-invert-100 center bold">Велосипед и город</p>
+    </div>
+
+    <!--Course-menu-->
+    <div class="course-menu fs">
+        <a href="{{ url_for('course') }}" class="button fs">
+            
+            <img src="{{ url_for('static', filename='/images/icon/arrow-left-black.svg') }}" alt="back">
+            <p class="dark-prime-invert-100">Назад</p>
+        </a>
+
+        <hr>
+
+        <span class="column gap2">
+
+            <a href="#one" class="button fs dark-prime-invert-400">
+                <p>Велосипед в городе</p>
+            </a>
+
+            <a href="#two" class="button fs dark-prime-invert-400">
+                <p>Какой велосипед подойдет?</p>
+            </a>
+
+            <a href="#three" class="button fs dark-prime-invert-400">
+                <p>Как подобрать велосипед?</p>
+            </a>
+
+
+        </span>
+
+    </div>
+
     <main class="course-main">
 
         <!--Cover-->
@@ -42,19 +83,18 @@
 
             <!--Badges-->
             <span class="gap8 row">
-                <p class="badge_m dark-prime-invert-100 bgprime200">2 урок из 10</p>
+                <p class="badge_m dark-prime-invert-100 bgprime200">1 урок из 8</p>
                 <p class="badge_m dark-prime-invert-100 bgprime200">14 минут на чтение</p>
             </span>
 
             <h1 class="dark-prime-invert-100 mt16 mb8">Велосипед и город</h1>
-            <p class="dark-prime-invert-200 mb16">Описание урока</p>
 
-            <img src="https://opis-cdn.tinkoffjournal.ru/pluto-backend-blog-images/b7091128.cover.png" alt="cover">
+            <img src="{{ url_for('static', filename='/images/course/2cover.png') }}" alt="cover">
         </div>
 
 
 
-        <h3 class="dark-prime-invert-200 mb8">Почему нужно пересаживаться на велосипед в современном городе?</h3>
+        <h3 class="dark-prime-invert-200 mb16" id="one">Почему нужно пересаживаться на велосипед в современном городе?</h3>
         <p class="p1 dark-prime-invert-200">Когда речь заходит о городской жизни, часто обсуждаются проблемы дорожных заторов, загрязнения и постоянного стресса. Например, <a href="https://tengrinews.kz/article/60-chasov-mesyats-tratim-probki-almatintsyi-predlagayut-1918/" target="_blank">жители города Алматы тратят в среднем до 60 часов в месяц в дорожных пробках</a>. Это существенное время, которое можно использовать более продуктивно, занимаясь физической активностью, любимыми хобби или просто наслаждаясь временем в кругу семьи и друзей. Урбанисты предлагают множество решений для этих проблем, и одним из самых простых и эффективных является использование велосипеда в качестве основного транспортного средства. Невозможно полностью избавить город от заторов, но использование велосипеда в качестве средства передвижения может существенно сократить это время.<br><br>Проведем сравнение автомобиля и велосипеда в городской среде, чтобы выделить преимущества велосипеда. Несмотря на то, что автомобиль обеспечивает удобства в перевозке грузов и может быть более комфортным в зимний период, давайте проанализируем положительные стороны велосипеда в современном городском образе жизни.
         </p>
 
@@ -112,15 +152,15 @@
             </span>
 
 
-            <h3 class="dark-prime-invert-100 mt48 mb16">Какой именно велосипед подойдёт для городских условий?</h3>
+            <h3 class="dark-prime-invert-100 mt48 mb16" id="two">Какой именно велосипед подойдёт для городских условий?</h3>
             <p class="p1 dark-prime-invert-100">Перейдем к приятному: выбору велосипеда. Внедрение велосипедов в городскую среду создало потребность в разных типах велосипедов, каждый из которых решает свои специфические задачи. Понимание основных типов велосипедов и их особенностей поможет вам выбрать идеальный байк для своих повседневных потребностей. Давайте углубимся в изучение ключевых моделей велосипедов, которые приобрели популярность среди пользователей.</p>
 
-            <p class="p1 dark-prime-invert-100"><b>Основные типы велосипедов</b></p>
+            <p class="p1 dark-prime-invert-100 mt32 mb8"><b>Основные типы велосипедов</b></p>
 
             <div class="cards-grid-2 mt16 mb24">
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F01d288a1-c0fc-4ac8-a339-505ee17c108f%2FUntitled.png?table=block&id=4e76fef7-27a8-46a6-8589-d7ef915b1ee2&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b11.jpg') }}" alt="cover">
 
                         <b>Городской велосипед</b><br>
         
@@ -130,7 +170,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F63c0b45a-f72f-4290-b79e-bddef4100d8b%2FUntitled.png?table=block&id=29229c26-571b-41eb-923b-b853bcfe7fe3&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=770&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b10.jpg') }}" alt="cover">
 
                         <b>Шоссейный велосипед</b><br>
         
@@ -140,7 +180,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F1eb77b9a-8bd2-46e3-8666-85878cf01519%2FUntitled.png?table=block&id=4f5ff648-bcf2-4184-bdf9-40d2e0268149&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b9.jpg') }}" alt="cover">
 
                         <b>Фэтбайк</b><br>
         
@@ -150,7 +190,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F24989cc8-b494-4935-94d2-43b610ed1f21%2FUntitled.png?table=block&id=89db2e16-5722-457f-8df9-83b59980e5f1&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=770&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b8.jpg') }}" alt="cover">
 
                         <b>Горный велосипед (МТБ)</b><br>
         
@@ -160,7 +200,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F9470c8e1-3227-43ee-bf68-a5f2cef96259%2FUntitled.png?table=block&id=5dbb8f68-e5aa-49d9-8f0c-ee544b208813&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b7.jpg') }}" alt="cover">
 
                         <b>Туринговые и гибридные велосипеды</b><br>
         
@@ -170,7 +210,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2Fa6f7a3a0-58db-4c6c-a450-abb886e47725%2FUntitled.png?table=block&id=1848c352-75fd-4293-a3e1-2fa67cd08300&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b6.jpg') }}" alt="cover">
 
                         <b>Электробайк</b><br>
         
@@ -180,7 +220,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F3bc49c55-0277-4d26-9906-32dfa28b6451%2FUntitled.png?table=block&id=92a9d32f-a668-4397-935c-b51a051e4b07&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=770&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b5.jpg') }}" alt="cover">
 
                         <b>Велосипед для трюков и фристайла</b><br>
         
@@ -190,7 +230,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2Fb335ccfb-97d0-4f1a-be68-78e3910cfdfd%2FUntitled.png?table=block&id=2475f7d1-eb65-488a-9312-80cc5c9ae075&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b4.jpg') }}" alt="cover">
 
                         <b>Складной велосипед</b><br>
         
@@ -200,17 +240,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2Fb335ccfb-97d0-4f1a-be68-78e3910cfdfd%2FUntitled.png?table=block&id=2475f7d1-eb65-488a-9312-80cc5c9ae075&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
-
-                        <b>Складной велосипед</b><br>
-        
-                        Идеален для городских поездок. Благодаря небольшому размеру колес, его можно легко сложить и взять с собой. При этом скорость, удобство и управляемость остаются на приемлемом уровне из-за его компактности. Хотя такой велосипед может не обладать высокой динамикой, он идеален для коротких городских поездок
-                    </p>
-                </span>
-
-                <span class="coursecard bgprime100">
-                    <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F2c15baae-0534-4b67-848c-116eb48a19bd%2FUntitled.png?table=block&id=6c8e10e8-f349-4231-809f-44665aa9034f&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b3.jpg') }}" alt="cover">
 
                         <b>Велосипеды для женщин</b><br>
         
@@ -218,9 +248,10 @@
                     </p>
                 </span>
 
+
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2Ff3d57670-81ba-4a9b-8643-15846a409afb%2FUntitled.png?table=block&id=a72883fd-b45d-4e41-af2d-6baeec726b37&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b2.jpg') }}" alt="cover">
 
                         <b>Детский велосипед</b><br>
         
@@ -230,17 +261,7 @@
 
                 <span class="coursecard bgprime100">
                     <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2Fe45cc623-e884-4e00-ae9b-4f96007689be%2FUntitled.png?table=block&id=12a27685-b28e-4c4d-8efa-5916fa2111ea&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
-
-                        <b>Детский велосипед</b><br>
-        
-                        Этих велосипедов множество разновидностей: от двухколесных до моделей с четырьмя колесами. Они обычно имеют одну передачу и педальный тормоз. Однако некоторые производители укомплектовывают детские модели многими скоростями и различными тормозами, делая их похожими на модели для взрослых
-                    </p>
-                </span>
-
-                <span class="coursecard bgprime100">
-                    <p class="dark-prime-invert-200">
-                        <img class="course-img" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2Fe45cc623-e884-4e00-ae9b-4f96007689be%2FUntitled.png?table=block&id=12a27685-b28e-4c4d-8efa-5916fa2111ea&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=870&userId=&cache=v2">
+                        <img class="course-img" src="{{ url_for('static', filename='/images/course/b1.jpg') }}" alt="cover">
 
                         <b>Трехколесные велосипеды </b><br>
         
@@ -252,7 +273,7 @@
 
             <hr>
 
-            <h3 class="dark-prime-invert-100 mt32 mb48">Как правильно подобрать велосипед для себя?</h3>
+            <h3 class="dark-prime-invert-100 mt32 mb16" id="three">Как правильно подобрать велосипед для себя?</h3>
             <p class="p1 dark-prime-invert-100">
                 Выбор велосипеда – это не только дело вкуса, но и внимательное рассмотрение ряда важных факторов. Если вы все еще в раздумьях относительно того, какой велосипед идеально подойдет именно вам, давайте рассмотрим несколько ключевых аспектов этого выбора.<br><br>Во-первых, нужно учитывать основные характеристики велосипедиста: пол, возраст, вес, рост, а также цели эксплуатации и условия окружающей среды.<br><br>Традиционные мужские велосипеды обычно обладают высокой рамой, в то время как женские – более низкой рамой для удобства посадки. Детские байки характеризуются сокращенной рамой и меньшим диаметром колес, не превышающим 26 дюймов. А модели унисекс подойдут и мужчинам, и женщинам благодаря среднего размера раме.
             </p>
@@ -308,14 +329,14 @@
             <div class="next-lesson bgprimveinvert300 row">
                     <span class="column" style="width: 100%;">
                         <p style="text-transform: uppercase;" class="p1 dark-prime-50">СЛЕДУЮЩИЙ УРОК</p>
-                        <h4 class="dark-prime-100 mt8 mb16">Велосипеды в городе</h4>
+                        <h4 class="dark-prime-100 mt8 mb16">Основы технического обслуживания</h4>
                         <a href="/" style="max-width: 150px;" class="button bgprime100 center"><p class="p1 dark-prime-invert-100">Перейти</p>
 
                             <img src="{{ url_for('static', filename='/images/icon/arrow-right-black.svg') }}" alt="next">
                         </a>
                     </span>
 
-                <img style="width: 115px; height: 115px; object-fit: contain;" src="https://opis-cdn.tinkoffjournal.ru/pluto-backend-blog-images/b7091128.cover.png" alt="next-cover">
+                    <img style="width: 115px; height: 115px; object-fit: contain;" src="{{ url_for('static', filename='/images/course/id-3.png') }}" alt="cover">
             </div>
     </main>
 </body>

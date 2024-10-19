@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Велосипед и город</title>
+    <title>Правила дорожного движения для велосипедистов</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Подробная карта велодорожек и велополос города">
@@ -36,8 +36,73 @@
 
 
 <body>
+
+    <!--Course-menu-->
+    <div class="course-menu fs">
+        <a href="{{ url_for('course') }}" class="button fs">
+            
+            <img src="{{ url_for('static', filename='/images/icon/arrow-left-black.svg') }}" alt="back">
+            <p class="dark-prime-invert-100">Назад</p>
+        </a>
+
+        <hr>
+
+        <span class="column gap2">
+
+            <a href="#one" class="button fs dark-prime-invert-400">
+                <p>Где можно ездить?</p>
+            </a>
+
+            <a href="#two" class="button fs dark-prime-invert-400">
+                <p>Где нельзя ездить?</p>
+            </a>
+
+            <a href="#three" class="button fs dark-prime-invert-400">
+                <p>Разметка</p>
+            </a>
+
+            <a href="#four" class="button fs dark-prime-invert-400">
+                <p>Знаки</p>
+            </a>
+
+            <a href="#five" class="button fs dark-prime-invert-400">
+                <p>Что нельзя делать?</p>
+            </a>
+
+
+        </span>
+
+    </div>
+
+    <!--Navbar-->
+    <div class="navbar row bgprime100 aic">
+        <a style="position: absolute; left: 16px;" href="{{ url_for('course') }}" class="button fs">
+            
+            <img src="{{ url_for('static', filename='/images/icon/arrow-left-black.svg') }}" alt="back">
+
+        </a>
+
+        <p style="margin-left: auto; margin-right: auto;" class="dark-prime-invert-100 center bold">Правила дорожного движения</p>
+    </div>
+
     <main class="course-main">
-        <h1 class="dark-prime-invert-100 mb16">Правила дорожного движения для велосипедистов</h1>
+
+        <!--Cover-->
+        <div class="course-cover bgprime10">
+
+            <!--Badges-->
+            <span class="gap8 row">
+                <p class="badge_m dark-prime-invert-100 bgprime200">4 урок из 8</p>
+                <p class="badge_m dark-prime-invert-100 bgprime200">14 минут на чтение</p>
+            </span>
+    
+            <h1 class="dark-prime-invert-100 mt16 mb8 center">Правила дорожного движения для велосипедистов</h1>
+            <p class="dark-prime-invert-200 mb16"></p>
+    
+            <img src="{{ url_for('static', filename='/images/course/5cover.png') }}" alt="cover">
+        </div>
+
+        <h1 class="dark-prime-invert-100 mb16"></h1>
 
         <p class="p1 dark-prime-invert-100">Вероятно, это самый важный урок в курсе. Когда вы садитесь на велосипед и выезжаете на городские улицы, вы становитесь полноценным участником дорожного движения. Поэтому знание и понимание ПДД для велосипедистов — ключевой аспект этой ответственности своей безопасности и безопасности окружающих.<br><br>В этом уроке мы подробно рассмотрим ПДД для велосипедистов в городских условиях. Вы узнаете о взаимодействии с автомобилями и пешеходами. Мы научимся использовать поворотник, постараемся понимать знаки ДД и применять “пешеходный” поворот.<br><br>После этого урока вы будете чувствовать себя уверенно и безопасно, передвигаясь на велосипеде по городским улицам, и сможете наслаждаться каждой прогулкой, зная, что делаете все возможное для своей безопасности и комфорта.</p>
 
@@ -47,7 +112,7 @@
 
         <hr>
 
-        <h3 class="dark-prime-invert-100 mt48 mb24">Где можно ездить?</h3>
+        <h3 class="dark-prime-invert-100 mt48 mb24" id="one">Где можно ездить?</h3>
         <p class="p1 dark-prime-invert-100 mt16 mb24">Движение на велосипеде имеет свои особенности. Если доступны <b>велосипедные полосы</b> или <b>дорожки</b>, приоритет следует отдавать им. Различия между типами велодорожек:</p>
 
         <span class="row gap24 mb16 li-callout">
@@ -102,7 +167,7 @@
 
 
         <hr>
-        <h3 class="h3 dark-prime-invert-100 mt48 mb16">Эти данные знаки запрещают движение на велосипеде:</h3>
+        <h3 class="h3 dark-prime-invert-100 mt48 mb16" id="two">Эти данные знаки запрещают движение на велосипеде:</h3>
 
         <div class="cards-grid-2 mt16">
             <span class="gap24 li-callout" style="flex-direction: column !important;">         
@@ -119,7 +184,7 @@
 
         <hr>
 
-        <h3 class="dark-prime-invert-100 mt48 mb24">Разметка</h3>
+        <h3 class="dark-prime-invert-100 mt48 mb24" id="three">Разметка</h3>
         <p class="p1 dark-prime-invert-100">Для велосипедиста важно не только знать, но и понимать указания разметки дороги. Понимание разметки помогает предсказать возможные опасности и реагировать на них заблаговременно. Знание этих аспектов способствует гармоничному включению в общий поток движения, снижает риск аварий и способствует более плавному и эффективному передвижению в городской среде. Несоблюдение разметки дороги увеличивает риск аварий и нарушения правил, повлекая за собой штрафы и неудобства для других участников движения</p>
 
         <div class="cards-grid-2 mt16">
@@ -165,11 +230,11 @@
             </span>
         </div>
 
-        <h3 class="dark-prime-invert-100 mt48 mb24">Знаки</h3>
+        <h3 class="dark-prime-invert-100 mt48 mb24" id="four">Знаки</h3>
 
         <p class="p1 dark-prime-invert-100">Знание дорожных знаков позволяет правильно интерпретировать дорожную обстановку и делать правильные решения на дороге. Они позволяют принимать обоснованные решения, эффективно взаимодействовать с другими участниками движения и выбирать оптимальные маршруты, избегая запрещенных участков и экономя время и усилия. Соблюдение указаний знаков способствует предотвращению аварий, обеспечивает беспроблемное передвижение и повышает общую безопасность на дороге.</p>
 
-        <p class="p1 dark-prime-invert-100 mt24"><b>Запрещающие знаки</b><br>Указывают на запрещенные действия или ограничения</p>
+        <p class="p1 dark-prime-invert-100 mt48"><b>Запрещающие знаки</b><br>Указывают на запрещенные действия или ограничения</p>
         <div class="cards-grid-2 mt16 mb24">
             <span class="gap24 li-callout" style="flex-direction: column !important;">         
                 <p class="p1 dark-prime-invert-100"><b>Кирпич</b><br><br>Знак ограничивает доступ на определенную территорию для всех ТС. Можно попробовать спешиться и пройти так</p>
@@ -193,7 +258,7 @@
             </span>
         </div>
 
-        <p class="p1 dark-prime-invert-100 mt24"><b>Знаки приоритета</b><br>Устанавливают порядок проезда на перекрестках или участках дороги</p>
+        <p class="p1 dark-prime-invert-100 mt48"><b>Знаки приоритета</b><br>Устанавливают порядок проезда на перекрестках или участках дороги</p>
         <div class="cards-grid-2 mt16 mb24">
             <span class="gap24 li-callout" style="flex-direction: column !important;">         
                 <p class="p1 dark-prime-invert-100"><b>Главная дорога.</b><br>Вы едете, и вас все пропускают. Смотрите по сторонам, чтобы избежать столкновений с невнимательными водителями</p>
@@ -215,37 +280,10 @@
                 <p class="p1 dark-prime-invert-100"><b>Уступи дорогу</b>Теперь другие едут, а вы их ждёте, чтобы выехать.</p>
                 <img class="mt8 course-img-bike" style=" width:100%; max-width:290px;border-radius: 16px;" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F8b7a0288-3737-4210-974c-4d5db7252f3c%2FUntitled.png?table=block&id=65c1938e-58d2-46d2-80cd-7bdec0122afd&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=290&userId=&cache=v2">
             </span>
-        </div>
+        </div>  
 
-        <h3 class="dark-prime-invert-100 mt48 mb24">Знаки</h3>
+        <p class="p1 dark-prime-invert-100 mt48"><b>Предписывающие знаки</b><br>Обязывают водителей (и велосипедистов) выполнять определенные действия</p>
 
-        <p class="p1 dark-prime-invert-100">Знание дорожных знаков позволяет правильно интерпретировать дорожную обстановку и делать правильные решения на дороге. Они позволяют принимать обоснованные решения, эффективно взаимодействовать с другими участниками движения и выбирать оптимальные маршруты, избегая запрещенных участков и экономя время и усилия. Соблюдение указаний знаков способствует предотвращению аварий, обеспечивает беспроблемное передвижение и повышает общую безопасность на дороге.</p>
-
-        <p class="p1 dark-prime-invert-100 mt24"><b>Запрещающие знаки</b><br>Указывают на запрещенные действия или ограничения</p>
-        <div class="cards-grid-2 mt16 mb24">
-            <span class="gap24 li-callout" style="flex-direction: column !important;">         
-                <p class="p1 dark-prime-invert-100"><b>Кирпич</b><br><br>Знак ограничивает доступ на определенную территорию для всех ТС. Можно попробовать спешиться и пройти так</p>
-                <img class="mt8 course-img-bike" style=" width:100%; max-width:290px;border-radius: 16px;" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F33bb6ed0-bc12-498c-8e6b-2a42c620840d%2FUntitled.png?table=block&id=f5face27-9197-4d61-80a6-60aed8e6c226&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=480&userId=&cache=v2">
-            </span>
-
-            <span class="gap24 li-callout" style="flex-direction: column !important;">         
-                <p class="p1 dark-prime-invert-100"><b>Движение на велосипеде запрещено</b><br><br>Однако разрешено провозить велосипед рядом с собой</p>
-                <img class="mt8 course-img-bike" style=" width:100%; max-width:290px;border-radius: 16px;" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fall-t-shirts.ru%2Fgoods_images%2F1721%2F1884%2Fru106145%2Fru106145II000e980e8701cc4c2af250979656e4d78d1.jpg?table=block&id=a31587c3-08a3-43a2-a220-dc7f46b963f3&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=480&userId=&cache=v2">
-            </span>
-
-            <span class="gap24 li-callout" style="flex-direction: column !important;">         
-                <p class="p1 dark-prime-invert-100"><b>Поворот запрещен</b><br><br>Часто это указывает на то, что поворот ведет на одностороннюю улицу</p>
-                <img class="mt8 course-img-bike" style=" width:100%; max-width:290px;border-radius: 16px;" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F7ac259bb-ad82-43a1-ae2c-76b49c680b0b%2FUntitled.png?table=block&id=bb5a4a4d-e2ca-46e1-912e-234613fc1ee8&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=380&userId=&cache=v2">
-            </span>
-
-            <span class="gap24 li-callout" style="flex-direction: column !important;">         
-                <p class="p1 dark-prime-invert-100"><b>Движение запрещено. </b>Лучше перейти на тротуар.
-                </b><br><br>Часто это указывает на то, что поворот ведет на одностороннюю улицу</p>
-                <img class="mt8 course-img-bike" style=" width:100%; max-width:290px;border-radius: 16px;" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F42e5f842-8cd7-41a7-aae8-08e5a36c60a3%2FUntitled.png?table=block&id=1629ba5e-b798-42e6-b7dc-3277c257fed2&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=380&userId=&cache=v2">
-            </span>
-        </div>
-
-        <p class="p1 dark-prime-invert-100 mt24"><b>Предписывающие знаки</b><br>Обязывают водителей (и велосипедистов) выполнять определенные действия</p>
         <div class="cards-grid-2 mt16 mb24">
             <span class="gap24 li-callout" style="flex-direction: column !important;">         
                 <p class="p1 dark-prime-invert-100"><b>Движение прямо.</b><br>То есть повороты запрещены</p>
@@ -274,7 +312,7 @@
             <img class="mt8" style=" width:100%;border-radius: 16px;" src="https://luizamiftakhova.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fe3ee84bd-7341-466b-90f0-bb396205a44a%2F6e41a5aa-c608-4a55-856b-ff8ccc0ae7e3%2FUntitled.png?table=block&id=78c8e6cc-cf74-4db5-8a9d-fc13e4f7be34&spaceId=e3ee84bd-7341-466b-90f0-bb396205a44a&width=960&userId=&cache=v2">
         </span>
 
-        <p class="p1 dark-prime-invert-100 mt24"><b>Знаки особых предписаний</b><br>Указывают на определенные обстоятельства или условия на участке дороги.</p>
+        <p class="p1 dark-prime-invert-100 mt48"><b>Знаки особых предписаний</b><br>Указывают на определенные обстоятельства или условия на участке дороги.</p>
         <div class="cards-grid-2 mt16 mb24">
             <span class="gap24 li-callout" style="flex-direction: column !important;">         
                 <p class="p1 dark-prime-invert-100"><b>Направление движения по полосам.</b><br>Обычно нас интересует правый ряд.</p>
@@ -311,7 +349,7 @@
 
         
 
-        <p class="p1 dark-prime-invert-100 mt24"><b>Предупреждающие</b><br>Сообщают об опасных участках дороги.</p>
+        <p class="p1 dark-prime-invert-100 mt48"><b>Предупреждающие</b><br>Сообщают об опасных участках дороги.</p>
         <div class="cards-grid-2 mt16 mb24">
             <span class="gap24 li-callout" style="flex-direction: column !important;">         
                 <p class="p1 dark-prime-invert-100"><b>Выезд велосипедистов. </b><br>Знак предназначен для оповещения  о наличии велосипедистов впереди.</p>
@@ -347,7 +385,7 @@
             </span>
         </div>
 
-        <p class="p1 dark-prime-invert-100 mt24"><b>Знаки дополнительной информации (таблички)</b><br>Уточняют или дополняют информацию, представленную на основных знаках.</p>
+        <p class="p1 dark-prime-invert-100 mt48"><b>Знаки дополнительной информации (таблички)</b><br>Уточняют или дополняют информацию, представленную на основных знаках.</p>
         <div class="cards-grid-2 mt16 mb24">
             <span class="gap24 li-callout" style="flex-direction: column !important;">         
                 <p class="p1 dark-prime-invert-100">Например, конец главной дороги через 300 метров.</p>
@@ -383,11 +421,11 @@
 
         <hr>
 
-        <h3 class="h3 dark-prime-invert-100 mt48 mb16">Что нельзя делать велосипедистам?</h3>
+        <h3 class="h3 dark-prime-invert-100 mt48 mb16" id="five">Что нельзя делать велосипедистам?</h3>
         <p class="p1 dark-prime-invert-100 mb8"><b>Запреты для велосипедистов в ПДД</b></p>
         <p class="p1 dark-prime-invert-100 mb24">В ПДД прописаны определенные запреты для велосипедистов. Они созданы для обеспечения безопасности на дорогах, и несоблюдение может привести к штрафам. Вот некоторые из них:</p>
 
-        <div class="cards-grid-2 mt16">
+        <div class="cards-grid-2 mt16 mb24">
             <span class="gap24 li-callout">
                 <p class="p1 dark-prime-invert-100"><b>Повороты и развороты.</b>На дорогах с несколькими полосами или трамвайными путями поворачивать налево или делать разворот запрещено. Вместо этого лучше перейти дорогу пешком или выполнить "пешеходный поворот".</p>
             </span>
@@ -436,7 +474,19 @@
 
         <p class="p1 dark-prime-invert-100">Знание ПДД так важно, потому что это ключ к безопасности на дорогах и способ предотвратить аварии и конфликты. Когда водители и другие участники движения знают и следуют правилам, это обеспечивает более эффективное движение. Общее соблюдение дорожных знаков делает движение более предсказуемым, что способствует поддержанию порядка на дорогах.</p>
     
+        <!--Next lessons-->
+        <div class="next-lesson bgprimveinvert300 row">
+            <span class="column" style="width: 100%;">
+                <p style="text-transform: uppercase;" class="p1 dark-prime-50">СЛЕДУЮЩИЙ УРОК</p>
+                <h4 class="dark-prime-100 mt8 mb16">Взаймодествие на дороге</h4>
+                <a href="/" style="max-width: 150px;" class="button bgprime100 center"><p class="p1 dark-prime-invert-100">Перейти</p>
 
+                    <img src="{{ url_for('static', filename='/images/icon/arrow-right-black.svg') }}" alt="next">
+                </a>
+            </span>
+
+            <img style="width: 115px; height: 115px; object-fit: contain;" src="{{ url_for('static', filename='/images/course/id-6.png') }}" alt="next-cover">
+        </div> 
     </main>
 </body>
     

@@ -1,5 +1,6 @@
 *{
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 body{
@@ -155,6 +156,16 @@ hr{
     object-fit: cover;
 }
 
+.navbar{
+    display: none !important;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+    border-radius: 0px 0px 4px 4px;
+    top: 0px;
+    height: 54px;
+}
+
 
 
 @media screen and (max-width: 1200px) {
@@ -182,6 +193,13 @@ hr{
 
     .hide540{
         display: none;
+    }
+}
+
+@media screen and (max-width: 1290px) {
+
+    .navbar{
+        display: flex !important;
     }
 }
 
