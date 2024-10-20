@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Статистика экзамена</title>
+</head>
+<body>
+  <h1>Статистика экзамена</h1>
+  <table border="1">
+    <tr>
+      <th>Количество правильных ответов</th>
+      <th>Количество пользователей</th>
+    </tr>
+    {% for score, count in stats.items() %}
+    <tr>
+      <td>{{ score }}</td>
+      <td>{{ count }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

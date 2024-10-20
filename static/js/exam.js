@@ -1,3 +1,4 @@
+// Инициализация переменных
 let questions = [];
 let currentQuestionIndex = 0;
 let correctAnswersCount = 0;
@@ -16,6 +17,7 @@ function loadQuestions() {
     });
 }
 
+// Функция отображения текущего вопроса
 function showQuestion() {
   const quizContainer = document.getElementById('quiz-container');
 
@@ -46,13 +48,13 @@ function showQuestion() {
     quizContainer.appendChild(imageElement);
   }
 
-  // Создаем элемент <span id="quiz-buttons">
+  // Создаем контейнер для кнопок вариантов ответов
   const buttonsContainer = document.createElement('span');
   buttonsContainer.className = 'column gap8 mt16 w100';
   buttonsContainer.id = 'quiz-buttons';
   quizContainer.appendChild(buttonsContainer);
 
-  // Отображение вариантов ответов внутри <span id="quiz-buttons">
+  // Отображение вариантов ответов
   questionObj.options.forEach((option, index) => {
     const optionButton = document.createElement('button');
     optionButton.className = 'button fs dark-prime-invert-400 size_m bold center tac';
@@ -109,10 +111,11 @@ function showResult() {
   }
 
   // Определяем изображение для истории в зависимости от количества правильных ответов
-  story_image = `/static/images/stories/result_${correctAnswersCount}.jpg`;
+  story_image = `/static/images/course/stories/result_${correctAnswersCount}.jpg`;
 
+  // Обновляем содержимое контейнера с результатом
   resultText.innerHTML = `
-    <img src="${performance_image}" alt="${performance}" style="max-width: 100%; height: auto;">
+    <img class="w100 course_img" style="max-height:200px; object-fit:contain;" src="${performance_image}" alt="${performance}">
     <h3 class="dark-prime-invert-100 bold center">${performance}</h3>
     <p class="dark-prime-invert-200 center">Вы ответили правильно на ${correctAnswersCount} из ${questions.length} вопросов.</p>
   `;
@@ -124,12 +127,33 @@ function showResult() {
       // Создаем скрытую ссылку для скачивания
       const link = document.createElement('a');
       link.href = story_image;
-      link.download = `Результат_${correctAnswersCount}_из_${questions.length}.png`;
+      link.download = `result_${correctAnswersCount}_${questions.length}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     };
   }
+
+  // Отправляем результат на сервер для сбора статистики
+  sendResultToServer(correctAnswersCount);
+}
+
+// Функция отправки результата на сервер
+function sendResultToServer(score) {
+  fetch('/submit_score', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ score: score })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Результат отправлен на сервер:', data);
+  })
+  .catch(error => {
+    console.error('Ошибка при отправке результата на сервер:', error);
+  });
 }
 
 // Обработчик для кнопки "Начать заново"
@@ -166,6 +190,7 @@ if (socialButtons.length > 0) {
   });
 }
 
+// Функция для шаринга результата в социальных сетях
 function shareResult(network) {
   const url = window.location.href;
   const text = `Я прошёл экзамен и получил результат: ${correctAnswersCount} из ${questions.length}! Попробуйте и вы: `;

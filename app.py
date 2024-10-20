@@ -2,7 +2,8 @@ import os
 import sys
 import json
 from collections import defaultdict
-from flask import Flask, render_template, jsonify, url_for, abort, send_from_directory
+from flask import Flask, render_template, jsonify, url_for, abort, send_from_directory, request
+import threading
 
 
 # Добавляем путь к виртуальному окружению (если необходимо)
@@ -108,7 +109,7 @@ def course_lesson(lesson_url):
     else:
         return render_template('404.html'), 404
 
-# ====== НОВЫЙ КОД ДЛЯ ЭКЗАМЕНА ======
+# ====== НОВЫЙ КОД ДЛЯ ЭКЗАМЕНА И СБОР СТАТИСТИКИ ======
 
 # Маршрут для страницы экзамена
 @app.route('/exam')
@@ -125,6 +126,64 @@ def exam_data():
         return jsonify(data)
     else:
         return jsonify({"error": "exam.json not found"}), 404
+
+# Создаём объект блокировки для потокобезопасной записи
+lock = threading.Lock()
+
+# Функция для сохранения результата в JSON-файл
+def save_score(score):
+    filepath = os.path.join(app.root_path, 'scores.json')
+
+    with lock:
+        # Проверяем, существует ли файл
+        if os.path.exists(filepath):
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        else:
+            data = {}
+
+        # Обновляем счётчик для данного результата
+        score_str = str(score)
+        if score_str in data:
+            data[score_str] += 1
+        else:
+            data[score_str] = 1
+
+        # Сохраняем обновлённые данные
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False)
+
+# Функция для получения статистики из JSON-файла
+def get_stats():
+    filepath = os.path.join(app.root_path, 'scores.json')
+    if os.path.exists(filepath):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data
+    else:
+        return {}
+
+# Маршрут для приёма результатов экзамена
+@app.route('/submit_score', methods=['POST'])
+def submit_score():
+    data = request.get_json()
+    score = data.get('score')
+
+    if score is not None and isinstance(score, int):
+        # Проверяем, что score в допустимом диапазоне
+        if 0 <= score <= 10:
+            save_score(score)
+            return jsonify({'status': 'success'}), 200
+        else:
+            return jsonify({'status': 'error', 'message': 'Invalid score value'}), 400
+    else:
+        return jsonify({'status': 'error', 'message': 'No score provided or invalid data'}), 400
+
+# Маршрут для отображения статистики
+@app.route('/stats')
+def stats():
+    stats_data = get_stats()
+    return render_template('stats.html', stats=stats_data)
 
 # ====== КОНЕЦ НОВОГО КОДА ======
 

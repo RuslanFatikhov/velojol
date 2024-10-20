@@ -32,6 +32,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/course.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
 
+    <script async src="https://tally.so/widgets/embed.js"></script>
+
 </head>
 
 <body>
@@ -80,10 +82,10 @@
             <p class="dark-prime-invert-100" id="result-text"></p>
 
             <span class="column mt24">
-                <button class="button w100 bgaccent100" id="share-button">Поделиться</button>
+                <button data-tally-open="3yEKBx" data-tally-width="370" data-tally-emoji-text="👋" data-tally-emoji-animation="wave" class="button w100 bgaccent100" id="share-button">Поделиться</button>
 
                 <!--Sharebuttons-->
-                <div class="column gap4 mt4 gap4 mb16" id="social-share-buttons" style="display: none;">
+                <div class="column gap4 mt4 gap4 mb16" id="social-share-buttons"  style="display: none;">
                   <button class="row gap4 button w100 bgprime10" data-network="vk"><img src="{{ url_for('static', filename='images/icon/vk.svg') }}">VK</button>
                   <button class="row gap4 button w100 bgprime10" data-network="facebook"><img src="{{ url_for('static', filename='images/icon/facebook.svg') }}">Facebook</button>
                   <button class="row gap4 button w100 bgprime10" data-network="twitter"><img src="{{ url_for('static', filename='images/icon/twitter.svg') }}">Twitter</button>
