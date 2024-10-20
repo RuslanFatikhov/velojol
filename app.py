@@ -4,7 +4,7 @@ import json
 from collections import defaultdict
 from flask import Flask, render_template, jsonify, url_for, abort, send_from_directory, request
 import threading
-
+from transliterate import translit  # Если используете функцию transliterate_city_name
 
 # Добавляем путь к виртуальному окружению (если необходимо)
 sys.path.append('/home/c/cc91451/velojol.kz/venv/lib/python3.10/site-packages/')
