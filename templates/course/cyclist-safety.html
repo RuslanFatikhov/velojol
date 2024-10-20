@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Велосипед и город</title>
+    <title>Безопасность велосипедиста</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Подробная карта велодорожек и велополос города">
@@ -20,7 +20,7 @@
     <meta property="og:url" content="https://velojol.kz">
     <meta property="og:title" content="VELOJOL">
     <meta property="og:description" content="Подробная карта велодорожек и велополос города">
-    <meta property="og:image" content="static/images/landing/meta.jpg">
+    <meta property="og:image" content="static/images/landing/coursemeta.jpg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors_light.css') }}">
@@ -31,6 +31,35 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/course.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2M7C2FWEP4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-2M7C2FWEP4');
+    </script>
+
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+     
+        ym(95219611, "init", {
+             clickmap:true,
+             trackLinks:true,
+             accurateTrackBounce:true,
+             webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/95219611" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
 
 </head>
 
@@ -45,7 +74,7 @@
 
         </a>
 
-        <p style="margin-left: auto; margin-right: auto;" class="dark-prime-invert-100 center bold">Введение</p>
+        <p style="margin-left: auto; margin-right: auto;" class="dark-prime-invert-100 center bold">Безопасность велосипедиста</p>
     </div>
 
     <!--Course-menu-->
@@ -83,8 +112,8 @@
 
             <!--Badges-->
             <span class="gap8 row">
-                <p class="badge_m dark-prime-invert-100 bgprime200">3 урок из 10</p>
-                <p class="badge_m dark-prime-invert-100 bgprime200">14 минут на чтение</p>
+                <p class="badge_m dark-prime-invert-100 bgprime200">3 урок из 8</p>
+                <p class="badge_m dark-prime-invert-100 bgprime200">12 минут на чтение</p>
             </span>
     
             <h1 class="dark-prime-invert-100 mt16 mb8 center">Безопасность велосипедиста</h1>
