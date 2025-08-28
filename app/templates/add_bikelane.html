@@ -1,0 +1,514 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить велодорожку - Velojol 4.0{% endblock %}
+
+{% block head %}
+<style>
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .form-full {
+        grid-column: 1 / -1;
+    }
+    
+    #map {
+        height: 400px;
+        width: 100%;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+    
+    .map-instructions {
+        background: #e8f4fd;
+        border: 1px solid #bee5eb;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .map-instructions h4 {
+        color: #0c5460;
+        margin-bottom: 0.5rem;
+    }
+    
+    .photos-preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .photo-preview {
+        position: relative;
+        border: 2px dashed #ddd;
+        border-radius: 4px;
+        padding: 1rem;
+        text-align: center;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .video-inputs {
+        display: grid;
+        gap: 1rem;
+    }
+    
+    .video-input-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .video-input-group input {
+        flex: 1;
+    }
+    
+    .geometry-status {
+        padding: 0.5rem;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        display: none;
+    }
+    
+    .geometry-status.valid {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .geometry-status.invalid {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .form-section {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-section h3 {
+        margin-bottom: 1rem;
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 0.5rem;
+    }
+    
+    .submit-section {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 2px solid #eee;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Добавить велодорожку</h1>
+<p>Помогите улучшить велоинфраструктуру вашего города!</p>
+
+<form method="POST" enctype="multipart/form-data" id="bikelane-form">
+    
+    <!-- Основная информация -->
+    <div class="form-section">
+        <h3>📍 Основная информация</h3>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="title">Название <span class="required">*</span></label>
+                <input type="text" 
+                       id="title" 
+                       name="title" 
+                       value="{{ form_data.title if form_data else '' }}"
+                       placeholder="Например: ул. Пушкина">
+                <div class="help-text">Укажите название улицы или район</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="track_type">Тип дорожки <span class="required">*</span></label>
+                <select id="track_type" name="track_type">
+                    <option value="">Выберите тип</option>
+                    <option value="separated_lane" 
+                            {% if form_data and form_data.track_type == 'separated_lane' %}selected{% endif %}>
+                        Выделенная полоса
+                    </option>
+                    <option value="bike_path" 
+                            {% if form_data and form_data.track_type == 'bike_path' %}selected{% endif %}>
+                        Велодорожка
+                    </option>
+                    <option value="shared_lane" 
+                            {% if form_data and form_data.track_type == 'shared_lane' %}selected{% endif %}>
+                        Общая полоса
+                    </option>
+                    <option value="bike_boulevard" 
+                            {% if form_data and form_data.track_type == 'bike_boulevard' %}selected{% endif %}>
+                        Велобульвар
+                    </option>
+                    <option value="cycle_track" 
+                            {% if form_data and form_data.track_type == 'cycle_track' %}selected{% endif %}>
+                        Велосипедная дорожка
+                    </option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group form-full">
+            <label for="description">Описание <span class="required">*</span></label>
+            <textarea id="description" 
+                      name="description" 
+                      rows="4" 
+                      placeholder="Опишите состояние дорожки, особенности, проблемы...">{{ form_data.description if form_data else '' }}</textarea>
+            <div class="help-text">Минимум 20 символов. Расскажите о покрытии, безопасности, удобстве использования.</div>
+        </div>
+    </div>
+
+    <!-- Карта -->
+    <div class="form-section">
+        <h3>🗺️ Местоположение на карте</h3>
+        
+        <div class="map-instructions">
+            <h4>Как нарисовать дорожку:</h4>
+            <ul>
+                <li>Кликните на карте, чтобы начать линию</li>
+                <li>Кликайте по карте, чтобы добавить точки маршрута</li>
+                <li>Двойной клик завершит линию</li>
+                <li>Можно перетаскивать точки для корректировки</li>
+            </ul>
+        </div>
+        
+        <div id="map"></div>
+        <div id="geometry-status" class="geometry-status"></div>
+        
+        <input type="hidden" id="geometry" name="geometry" value="{{ form_data.geometry if form_data else '' }}">
+    </div>
+
+    <!-- Фотографии -->
+    <div class="form-section">
+        <h3>📸 Фотографии</h3>
+        
+        <div class="form-group">
+            <label for="photos">Загрузите фото дорожки (до 10 штук)</label>
+            <input type="file" 
+                   id="photos" 
+                   name="photos" 
+                   multiple 
+                   accept="image/*">
+            <div class="help-text">Поддерживаются форматы: JPG, PNG, GIF, WebP. Максимум 10 фотографий.</div>
+        </div>
+        
+        <div id="photos-preview" class="photos-preview"></div>
+    </div>
+
+    <!-- Видео -->
+    <div class="form-section">
+        <h3>🎥 Видео (опционально)</h3>
+        
+        <div class="video-inputs">
+            {% for i in range(3) %}
+            <div class="video-input-group">
+                <label>Видео {{ i + 1 }}:</label>
+                <input type="url" 
+                       name="video_{{ i }}" 
+                       placeholder="https://youtube.com/watch?v=... или ссылка на .mp4"
+                       value="{{ form_data.videos[i] if form_data and form_data.videos and i < form_data.videos|length else '' }}">
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="help-text">Поддерживаются YouTube ссылки и прямые ссылки на mp4 файлы</div>
+    </div>
+
+    <!-- Кнопка отправки -->
+    <div class="submit-section">
+        <button type="submit" class="btn btn-success">
+            🚀 Отправить на модерацию
+        </button>
+        <div class="help-text" style="margin-top: 1rem;">
+            После отправки велодорожка будет проверена модераторами
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Инициализация карты
+let map, drawnItems, drawControl, currentPolyline;
+
+function initMap() {
+    // Создаем карту (центр - Алматы)
+    map = L.map('map').setView([43.2565, 76.9286], 12);
+    
+    // Добавляем тайлы OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Создаем слой для рисования
+    drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+    
+    // Обработчики событий карты для рисования линий
+    let isDrawing = false;
+    let currentPoints = [];
+    
+    map.on('click', function(e) {
+        if (!isDrawing) {
+            // Начинаем новую линию
+            startNewLine(e.latlng);
+        } else {
+            // Добавляем точку к существующей линии
+            addPointToLine(e.latlng);
+        }
+    });
+    
+    map.on('dblclick', function(e) {
+        if (isDrawing) {
+            // Завершаем линию
+            finishLine();
+        }
+    });
+    
+    function startNewLine(latlng) {
+        // Очищаем предыдущие линии
+        drawnItems.clearLayers();
+        
+        // Начинаем новую линию
+        currentPoints = [latlng];
+        currentPolyline = L.polyline(currentPoints, {
+            color: '#3498db',
+            weight: 4,
+            opacity: 0.8
+        }).addTo(drawnItems);
+        
+        isDrawing = true;
+        updateGeometryStatus('Кликайте по карте для добавления точек. Двойной клик завершит линию.', 'info');
+    }
+    
+    function addPointToLine(latlng) {
+        currentPoints.push(latlng);
+        currentPolyline.setLatLngs(currentPoints);
+    }
+    
+    function finishLine() {
+        if (currentPoints.length < 2) {
+            updateGeometryStatus('Линия должна содержать минимум 2 точки', 'invalid');
+            return;
+        }
+        
+        isDrawing = false;
+        
+        // Создаем GeoJSON
+        const coordinates = currentPoints.map(point => [point.lng, point.lat]);
+        const geojson = {
+            type: "LineString",
+            coordinates: coordinates
+        };
+        
+        // Сохраняем в скрытое поле
+        document.getElementById('geometry').value = JSON.stringify(geojson);
+        
+        // Делаем линию редактируемой
+        currentPolyline.editing.enable();
+        
+        // Обновляем статус
+        validateGeometry();
+        
+        updateGeometryStatus('Линия нарисована! Можете перетаскивать точки для корректировки.', 'valid');
+    }
+    
+    // Загружаем существующую геометрию если есть
+    const existingGeometry = document.getElementById('geometry').value;
+    if (existingGeometry) {
+        try {
+            const geojson = JSON.parse(existingGeometry);
+            if (geojson.coordinates && geojson.coordinates.length > 1) {
+                const latlngs = geojson.coordinates.map(coord => [coord[1], coord[0]]);
+                const polyline = L.polyline(latlngs, {
+                    color: '#3498db',
+                    weight: 4,
+                    opacity: 0.8
+                }).addTo(drawnItems);
+                
+                polyline.editing.enable();
+                
+                // Подгоняем карту под линию
+                map.fitBounds(polyline.getBounds());
+                
+                updateGeometryStatus('Линия загружена из сохраненных данных', 'valid');
+            }
+        } catch (e) {
+            console.error('Ошибка при загрузке геометрии:', e);
+        }
+    }
+}
+
+// Валидация геометрии
+function validateGeometry() {
+    const geometryValue = document.getElementById('geometry').value;
+    
+    if (!geometryValue) {
+        return;
+    }
+    
+    fetch('/api/validate-geometry', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ geometry: geometryValue })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.valid) {
+            updateGeometryStatus('✓ Геометрия корректна', 'valid');
+        } else {
+            updateGeometryStatus('✗ ' + data.errors.join(', '), 'invalid');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка валидации:', error);
+    });
+}
+
+function updateGeometryStatus(message, type) {
+    const statusDiv = document.getElementById('geometry-status');
+    statusDiv.textContent = message;
+    statusDiv.className = 'geometry-status ' + type;
+    statusDiv.style.display = 'block';
+}
+
+// Обработка загрузки фотографий
+document.getElementById('photos').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    const preview = document.getElementById('photos-preview');
+    
+    // Очищаем предыдущий превью
+    preview.innerHTML = '';
+    
+    if (files.length > 10) {
+        alert('Максимум 10 фотографий');
+        e.target.value = '';
+        return;
+    }
+    
+    files.forEach((file, index) => {
+        if (!file.type.startsWith('image/')) {
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const photoDiv = document.createElement('div');
+            photoDiv.className = 'photo-preview';
+            photoDiv.innerHTML = `
+                <img src="${e.target.result}" alt="Фото ${index + 1}" 
+                     style="max-width: 100%; max-height: 120px; object-fit: cover; border-radius: 4px;">
+            `;
+            preview.appendChild(photoDiv);
+        };
+        reader.readAsDataURL(file);
+    });
+});
+
+// Валидация формы перед отправкой
+document.getElementById('bikelane-form').addEventListener('submit', function(e) {
+    const title = document.getElementById('title').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const trackType = document.getElementById('track_type').value;
+    const geometry = document.getElementById('geometry').value;
+    
+    let errors = [];
+    
+    if (title.length < 3) {
+        errors.push('Название должно содержать минимум 3 символа');
+    }
+    
+    if (description.length < 20) {
+        errors.push('Описание должно содержать минимум 20 символов');
+    }
+    
+    if (!trackType) {
+        errors.push('Необходимо выбрать тип дорожки');
+    }
+    
+    if (!geometry) {
+        errors.push('Необходимо нарисовать линию на карте');
+    }
+    
+    if (errors.length > 0) {
+        e.preventDefault();
+        alert('Ошибки в форме:\n' + errors.join('\n'));
+        return false;
+    }
+    
+    // Показываем индикатор загрузки
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+});
+
+// Обновляем геометрию при изменении линии
+function updateGeometryFromMap() {
+    drawnItems.eachLayer(function(layer) {
+        if (layer instanceof L.Polyline) {
+            const latlngs = layer.getLatLngs();
+            const coordinates = latlngs.map(latlng => [latlng.lng, latlng.lat]);
+            const geojson = {
+                type: "LineString",
+                coordinates: coordinates
+            };
+            document.getElementById('geometry').value = JSON.stringify(geojson);
+        }
+    });
+}
+
+// Инициализация карты после загрузки страницы
+document.addEventListener('DOMContentLoaded', function() {
+    initMap();
+    
+    // Обновляем геометрию при редактировании
+    map.on('layeredit', updateGeometryFromMap);
+});
+
+// Подсчет символов в описании
+document.getElementById('description').addEventListener('input', function(e) {
+    const length = e.target.value.length;
+    const minLength = 20;
+    
+    // Находим help-text для этого поля
+    const helpText = e.target.parentNode.querySelector('.help-text');
+    
+    if (length < minLength) {
+        helpText.textContent = `Минимум ${minLength} символов. Введено: ${length}`;
+        helpText.style.color = '#e74c3c';
+    } else {
+        helpText.textContent = `Минимум ${minLength} символов. Введено: ${length} ✓`;
+        helpText.style.color = '#27ae60';
+    }
+});
+
+// Подсчет символов в названии
+document.getElementById('title').addEventListener('input', function(e) {
+    const length = e.target.value.length;
+    const minLength = 3;
+    
+    const helpText = e.target.parentNode.querySelector('.help-text');
+    
+    if (length < minLength) {
+        helpText.textContent = `Укажите название улицы или район. Минимум ${minLength} символа: ${length}`;
+        helpText.style.color = '#e74c3c';
+    } else {
+        helpText.textContent = `Укажите название улицы или район ✓`;
+        helpText.style.color = '#27ae60';
+    }
+});
+</script>
+{% endblock %}
