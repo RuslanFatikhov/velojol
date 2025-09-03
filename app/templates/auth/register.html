@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация - Velojol 4.0{% endblock %}
+
+
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header gap-s">
+        <h1 class="prime100">Присоединяйтесь к VELOJOL</h1>
+        <p class="prime100 tac">Создайте аккаунт и станьте частью велосообщества</p>
+    </div>
+
+    <form method="POST" id="registerForm" style="margin-top: var(--spacer-m);">
+
+        <!-- Основная информация -->
+        <div class="form-section">
+            
+            <div class="form-group" id="email-group">
+
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       value="{{ form_data.email if form_data else '' }}"
+                       placeholder="E-mail"
+                       required>
+                <div class="validation-message" id="email-validation"></div>
+            </div>
+            
+
+
+            <div class="form-group" id="nickname-group">
+
+                <input type="text" 
+                       id="nickname" 
+                       name="nickname" 
+                       value="{{ form_data.nickname if form_data else '' }}"
+                       placeholder="Никнейм"
+                       pattern="[a-zA-Z0-9_-]{3,30}"
+                       required>
+                <div class="validation-message" id="nickname-validation"></div>
+            </div>
+            
+
+            <div class="form-group" id="password-group">
+
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       placeholder="Пароль"
+                       minlength="6"
+                       required>
+
+                <div class="password-strength" id="password-strength"></div>
+                <div class="validation-message" id="password-validation"></div>
+            </div>
+        </div>
+
+
+        <h3 class="prime100 header3">Социальные сети</h3>
+
+        <div class="form-section">
+            
+        
+
+            <!-- Strava -->
+            <div class="form-row">  
+                <div class="form-group" id="strava-group">
+
+                    <input type="url" 
+                           id="strava_url" 
+                           name="strava_url" 
+                           value="{{ form_data.strava_url if form_data else '' }}"
+                           placeholder="Strava">
+                    <div class="validation-message" id="strava-validation"></div>
+                </div>
+            </div>
+
+            <!-- Komoot -->
+            <div class="form-group" id="komoot-group">
+
+                    <input type="url" 
+                           id="komoot_url" 
+                           name="komoot_url" 
+                           value="{{ form_data.komoot_url if form_data else '' }}"
+                           placeholder="Komoot">
+                    <div class="validation-message" id="komoot-validation"></div>
+            </div>
+         
+            <!--Telegram-->
+            <div class="form-row">
+                <div class="form-group" id="telegram-group">
+
+                    <input type="url" 
+                        id="telegram_url" 
+                        name="telegram_url" 
+                        value="{{ form_data.telegram_url if form_data else '' }}"
+                        placeholder="Telegram">
+                    <div class="validation-message" id="telegram-validation"></div>
+                </div>
+                <!--Instagram-->
+                <div class="form-group" id="instagram-group">
+
+                    <input type="url" 
+                        id="instagram_url" 
+                        name="instagram_url" 
+                        value="{{ form_data.instagram_url if form_data else '' }}"
+                        placeholder="Instagram">
+                    <div class="validation-message" id="instagram-validation"></div>
+                </div>
+            </div>
+        
+        </div>
+
+            <!-- Кнопка регистрации -->
+            <div class="submit-section">
+                <button type="submit" class="button_square_label btn_accent" id="submitBtn">
+                    Создать аккаунт
+                </button>
+            </div>
+    </form>
+
+    <div class="auth-links">
+        <p>Уже есть аккаунт? <a href="{{ url_for('auth.login') }}">Войти</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Полная валидация формы регистрации
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const inputs = {
+        email: document.getElementById('email'),
+        nickname: document.getElementById('nickname'),
+        password: document.getElementById('password'),
+        avatar_url: document.getElementById('avatar_url'),
+        strava_url: document.getElementById('strava_url'),
+        komoot_url: document.getElementById('komoot_url'),
+        telegram_url: document.getElementById('telegram_url'),
+        instagram_url: document.getElementById('instagram_url')
+    };
+
+    // Валидация email
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    // Валидация никнейма
+    function validateNickname(nickname) {
+        const re = /^[a-zA-Z0-9_-]{3,30}$/;
+        return re.test(nickname);
+    }
+
+    // Валидация пароля и определение силы
+    function validatePassword(password) {
+        const minLength = password.length >= 6;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        let strength = 0;
+        if (minLength) strength++;
+        if (hasUpper) strength++;
+        if (hasLower) strength++;
+        if (hasNumber) strength++;
+        if (hasSpecial) strength++;
+
+        return {
+            isValid: minLength,
+            strength: strength,
+            feedback: getPasswordFeedback(strength, minLength)
+        };
+    }
+
+    function getPasswordFeedback(strength, minLength) {
+        if (!minLength) return { level: 'weak', message: 'Пароль должен содержать минимум 6 символов' };
+        
+        if (strength <= 2) return { level: 'weak', message: 'Слабый пароль. Добавьте заглавные буквы, цифры' };
+        if (strength <= 3) return { level: 'medium', message: 'Средний пароль. Добавьте специальные символы' };
+        return { level: 'strong', message: 'Надежный пароль!' };
+    }
+
+    // Валидация URL
+    function validateURL(url) {
+        if (!url) return true; // Пустые URL разрешены
+        try {
+            const urlObj = new URL(url);
+            return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Показ сообщения валидации
+    function showValidationMessage(fieldName, message, isValid) {
+        const group = document.getElementById(fieldName + '-group');
+        const validation = document.getElementById(fieldName + '-validation');
+        
+        if (group && validation) {
+            group.classList.toggle('valid', isValid);
+            group.classList.toggle('invalid', !isValid);
+            
+            validation.textContent = message;
+            validation.classList.add('show');
+            validation.classList.toggle('success', isValid);
+            validation.classList.toggle('error', !isValid);
+        }
+    }
+
+    // Обработчики событий для валидации
+    inputs.email.addEventListener('input', function(e) {
+        const value = e.target.value.trim();
+        if (value) {
+            const isValid = validateEmail(value);
+            showValidationMessage('email', 
+                isValid ? 'Отлично!' : 'Некорректный формат email', 
+                isValid
+            );
+        } else {
+            document.getElementById('email-group').classList.remove('valid', 'invalid');
+            document.getElementById('email-validation').classList.remove('show');
+        }
+    });
+
+    inputs.nickname.addEventListener('input', function(e) {
+        const value = e.target.value.trim();
+        if (value) {
+            const isValid = validateNickname(value);
+            showValidationMessage('nickname',
+                isValid ? 'Отличный никнейм' : '✗ Используйте только буквы, цифры, дефисы и подчеркивания (3-30 символов)',
+                isValid
+            );
+        } else {
+            document.getElementById('nickname-group').classList.remove('valid', 'invalid');
+            document.getElementById('nickname-validation').classList.remove('show');
+        }
+    });
+
+    inputs.password.addEventListener('input', function(e) {
+        const value = e.target.value;
+        const strengthDiv = document.getElementById('password-strength');
+        
+        if (value) {
+            const result = validatePassword(value);
+            
+            // Показываем силу пароля
+            strengthDiv.style.display = 'block';
+            strengthDiv.className = 'password-strength ' + result.feedback.level;
+            strengthDiv.textContent = result.feedback.message;
+            
+            // Показываем валидацию
+            showValidationMessage('password',
+                result.isValid ? 'Отличный пароль' : 'Минимум 6 символов',
+                result.isValid
+            );
+        } else {
+            strengthDiv.style.display = 'none';
+            document.getElementById('password-group').classList.remove('valid', 'invalid');
+            document.getElementById('password-validation').classList.remove('show');
+        }
+    });
+
+    // Валидация URL полей
+    ['avatar_url', 'strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
+        const input = inputs[fieldName];
+        if (input) {
+            input.addEventListener('blur', function(e) {
+                const value = e.target.value.trim();
+                if (value) {
+                    const isValid = validateURL(value);
+                    showValidationMessage(fieldName,
+                        isValid ? '' : 'Некорректная ссылка',
+                        isValid
+                    );
+                } else {
+                    document.getElementById(fieldName + '-group').classList.remove('valid', 'invalid');
+                    const validation = document.getElementById(fieldName + '-validation');
+                    if (validation) validation.classList.remove('show');
+                }
+            });
+        }
+    });
+
+    // Валидация формы перед отправкой
+    form.addEventListener('submit', function(e) {
+        const email = inputs.email.value.trim();
+        const nickname = inputs.nickname.value.trim();
+        const password = inputs.password.value;
+
+        let isFormValid = true;
+        let errors = [];
+
+        // Проверка обязательных полей
+        if (!email) {
+            errors.push('Email обязателен');
+            isFormValid = false;
+        } else if (!validateEmail(email)) {
+            errors.push('Некорректный email');
+            isFormValid = false;
+        }
+
+        if (!nickname) {
+            errors.push('Никнейм обязателен');
+            isFormValid = false;
+        } else if (!validateNickname(nickname)) {
+            errors.push('Некорректный никнейм');
+            isFormValid = false;
+        }
+
+        if (!password) {
+            errors.push('Пароль обязателен');
+            isFormValid = false;
+        } else if (password.length < 6) {
+            errors.push('Пароль слишком короткий');
+            isFormValid = false;
+        }
+
+        // Проверка URL полей
+        ['avatar_url', 'strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
+            const value = inputs[fieldName].value.trim();
+            if (value && !validateURL(value)) {
+                errors.push(`Некорректная ссылка в поле ${fieldName.replace('_url', '')}`);
+                isFormValid = false;
+            }
+        });
+
+        if (!isFormValid) {
+            e.preventDefault();
+            alert('Ошибки в форме:\n' + errors.join('\n'));
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '🔄 Создание аккаунта...';
+    });
+});
+</script>
+{% endblock %}

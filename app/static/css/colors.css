@@ -1,0 +1,23 @@
+:root {
+    --bg1: #FEFEFE;
+	--bg3 : #F2F2F2;
+    --bg4 :#E6E6E6;
+
+    --prime100: #121212;
+
+    --secondary100:#6A6A6A;
+
+    --accent80: #D6F3DD;
+    --accent100:#34C759;
+    --accent200:#2AA248;
+
+    --prime_invert100:#fefefe;
+}
+
+.prime100{
+    color: var(--prime100);
+}
+
+.secondary100{
+    color: var(--secondary100);
+}

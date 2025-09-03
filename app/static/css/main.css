@@ -1,0 +1,144 @@
+
+
+*{
+    box-sizing: border-box;
+
+    --spacer:4px;
+    --spacer-s:8px;
+    --spacer-sm:12px;
+    --spacer-m: 16px;
+    --spacer-l: 24px;
+    --spacer-xl: 32px;
+    --spacer-xxl:48px;
+    --spacer-xxxl:64px;
+    --spacer-80:80px;
+    --spacer-100: 100px
+}
+
+body{
+    background-color: var(--bg3);
+}
+
+header{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--bg3);
+    padding-left: var(--spacer-m);
+    padding-right: var(--spacer-m);
+    padding: 12px;
+}
+
+footer{
+    padding-top: var(--spacer-m);
+    padding-bottom: var(--spacer100);
+}
+
+main{
+    padding-top: var(--spacer-100);
+    padding-bottom: var(--spacer-100);
+}
+
+.divider{
+    width: 100%;
+    height: 0.5px;
+    background-color: var(--secondary100);
+    border-radius: 100%;
+}
+
+.hstack{
+    display: flex;
+    flex-direction: row;
+}
+
+.aic{
+    align-items: center;
+}
+
+.gap-s{
+    gap: var(--spacer-s);
+}
+
+.gap-m{
+    gap: var(--spacer-m);
+}
+
+.auth-container{
+    background-color: var(--bg1);
+    padding: var(--spacer-m);
+    border-radius: var(--spacer-m);
+    max-width: 390px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.auth-links{
+    padding-top: var(--spacer-l);
+    padding-bottom: var(--spacer-l);
+}
+
+.auth-header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group{
+    width: 100%;
+}
+
+.input_login_form, .form-section{
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    border-radius: var(--spacer-m);
+    border: 0.5px solid var(--secondary100);
+    overflow: hidden;
+    
+}
+
+.form-section input{
+    border-bottom: 0.5px solid var(--secondary100);
+}
+
+.form-section input:last-child{
+    border-bottom: 0px;
+}
+
+input{
+    width: 100%;
+    height: 50px;
+    border: none;
+    background-color: var(--bg3);
+    padding: var(--spacer-m);
+    color: var(--secondary100);
+}
+
+input:focus-visible{
+    border: 0px !important;
+}
+
+.submit-section{
+    padding-top: var(--spacer-sm);
+    
+}
+
+.validation-message{
+    display: none;
+}
+
+@media (max-width: 768px) {
+    
+    header{
+        background-color: var(--bg1);
+        border-radius: 0px 0px 16px 16px;
+    }
+
+}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Вход | Velojol{% endblock %}
+
+
+
+{% block content %}
+<div class="auth-container">
+
+    <form method="POST">
+        <div class="input_login_form">
+            <div class="form-group">
+                <input type="email" 
+                    id="email" 
+                    name="email" 
+                    value="{{ form_data.email if form_data else '' }}"
+                    placeholder="email"
+                    required
+                    autofocus>
+            </div>
+            <span class="divider"></span>
+            <div class="form-group">
+                <input type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="пароль"
+                    required>
+            </div>
+        </div>
+        
+        <!--div class="remember-me">
+            <input type="checkbox" id="remember_me" name="remember_me">
+            <label for="remember_me">Запомнить меня</label>
+        </div-->
+
+        <div class="submit-section">
+            <button type="submit" class="button_square_label btn_accent">
+                Войти
+            </button>
+        </div>
+    </form>
+
+    <div class="auth-links">
+
+        <span class="hstack aic gap-m">
+            <span class="divider"></span>
+            <p>или</p>
+            <span class="divider"></span>
+        </span>
+        <a style="margin-top: var(--spacer-l);" class="button_square_label btn_gray" href="{{ url_for('auth.register') }}">Создать аккаунт</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+
+<script>
+// Простая валидация формы
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    
+    // Валидация email в реальном времени
+    emailInput.addEventListener('blur', function(e) {
+        const value = e.target.value;
+        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        
+        if (value.length > 0) {
+            e.target.style.borderColor = isValid ? '#27ae60' : '#e74c3c';
+        }
+    });
+    
+    // Сброс стилей при фокусе
+    [emailInput, passwordInput].forEach(input => {
+        input.addEventListener('focus', function(e) {
+            e.target.style.borderColor = '#3498db';
+        });
+    });
+    
+    // Валидация перед отправкой
+    form.addEventListener('submit', function(e) {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        
+        if (!email || !password) {
+            e.preventDefault();
+            alert('Пожалуйста, заполните все обязательные поля');
+            return;
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            e.preventDefault();
+            alert('Пожалуйста, введите корректный email');
+            return;
+        }
+        
+        // Показываем индикатор загрузки
+        const submitBtn = document.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Вход...';
+    });
+});
+</script>
+{% endblock %}
