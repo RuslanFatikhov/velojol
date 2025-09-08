@@ -23,6 +23,7 @@ header{
     position: fixed;
     left: 0px;
     top: 0px;
+    z-index: 100;
     width: 100vw;
     height: 80px;
     display: flex;
@@ -37,7 +38,7 @@ header{
 
 footer{
     padding-top: var(--spacer-m);
-    padding-bottom: var(--spacer100);
+    padding-bottom: 150px;
 }
 
 main{
@@ -45,16 +46,42 @@ main{
     padding-bottom: var(--spacer-100);
 }
 
+.profile-actions{
+    margin-top: var(--spacer-m);
+}
+
 .divider{
+    display: block;
     width: 100%;
     height: 0.5px;
     background-color: var(--secondary100);
     border-radius: 100%;
+    margin-top: var(--spacer-s);
+    margin-bottom: var(--spacer-s);
+}
+
+.icon-small{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.w100{
+    width: 100%;
+}
+
+.mt-m{
+    margin-top: var(--spacer-m);
 }
 
 .hstack{
     display: flex;
     flex-direction: row;
+}
+
+.vstack{
+    display: flex;
+    flex-direction: column;
 }
 
 .aic{
@@ -132,6 +159,31 @@ input:focus-visible{
 
 .validation-message{
     display: none;
+}
+
+.password-strength{
+    padding-left: var(--spacer-m);
+    font-size: var(--spacer-m);
+    line-height: var(--spacer-xxl);
+}
+
+.graph{
+    border-right: 1px solid var(--secondary40);
+}
+
+.badge_gs{
+    display: flex;
+    flex-direction: row;
+    background-color: var(--secondary20);
+    gap: var(--spacer-s);
+    padding: var(--spacer-s) var(--spacer-m);
+    border-radius: var(--spacer-m);
+}
+
+.social-links, .profile-actions{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
 }
 
 @media (max-width: 768px) {

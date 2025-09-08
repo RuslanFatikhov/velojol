@@ -1,0 +1,57 @@
+
+    /* Стили для flash-сообщений */
+    .flash-messages {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        padding: var(--spacer-m);
+    }
+    
+    .flash-message {
+        padding: var(--spacer-m);
+        margin-bottom: var(--spacer-s);
+        border-radius: var(--spacer-s);
+        font-size: var(--spacer-m);
+        line-height: 120%;
+    }
+    
+    .flash-error {
+        background-color: #fee;
+        color: #c33;
+        border: 1px solid #fcc;
+    }
+    
+    .flash-success {
+        background-color: #efe;
+        color: #363;
+        border: 1px solid #cfc;
+    }
+    
+    .flash-info {
+        background-color: #eef;
+        color: #336;
+        border: 1px solid #ccf;
+    }
+    
+    .flash-warning {
+        background-color: #ffe;
+        color: #663;
+        border: 1px solid #ffc;
+    }
+    
+    /* Анимация появления сообщений */
+    .flash-message {
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }

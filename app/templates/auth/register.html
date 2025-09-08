@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Регистрация - Velojol 4.0{% endblock %}
+{% block title %}Регистрация{% endblock %}
 
 
 
@@ -11,13 +11,25 @@
         <p class="prime100 tac">Создайте аккаунт и станьте частью велосообщества</p>
     </div>
 
+    <!-- Flash сообщения -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <form method="POST" id="registerForm" style="margin-top: var(--spacer-m);">
 
         <!-- Основная информация -->
         <div class="form-section">
             
             <div class="form-group" id="email-group">
-
                 <input type="email" 
                        id="email" 
                        name="email" 
@@ -27,10 +39,7 @@
                 <div class="validation-message" id="email-validation"></div>
             </div>
             
-
-
             <div class="form-group" id="nickname-group">
-
                 <input type="text" 
                        id="nickname" 
                        name="nickname" 
@@ -41,32 +50,24 @@
                 <div class="validation-message" id="nickname-validation"></div>
             </div>
             
-
             <div class="form-group" id="password-group">
-
                 <input type="password" 
                        id="password" 
                        name="password" 
                        placeholder="Пароль"
                        minlength="6"
                        required>
-
                 <div class="password-strength" id="password-strength"></div>
                 <div class="validation-message" id="password-validation"></div>
             </div>
         </div>
 
-
         <h3 class="prime100 header3">Социальные сети</h3>
 
         <div class="form-section">
-            
-        
-
             <!-- Strava -->
             <div class="form-row">  
                 <div class="form-group" id="strava-group">
-
                     <input type="url" 
                            id="strava_url" 
                            name="strava_url" 
@@ -74,23 +75,21 @@
                            placeholder="Strava">
                     <div class="validation-message" id="strava-validation"></div>
                 </div>
-            </div>
-
-            <!-- Komoot -->
-            <div class="form-group" id="komoot-group">
-
+                
+                <!-- Komoot -->
+                <div class="form-group" id="komoot-group">
                     <input type="url" 
                            id="komoot_url" 
                            name="komoot_url" 
                            value="{{ form_data.komoot_url if form_data else '' }}"
                            placeholder="Komoot">
                     <div class="validation-message" id="komoot-validation"></div>
+                </div>
             </div>
          
-            <!--Telegram-->
+            <!-- Telegram и Instagram -->
             <div class="form-row">
                 <div class="form-group" id="telegram-group">
-
                     <input type="url" 
                         id="telegram_url" 
                         name="telegram_url" 
@@ -98,9 +97,8 @@
                         placeholder="Telegram">
                     <div class="validation-message" id="telegram-validation"></div>
                 </div>
-                <!--Instagram-->
+                
                 <div class="form-group" id="instagram-group">
-
                     <input type="url" 
                         id="instagram_url" 
                         name="instagram_url" 
@@ -109,19 +107,19 @@
                     <div class="validation-message" id="instagram-validation"></div>
                 </div>
             </div>
-        
         </div>
 
-            <!-- Кнопка регистрации -->
-            <div class="submit-section">
-                <button type="submit" class="button_square_label btn_accent" id="submitBtn">
-                    Создать аккаунт
-                </button>
-            </div>
+        <!-- Кнопка регистрации -->
+        <div class="submit-section">
+            <button type="submit" class="button_square_label btn_accent" id="submitBtn">
+                Создать аккаунт
+            </button>
+        </div>
     </form>
 
-    <div class="auth-links">
-        <p>Уже есть аккаунт? <a href="{{ url_for('auth.login') }}">Войти</a></p>
+    <div class="vstack gap-s aic" style="margin-top: var(--spacer-xl);">
+        <p class="prime100 tac">Уже есть аккаунт?</p>
+        <a class="button_square_label btn_gray" href="{{ url_for('auth.login') }}">Войти</a>
     </div>
 </div>
 {% endblock %}
@@ -135,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
         email: document.getElementById('email'),
         nickname: document.getElementById('nickname'),
         password: document.getElementById('password'),
-        avatar_url: document.getElementById('avatar_url'),
         strava_url: document.getElementById('strava_url'),
         komoot_url: document.getElementById('komoot_url'),
         telegram_url: document.getElementById('telegram_url'),
@@ -177,11 +174,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getPasswordFeedback(strength, minLength) {
-        if (!minLength) return { level: 'weak', message: 'Пароль должен содержать минимум 6 символов' };
+        if (!minLength) return { level: 'weak', message: 'Минимум 6 символов' };
         
-        if (strength <= 2) return { level: 'weak', message: 'Слабый пароль. Добавьте заглавные буквы, цифры' };
-        if (strength <= 3) return { level: 'medium', message: 'Средний пароль. Добавьте специальные символы' };
-        return { level: 'strong', message: 'Надежный пароль!' };
+        if (strength <= 2) return { level: 'weak', message: 'Слабый пароль' };
+        if (strength <= 3) return { level: 'medium', message: 'Средний пароль' };
+        return { level: 'strong', message: 'Надежный пароль' };
     }
 
     // Валидация URL
@@ -217,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (value) {
             const isValid = validateEmail(value);
             showValidationMessage('email', 
-                isValid ? 'Отлично!' : 'Некорректный формат email', 
+                isValid ? '✓ Email корректен' : 'Некорректный формат email', 
                 isValid
             );
         } else {
@@ -231,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (value) {
             const isValid = validateNickname(value);
             showValidationMessage('nickname',
-                isValid ? 'Отличный никнейм' : '✗ Используйте только буквы, цифры, дефисы и подчеркивания (3-30 символов)',
+                isValid ? '✓ Никнейм корректен' : 'Используйте только буквы, цифры, дефисы и подчеркивания (3-30 символов)',
                 isValid
             );
         } else {
@@ -254,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Показываем валидацию
             showValidationMessage('password',
-                result.isValid ? 'Отличный пароль' : 'Минимум 6 символов',
+                result.isValid ? '✓ Пароль принят' : 'Минимум 6 символов',
                 result.isValid
             );
         } else {
@@ -265,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Валидация URL полей
-    ['avatar_url', 'strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
+    ['strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
         const input = inputs[fieldName];
         if (input) {
             input.addEventListener('blur', function(e) {
@@ -273,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (value) {
                     const isValid = validateURL(value);
                     showValidationMessage(fieldName,
-                        isValid ? '' : 'Некорректная ссылка',
+                        isValid ? '✓ Ссылка корректна' : 'Некорректная ссылка',
                         isValid
                     );
                 } else {
@@ -320,11 +317,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Проверка URL полей
-        ['avatar_url', 'strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
-            const value = inputs[fieldName].value.trim();
-            if (value && !validateURL(value)) {
-                errors.push(`Некорректная ссылка в поле ${fieldName.replace('_url', '')}`);
-                isFormValid = false;
+        ['strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
+            const input = inputs[fieldName];
+            if (input) {
+                const value = input.value.trim();
+                if (value && !validateURL(value)) {
+                    errors.push(`Некорректная ссылка в поле ${fieldName.replace('_url', '')}`);
+                    isFormValid = false;
+                }
             }
         });
 
@@ -338,7 +338,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
         submitBtn.textContent = '🔄 Создание аккаунта...';
+        
+        // Возвращаем обратно если что-то пойдет не так (через 10 секунд)
+        setTimeout(function() {
+            if (submitBtn.disabled) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Создать аккаунт';
+            }
+        }, 10000);
     });
+    
+    // Автоматическое скрытие flash-сообщений через 7 секунд
+    setTimeout(function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(function(message) {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(-10px)';
+            message.style.transition = 'opacity 0.5s, transform 0.5s';
+            
+            setTimeout(function() {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 500);
+        });
+    }, 7000);
 });
 </script>
 {% endblock %}

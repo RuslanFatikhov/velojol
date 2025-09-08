@@ -2,10 +2,25 @@
 
 {% block title %}Вход | Velojol{% endblock %}
 
+{% block head %}
 
+{% endblock %}
 
 {% block content %}
 <div class="auth-container">
+    
+    <!-- Flash сообщения -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
     <form method="POST">
         <div class="input_login_form">
@@ -34,14 +49,13 @@
         </div-->
 
         <div class="submit-section">
-            <button type="submit" class="button_square_label btn_accent">
+            <button type="submit" class="button_square_label btn_accent" id="loginBtn">
                 Войти
             </button>
         </div>
     </form>
 
     <div class="auth-links">
-
         <span class="hstack aic gap-m">
             <span class="divider"></span>
             <p>или</p>
@@ -53,14 +67,13 @@
 {% endblock %}
 
 {% block scripts %}
-
-
 <script>
 // Простая валидация формы
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
     
     // Валидация email в реальном времени
     emailInput.addEventListener('blur', function(e) {
@@ -97,10 +110,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Показываем индикатор загрузки
-        const submitBtn = document.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Вход...';
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Вход...';
+        
+        // Возвращаем обратно если что-то пойдет не так (через 5 секунд)
+        setTimeout(function() {
+            if (loginBtn.disabled) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Войти';
+            }
+        }, 5000);
     });
+    
+    // Автоматическое скрытие flash-сообщений через 5 секунд
+    setTimeout(function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(function(message) {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(-10px)';
+            message.style.transition = 'opacity 0.5s, transform 0.5s';
+            
+            setTimeout(function() {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 500);
+        });
+    }, 5000);
 });
 </script>
 {% endblock %}

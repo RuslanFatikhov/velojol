@@ -1,0 +1,21 @@
+.profile-container{
+    padding-left: var(--spacer-sm);
+    padding-right: var(--spacer-sm);
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-m);
+    background-color: var(--bg1);
+    padding: var(--spacer-m);
+    border-radius: var(--spacer-m);
+    filter: drop-shadow(0px 4px 16px rgba(54, 55, 98, 0.10));
+}
+
+.profile-avatar{
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+    object-fit: cover;
+}

@@ -3,6 +3,10 @@ button{
     width: 100%;
 }
 
+a{
+    text-decoration: none;
+}
+
 .button_square_label{
     display: flex;
     flex-direction: row;
@@ -14,6 +18,7 @@ button{
     text-decoration: none;
     transition: background-color 0.1s ease;
     border-radius: var(--spacer-m);
+    width: 100%;
 }
 
 .button_square_label:hover{
@@ -33,4 +38,33 @@ button{
 .btn_gray{
     background-color: var(--bg3);
     color: var(--prime100);
+}
+
+.btn_black{
+    background-color: var(--prime100);
+    color: var(--prime_invert100);
+}
+
+.button_wrapper_fixed{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    padding: var(--spacer-l) var(--spacer-m);
+    z-index: 1000;
+}
+
+.cell{
+    width: 100%;
+    height: 48px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: var(--prime100);
+    gap: var(--spacer-s);
+}
+
+.chevron_right{
+    position: absolute;
+    right: var(--spacer-m)
 }

@@ -1,259 +1,118 @@
 {% extends "base.html" %}
 
-{% block title %}Профиль {{ user.nickname }} - Velojol 4.0{% endblock %}
+{% block title %}Профиль {{ user.nickname }} - VELOJOL{% endblock %}
 
-{% block head %}
-<style>
-    .profile-container {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .profile-header {
-        background: linear-gradient(135deg, #3498db, #2c3e50);
-        color: white;
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    
-    .profile-avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        border: 4px solid white;
-        margin-bottom: 1rem;
-        object-fit: cover;
-    }
-    
-    .profile-name {
-        font-size: 1.8rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    
-    .profile-email {
-        opacity: 0.9;
-        font-size: 1rem;
-    }
-    
-    .profile-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    
-    .stat-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #3498db;
-        margin-bottom: 0.5rem;
-    }
-    
-    .stat-label {
-        color: #666;
-        font-size: 0.9rem;
-    }
-    
-    .profile-sections {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
-    
-    .profile-section {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .section-title {
-        color: #2c3e50;
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #ecf0f1;
-    }
-    
-    .social-links {
-        list-style: none;
-    }
-    
-    .social-link {
-        margin-bottom: 0.75rem;
-    }
-    
-    .social-link a {
-        display: flex;
-        align-items: center;
-        color: #3498db;
-        text-decoration: none;
-        padding: 0.5rem;
-        border-radius: 4px;
-        transition: background 0.3s;
-    }
-    
-    .social-link a:hover {
-        background: #f8f9fa;
-    }
-    
-    .social-icon {
-        width: 20px;
-        margin-right: 0.75rem;
-    }
-    
-    .no-social {
-        color: #666;
-        font-style: italic;
-    }
-    
-    .profile-actions {
-        text-align: center;
-        margin-top: 2rem;
-    }
-    
-    .btn-outline {
-        background: transparent;
-        color: #3498db;
-        border: 2px solid #3498db;
-    }
-    
-    .btn-outline:hover {
-        background: #3498db;
-        color: white;
-    }
-    
-    .member-since {
-        color: #666;
-        font-size: 0.9rem;
-        margin-top: 1rem;
-    }
-    
-    @media (max-width: 768px) {
-        .profile-sections {
-            grid-template-columns: 1fr;
-        }
-        
-        .profile-stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-</style>
-{% endblock %}
+
 
 {% block content %}
 <div class="profile-container">
+
+    <div class="button_wrapper_fixed">
+        <a href="{{ url_for('main.add_bikelane') }}" class="button_square_label btn_black">
+            Добавить велодорожку
+        </a>
+    </div>
+
     <!-- Заголовок профиля -->
     <div class="profile-header">
-        <img src="{{ user.display_avatar }}" alt="Аватар {{ user.nickname }}" class="profile-avatar">
-        <div class="profile-name">{{ user.nickname }}</div>
-        <div class="profile-email">{{ user.email }}</div>
-        <div class="member-since">
-            Участник с {{ user.created_at.strftime('%B %Y') }}
+        <div class="hstack gap-m aic">
+            <img src="{{ user.display_avatar }}" alt="Аватар {{ user.nickname }}" class="profile-avatar">
+
+            <span class="vstack gap-s">
+                <h2 class="prime100 profile-name">{{ user.nickname }}</h2>
+
+                <span class="badge_gs">
+                    <img src="{{ url_for('static', filename='img/icon/ball_icon.svg') }}" alt="Велосипед" class="icon-small">
+                    <p class="stat-number">0</p>
+                    
+                </span>
+                
+                
         </div>
+
+        <div class="hstack w100">
+            <span class="vstack graph w100 aic gap-s">
+                    <p class="stat-number">0</p>
+                    <p class="prime100">дорожек</p>
+            </span>
+
+
+            <span class="vstack graph w100 aic gap-s">
+                    <p class="stat-number">0</p>
+                    <p class="prime100">маршрутов</p>
+            </span>
+
+            <span class="vstack w100 aic gap-s">
+                    <p class="stat-number">0</p>
+                    <p class="prime100">точек</p>
+            </span>
+        </div>
+
+            <!--div class="profile-email">{{ user.email }}</div-->
+            <!--div class="member-since">
+                Участник с {{ user.created_at.strftime('%B %Y') }}
+            </div-->
     </div>
 
-    <!-- Статистика -->
-    <div class="profile-stats">
-        <div class="stat-card">
-            <div class="stat-number">0</div>
-            <div class="stat-label">Добавлено дорожек</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">0</div>
-            <div class="stat-label">Баллов заработано</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ user.created_at.strftime('%d.%m.%Y') }}</div>
-            <div class="stat-label">Дата регистрации</div>
-        </div>
-    </div>
+
 
     <!-- Секции профиля -->
-    <div class="profile-sections">
-        <!-- Социальные сети -->
-        <div class="profile-section">
-            <h3 class="section-title">🔗 Социальные сети</h3>
+    <div class="profile-section mt-m">
             
             {% set social_links = user.get_social_links() %}
             {% if social_links %}
                 <ul class="social-links">
                     {% for platform, url in social_links.items() %}
-                        <li class="social-link">
-                            <a href="{{ url }}" target="_blank" rel="noopener">
-                                <span class="social-icon">
-                                    {% if platform == 'Strava' %}🏃
-                                    {% elif platform == 'Komoot' %}🗺️
-                                    {% elif platform == 'Telegram' %}💬
-                                    {% elif platform == 'Instagram' %}📸
+                        <li>
+                            <a href="{{ url }}" class="prime100 cell" target="_blank" rel="noopener">
+                                <span class="icon-small">
+                                    {% if platform == 'Strava' %} <img src="{{ url_for('static', filename='img/icon/strava.svg') }}" alt="Strava" class="icon-small">
+                                    {% elif platform == 'Komoot' %} <img src="{{ url_for('static', filename='img/icon/komoot.svg') }}" alt="Komoot" class="icon-small">
+                                    {% elif platform == 'Telegram' %}<img src="{{ url_for('static', filename='img/icon/telegram.svg') }}" alt="Telegram" class="icon-small">
+                                    {% elif platform == 'Instagram' %}<img src="{{ url_for('static', filename='img/icon/instagram.svg') }}" alt="Instagram" class="icon-small">
                                     {% else %}🔗
                                     {% endif %}
                                 </span>
                                 {{ platform }}
+                                <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
                             </a>
+
+
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p class="no-social">Социальные сети не указаны</p>
+                
             {% endif %}
-        </div>
-
-        <!-- Активность -->
-        <div class="profile-section">
-            <h3 class="section-title">📊 Активность</h3>
-            <p>Последняя активность: {{ user.updated_at.strftime('%d.%m.%Y в %H:%M') }}</p>
-            <p>Аккаунт создан: {{ user.created_at.strftime('%d.%m.%Y в %H:%M') }}</p>
-            
-            <!-- В будущем здесь будут последние добавленные дорожки -->
-            <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
-                <p style="margin: 0; color: #666; font-size: 0.9rem;">
-                    🚧 Скоро здесь появится история ваших добавленных велодорожек
-                </p>
-            </div>
-        </div>
     </div>
+
+    <span class="divider"></span>
 
     <!-- Действия -->
     <div class="profile-actions">
-        <a href="{{ url_for('main.add_bikelane') }}" class="btn btn-success">
-            🚴 Добавить велодорожку
+
+        <a href="{{ url_for('auth.logout') }}" class="cell">
+            <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="help" class="icon-small">
+            Редактировать профиль
+
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
+        </a>
+
+
+        <a href="{{ url_for('auth.logout') }}" class="cell">
+            <img src="{{ url_for('static', filename='img/icon/help.svg') }}" alt="help" class="icon-small">
+            Помощь
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
         </a>
         
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline">
-            🚪 Выйти
+        <span class="divider"></span>
+        
+        <a href="{{ url_for('auth.logout') }}" class="cell">
+            <img src="{{ url_for('static', filename='img/icon/door.svg') }}" alt="Выйти" class="icon-small">
+            Выйти
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
         </a>
     </div>
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-// Анимация появления элементов
-document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.stat-card, .profile-section');
-    
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        
-        setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-});
-</script>
-{% endblock %}
