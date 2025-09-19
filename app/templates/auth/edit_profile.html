@@ -1,0 +1,477 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать профиль - VELOJOL{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header gap-s">
+        <h1 class="prime100">Редактировать профиль</h1>
+        <p class="prime100 tac">Обновите информацию о себе</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="editProfileForm" style="margin-top: var(--spacer-m);">
+
+        <!-- Основная информация -->
+        <div class="form-section">
+            
+            <div class="form-group" id="nickname-group">
+                <input type="text" 
+                       id="nickname" 
+                       name="nickname" 
+                       value="{{ form_data.nickname if form_data else '' }}"
+                       placeholder="Никнейм"
+                       pattern="[a-zA-Z0-9_-]{3,30}"
+                       required>
+                <div class="validation-message" id="nickname-validation"></div>
+            </div>
+
+            <div class="form-group" id="email-group">
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       value="{{ form_data.email if form_data else '' }}"
+                       placeholder="E-mail"
+                       required>
+                <div class="validation-message" id="email-validation"></div>
+            </div>
+        </div>
+
+        <h3 class="prime100 header3">Смена пароля</h3>
+        <p class="secondary100" style="margin-bottom: var(--spacer-m);">Оставьте пустым, если не хотите менять пароль</p>
+
+        <div class="form-section">
+            <div class="form-group" id="current-password-group">
+                <input type="password" 
+                       id="current_password" 
+                       name="current_password" 
+                       placeholder="Текущий пароль">
+                <div class="validation-message" id="current-password-validation"></div>
+            </div>
+
+            <div class="form-group" id="new-password-group">
+                <input type="password" 
+                       id="new_password" 
+                       name="new_password" 
+                       placeholder="Новый пароль"
+                       minlength="6">
+                <div class="password-strength" id="password-strength"></div>
+                <div class="validation-message" id="new-password-validation"></div>
+            </div>
+
+            <div class="form-group" id="confirm-password-group">
+                <input type="password" 
+                       id="confirm_password" 
+                       name="confirm_password" 
+                       placeholder="Подтвердите новый пароль">
+                <div class="validation-message" id="confirm-password-validation"></div>
+            </div>
+        </div>
+
+        <h3 class="prime100 header3">Аватар</h3>
+
+        <div class="form-section">
+            <!-- Текущий аватар -->
+            {% if current_user.display_avatar %}
+            <div class="current-avatar">
+                <img src="{{ current_user.display_avatar }}" alt="Текущий аватар" class="avatar-preview">
+                <p class="secondary100">Текущий аватар</p>
+            </div>
+            {% endif %}
+            
+            <!-- Загрузка нового аватара -->
+            <div class="form-group" id="avatar-group">
+                <input type="file" 
+                       id="avatar" 
+                       name="avatar" 
+                       accept="image/*"
+                       class="file-input">
+                <label for="avatar" class="file-input-label">
+                    <span class="file-input-text">Выберите новый аватар</span>
+                    <span class="file-input-button">Обзор</span>
+                </label>
+                <div class="file-info">
+                    <p class="secondary100">JPG, PNG, GIF, WebP • Максимум 5MB</p>
+                </div>
+                <div class="validation-message" id="avatar-validation"></div>
+                
+                <!-- Предпросмотр нового аватара -->
+                <div class="avatar-preview-container" id="avatarPreview" style="display: none;">
+                    <img id="avatarPreviewImg" alt="Предпросмотр аватара" class="avatar-preview">
+                    <button type="button" class="remove-avatar" onclick="clearAvatarPreview()">✕</button>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="prime100 header3">Социальные сети</h3>
+
+        <div class="form-section">
+            <!-- Strava -->
+            <div class="form-group" id="strava-group">
+                <input type="url" 
+                       id="strava_url" 
+                       name="strava_url" 
+                       value="{{ form_data.strava_url if form_data else '' }}"
+                       placeholder="Strava">
+                <div class="validation-message" id="strava-validation"></div>
+            </div>
+
+            <!-- Komoot -->
+            <div class="form-group" id="komoot-group">
+                <input type="url" 
+                       id="komoot_url" 
+                       name="komoot_url" 
+                       value="{{ form_data.komoot_url if form_data else '' }}"
+                       placeholder="Komoot">
+                <div class="validation-message" id="komoot-validation"></div>
+            </div>
+         
+            <!-- Telegram -->
+            <div class="form-group" id="telegram-group">
+                <input type="url" 
+                       id="telegram_url" 
+                       name="telegram_url" 
+                       value="{{ form_data.telegram_url if form_data else '' }}"
+                       placeholder="Telegram">
+                <div class="validation-message" id="telegram-validation"></div>
+            </div>
+
+            <!-- Instagram -->
+            <div class="form-group" id="instagram-group">
+                <input type="url" 
+                       id="instagram_url" 
+                       name="instagram_url" 
+                       value="{{ form_data.instagram_url if form_data else '' }}"
+                       placeholder="Instagram">
+                <div class="validation-message" id="instagram-validation"></div>
+            </div>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="submit-section">
+            <button type="submit" class="button_square_label btn_accent" id="submitBtn">
+                Сохранить изменения
+            </button>
+        </div>
+    </form>
+
+    <div class="auth-links">
+        <a href="{{ url_for('auth.profile') }}" class="button_square_label btn_gray">
+            Отменить
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Валидация формы редактирования профиля
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editProfileForm');
+    const inputs = {
+        nickname: document.getElementById('nickname'),
+        email: document.getElementById('email'),
+        current_password: document.getElementById('current_password'),
+        new_password: document.getElementById('new_password'),
+        confirm_password: document.getElementById('confirm_password'),
+        avatar: document.getElementById('avatar'),
+        strava_url: document.getElementById('strava_url'),
+        komoot_url: document.getElementById('komoot_url'),
+        telegram_url: document.getElementById('telegram_url'),
+        instagram_url: document.getElementById('instagram_url')
+    };
+
+    // Функции валидации (те же что в register.html)
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    function validateNickname(nickname) {
+        const re = /^[a-zA-Z0-9_-]{3,30}$/;
+        return re.test(nickname);
+    }
+
+    function validatePassword(password) {
+        const minLength = password.length >= 6;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        let strength = 0;
+        if (minLength) strength++;
+        if (hasUpper) strength++;
+        if (hasLower) strength++;
+        if (hasNumber) strength++;
+        if (hasSpecial) strength++;
+
+        return {
+            isValid: minLength,
+            strength: strength,
+            feedback: getPasswordFeedback(strength, minLength)
+        };
+    }
+
+    function getPasswordFeedback(strength, minLength) {
+        if (!minLength) return { level: 'weak', message: 'Пароль должен содержать минимум 6 символов' };
+        
+        if (strength <= 2) return { level: 'weak', message: 'Слабый пароль. Добавьте заглавные буквы, цифры' };
+        if (strength <= 3) return { level: 'medium', message: 'Средний пароль. Добавьте специальные символы' };
+        return { level: 'strong', message: 'Надежный пароль!' };
+    }
+
+    function validateURL(url) {
+        if (!url) return true; // Пустые URL разрешены
+        try {
+            const urlObj = new URL(url);
+            return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function showValidationMessage(fieldName, message, isValid) {
+        const group = document.getElementById(fieldName + '-group');
+        const validation = document.getElementById(fieldName + '-validation');
+        
+        if (group && validation) {
+            group.classList.toggle('valid', isValid);
+            group.classList.toggle('invalid', !isValid);
+            
+            validation.textContent = message;
+            validation.classList.add('show');
+            validation.classList.toggle('success', isValid);
+            validation.classList.toggle('error', !isValid);
+        }
+    }
+
+    // Валидация никнейма
+    inputs.nickname.addEventListener('input', function(e) {
+        const value = e.target.value.trim();
+        if (value) {
+            const isValid = validateNickname(value);
+            showValidationMessage('nickname',
+                isValid ? 'Отличный никнейм' : '✗ Используйте только буквы, цифры, дефисы и подчеркивания (3-30 символов)',
+                isValid
+            );
+        } else {
+            document.getElementById('nickname-group').classList.remove('valid', 'invalid');
+            document.getElementById('nickname-validation').classList.remove('show');
+        }
+    });
+
+    // Валидация email
+    inputs.email.addEventListener('input', function(e) {
+        const value = e.target.value.trim();
+        if (value) {
+            const isValid = validateEmail(value);
+            showValidationMessage('email', 
+                isValid ? 'Отлично!' : 'Некорректный формат email', 
+                isValid
+            );
+        } else {
+            document.getElementById('email-group').classList.remove('valid', 'invalid');
+            document.getElementById('email-validation').classList.remove('show');
+        }
+    });
+
+    // Валидация нового пароля
+    inputs.new_password.addEventListener('input', function(e) {
+        const value = e.target.value;
+        const strengthDiv = document.getElementById('password-strength');
+        
+        if (value) {
+            const result = validatePassword(value);
+            
+            strengthDiv.style.display = 'block';
+            strengthDiv.className = 'password-strength ' + result.feedback.level;
+            strengthDiv.textContent = result.feedback.message;
+            
+            showValidationMessage('new-password',
+                result.isValid ? 'Отличный пароль' : 'Минимум 6 символов',
+                result.isValid
+            );
+        } else {
+            strengthDiv.style.display = 'none';
+            document.getElementById('new-password-group').classList.remove('valid', 'invalid');
+            document.getElementById('new-password-validation').classList.remove('show');
+        }
+
+        // Проверяем совпадение паролей если введен подтверждающий пароль
+        const confirmValue = inputs.confirm_password.value;
+        if (confirmValue) {
+            const passwordsMatch = value === confirmValue;
+            showValidationMessage('confirm-password',
+                passwordsMatch ? 'Пароли совпадают' : 'Пароли не совпадают',
+                passwordsMatch
+            );
+        }
+    });
+
+    // Валидация подтверждения пароля
+    inputs.confirm_password.addEventListener('input', function(e) {
+        const value = e.target.value;
+        const newPassword = inputs.new_password.value;
+        
+        if (value) {
+            const passwordsMatch = value === newPassword;
+            showValidationMessage('confirm-password',
+                passwordsMatch ? 'Пароли совпадают' : 'Пароли не совпадают',
+                passwordsMatch
+            );
+        } else {
+            document.getElementById('confirm-password-group').classList.remove('valid', 'invalid');
+            document.getElementById('confirm-password-validation').classList.remove('show');
+        }
+    });
+
+    // Обработка загрузки аватара
+    inputs.avatar.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const previewContainer = document.getElementById('avatarPreview');
+        const previewImg = document.getElementById('avatarPreviewImg');
+        const label = e.target.nextElementSibling;
+        
+        if (file) {
+            // Проверка типа файла
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                showValidationMessage('avatar', 'Недопустимый формат файла. Разрешены: JPG, PNG, GIF, WebP', false);
+                clearAvatarPreview();
+                return;
+            }
+
+            // Проверка размера файла (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showValidationMessage('avatar', 'Размер файла не должен превышать 5MB', false);
+                clearAvatarPreview();
+                return;
+            }
+
+            // Показываем предпросмотр
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+
+            // Обновляем текст лейбла
+            label.querySelector('.file-input-text').textContent = file.name;
+            
+            // Убираем сообщение об ошибке
+            showValidationMessage('avatar', 'Файл выбран', true);
+        } else {
+            clearAvatarPreview();
+        }
+    });
+
+    // Валидация URL полей
+    ['strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
+        const input = inputs[fieldName];
+        if (input) {
+            input.addEventListener('blur', function(e) {
+                const value = e.target.value.trim();
+                if (value) {
+                    const isValid = validateURL(value);
+                    showValidationMessage(fieldName,
+                        isValid ? '' : 'Некорректная ссылка',
+                        isValid
+                    );
+                } else {
+                    document.getElementById(fieldName + '-group').classList.remove('valid', 'invalid');
+                    const validation = document.getElementById(fieldName + '-validation');
+                    if (validation) validation.classList.remove('show');
+                }
+            });
+        }
+    });
+
+    // Валидация формы перед отправкой
+    form.addEventListener('submit', function(e) {
+        const nickname = inputs.nickname.value.trim();
+        const email = inputs.email.value.trim();
+        const currentPassword = inputs.current_password.value;
+        const newPassword = inputs.new_password.value;
+        const confirmPassword = inputs.confirm_password.value;
+
+        let isFormValid = true;
+        let errors = [];
+
+        // Проверка обязательных полей
+        if (!nickname) {
+            errors.push('Никнейм обязателен');
+            isFormValid = false;
+        } else if (!validateNickname(nickname)) {
+            errors.push('Некорректный никнейм');
+            isFormValid = false;
+        }
+
+        if (!email) {
+            errors.push('Email обязателен');
+            isFormValid = false;
+        } else if (!validateEmail(email)) {
+            errors.push('Некорректный email');
+            isFormValid = false;
+        }
+
+        // Проверка смены пароля
+        const passwordChangeRequested = currentPassword || newPassword || confirmPassword;
+        if (passwordChangeRequested) {
+            if (!currentPassword) {
+                errors.push('Введите текущий пароль');
+                isFormValid = false;
+            }
+            if (!newPassword) {
+                errors.push('Введите новый пароль');
+                isFormValid = false;
+            } else if (newPassword.length < 6) {
+                errors.push('Новый пароль слишком короткий');
+                isFormValid = false;
+            }
+            if (newPassword !== confirmPassword) {
+                errors.push('Пароли не совпадают');
+                isFormValid = false;
+            }
+        }
+
+        // Проверка URL полей
+        ['strava_url', 'komoot_url', 'telegram_url', 'instagram_url'].forEach(fieldName => {
+            const value = inputs[fieldName].value.trim();
+            if (value && !validateURL(value)) {
+                errors.push(`Некорректная ссылка в поле ${fieldName.replace('_url', '')}`);
+                isFormValid = false;
+            }
+        });
+
+        if (!isFormValid) {
+            e.preventDefault();
+            alert('Ошибки в форме:\n' + errors.join('\n'));
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '🔄 Сохранение...';
+    });
+});
+
+// Функция очистки предпросмотра аватара
+function clearAvatarPreview() {
+    const fileInput = document.getElementById('avatar');
+    const previewContainer = document.getElementById('avatarPreview');
+    const label = fileInput.nextElementSibling;
+    
+    fileInput.value = '';
+    previewContainer.style.display = 'none';
+    label.querySelector('.file-input-text').textContent = 'Выберите новый аватар';
+    
+    // Убираем валидационные сообщения
+    const group = document.getElementById('avatar-group');
+    const validation = document.getElementById('avatar-validation');
+    group.classList.remove('valid', 'invalid');
+    validation.classList.remove('show');
+}
+</script>
+{% endblock %}

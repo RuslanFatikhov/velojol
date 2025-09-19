@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap);
 
-body {
+body, textarea {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
 }
@@ -9,7 +9,13 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
 }
 
-p, input, button, .cell{
+h3{
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.25px;
+}
+
+p, input, button, .cell, textarea{
     font-size: var(--spacer-m);
     line-height: 120%;
 }

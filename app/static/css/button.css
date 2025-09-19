@@ -45,6 +45,12 @@ a{
     color: var(--prime_invert100);
 }
 
+.btn_black:disabled{
+    background-color: var(--prime50);
+    color: var(--prime_invert50);
+    cursor: not-allowed;
+}
+
 .button_wrapper_fixed{
     position: fixed;
     bottom: 0px;
@@ -68,3 +74,4 @@ a{
     position: absolute;
     right: var(--spacer-m)
 }
+

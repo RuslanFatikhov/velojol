@@ -3,7 +3,7 @@
 *{
     box-sizing: border-box;
 
-    --spacer:4px;
+    --spacer-xs:4px;
     --spacer-s:8px;
     --spacer-sm:12px;
     --spacer-m: 16px;
@@ -19,7 +19,7 @@ body{
     background-color: var(--bg3);
 }
 
-header{
+header, .page-header{
     position: fixed;
     left: 0px;
     top: 0px;
@@ -34,6 +34,12 @@ header{
     padding-left: var(--spacer-m);
     padding-right: var(--spacer-m);
     padding: 12px;
+}
+
+.page-header{
+    z-index: 101;
+    background-color: var(--bg1);
+    border-radius: var(--spacer-m);
 }
 
 footer{
@@ -121,6 +127,21 @@ main{
     width: 100%;
 }
 
+.island{
+    background-color: var(--bg1);
+    border-radius: var(--spacer-m);
+    padding-top: var(--spacer-s);
+    padding-left: var(--spacer-sm);
+    padding-right: var(--spacer-sm);
+    padding-bottom: var(--spacer-sm);
+    margin-bottom: var(--spacer-sm);
+}
+
+.island_heading {
+    padding-top: var(--spacer-m);
+    padding-bottom: var(--spacer-m);    
+}
+
 .input_login_form, .form-section{
     display: flex;
     flex-direction: column;
@@ -130,6 +151,8 @@ main{
     overflow: hidden;
     
 }
+
+
 
 .form-section input{
     border-bottom: 0.5px solid var(--secondary100);
@@ -185,6 +208,9 @@ input:focus-visible{
     flex-direction: column;
     gap: var(--spacer-s);
 }
+
+
+
 
 @media (max-width: 768px) {
     

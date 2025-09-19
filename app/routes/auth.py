@@ -1,3 +1,5 @@
+# app/routes/auth.py
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
@@ -194,3 +196,193 @@ def logout():
 def profile():
     """Профиль пользователя"""
     return render_template('auth/profile.html', user=current_user)
+
+@bp.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    """Редактирование профиля пользователя"""
+    
+    import os
+    from datetime import datetime
+    
+    if request.method == 'GET':
+        # Заполняем форму текущими данными пользователя
+        form_data = {
+            'nickname': current_user.nickname,
+            'email': current_user.email,
+            'strava_url': current_user.strava_url or '',
+            'komoot_url': current_user.komoot_url or '',
+            'telegram_url': current_user.telegram_url or '',
+            'instagram_url': current_user.instagram_url or ''
+        }
+        return render_template('auth/edit_profile.html', form_data=form_data)
+    
+    # Обработка POST запроса
+    nickname = request.form.get('nickname', '').strip()
+    email = request.form.get('email', '').strip().lower()
+    current_password = request.form.get('current_password', '')
+    new_password = request.form.get('new_password', '')
+    confirm_password = request.form.get('confirm_password', '')
+    
+    strava_url = request.form.get('strava_url', '').strip()
+    komoot_url = request.form.get('komoot_url', '').strip()
+    telegram_url = request.form.get('telegram_url', '').strip()
+    instagram_url = request.form.get('instagram_url', '').strip()
+    
+    # Обработка загрузки аватара
+    avatar_file = request.files.get('avatar')
+    avatar_relative_path = None
+    
+    print(f"DEBUG: Avatar file received: {avatar_file}")
+    if avatar_file:
+        print(f"DEBUG: Avatar filename: {avatar_file.filename}")
+    
+    # Сохраняем данные формы для повторного отображения при ошибках
+    form_data = {
+        'nickname': nickname,
+        'email': email,
+        'strava_url': strava_url,
+        'komoot_url': komoot_url,
+        'telegram_url': telegram_url,
+        'instagram_url': instagram_url,
+    }
+    
+    # Валидация
+    errors = []
+    
+    # Проверка никнейма
+    if not nickname:
+        errors.append('Никнейм обязателен')
+    elif not validate_nickname(nickname):
+        errors.append('Никнейм может содержать только буквы, цифры, дефисы и подчеркивания (3-30 символов)')
+    elif nickname != current_user.nickname and User.query.filter_by(nickname=nickname).first():
+        errors.append('Пользователь с таким никнеймом уже существует')
+    
+    # Проверка email
+    if not email:
+        errors.append('Email обязателен')
+    elif not validate_email(email):
+        errors.append('Некорректный формат email')
+    elif email != current_user.email and User.query.filter_by(email=email).first():
+        errors.append('Пользователь с таким email уже существует')
+    
+    # Проверка смены пароля
+    password_change_requested = bool(current_password or new_password or confirm_password)
+    
+    if password_change_requested:
+        if not current_password:
+            errors.append('Введите текущий пароль для смены')
+        elif not current_user.check_password(current_password):
+            errors.append('Неверный текущий пароль')
+        
+        if not new_password:
+            errors.append('Введите новый пароль')
+        elif len(new_password) < 6:
+            errors.append('Новый пароль должен содержать минимум 6 символов')
+        
+        if new_password != confirm_password:
+            errors.append('Пароли не совпадают')
+    
+    # Обработка загрузки аватара
+    if avatar_file and avatar_file.filename:
+        print("DEBUG: Processing avatar upload...")
+        
+        # Проверка типа файла
+        allowed_extensions = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+        file_ext = avatar_file.filename.rsplit('.', 1)[1].lower() if '.' in avatar_file.filename else ''
+        
+        if file_ext not in allowed_extensions:
+            errors.append('Недопустимый формат файла аватара. Разрешены: JPG, PNG, GIF, WebP')
+        else:
+            # Проверка размера файла (максимум 5MB)
+            avatar_file.seek(0, 2)  # Переходим в конец файла
+            file_size = avatar_file.tell()  # Получаем размер
+            avatar_file.seek(0)  # Возвращаемся в начало
+            
+            if file_size > 5 * 1024 * 1024:  # 5MB
+                errors.append('Размер файла аватара не должен превышать 5MB')
+            else:
+                try:
+                    # Создаем папку для аватаров пользователя в static
+                    static_folder = current_app.static_folder
+                    user_avatar_dir = os.path.join(static_folder, 'uploads', 'avatars', str(current_user.id))
+                    os.makedirs(user_avatar_dir, exist_ok=True)
+                    
+                    # Генерируем уникальное имя файла
+                    timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+                    filename = f"avatar_{timestamp}.{file_ext}"
+                    avatar_path = os.path.join(user_avatar_dir, filename)
+                    
+                    # Сохраняем файл
+                    avatar_file.save(avatar_path)
+                    
+                    # Сохраняем относительный путь для базы данных (от папки static)
+                    avatar_relative_path = f"uploads/avatars/{current_user.id}/{filename}"
+                    
+                    print(f"DEBUG: Avatar saved to: {avatar_path}")
+                    print(f"DEBUG: Avatar relative path: {avatar_relative_path}")
+                    print(f"DEBUG: File exists after save: {os.path.exists(avatar_path)}")
+                    
+                except Exception as e:
+                    current_app.logger.error(f'Ошибка при сохранении аватара: {e}')
+                    errors.append('Ошибка при загрузке аватара. Попробуйте еще раз.')
+    
+    # Валидация URL'ов
+    urls_to_validate = [
+        ('strava_url', strava_url, 'Strava'),
+        ('komoot_url', komoot_url, 'Komoot'),
+        ('telegram_url', telegram_url, 'Telegram'),
+        ('instagram_url', instagram_url, 'Instagram'),
+    ]
+    
+    for field_name, url_value, field_label in urls_to_validate:
+        if url_value and not validate_url(url_value):
+            errors.append(f'Некорректная ссылка в поле {field_label}')
+    
+    # Если есть ошибки, возвращаем форму
+    if errors:
+        for error in errors:
+            flash(error, 'error')
+        return render_template('auth/edit_profile.html', form_data=form_data)
+    
+    try:
+        # Обновляем данные пользователя
+        current_user.nickname = nickname
+        current_user.email = email
+        current_user.strava_url = strava_url if strava_url else None
+        current_user.komoot_url = komoot_url if komoot_url else None
+        current_user.telegram_url = telegram_url if telegram_url else None
+        current_user.instagram_url = instagram_url if instagram_url else None
+        
+        # Обновляем аватар если загружен новый файл
+        if avatar_relative_path:
+            print(f"DEBUG: Updating avatar_url in database to: {avatar_relative_path}")
+            
+            # Удаляем старый аватар если он существует и это загруженный файл
+            if current_user.avatar_url and current_user.avatar_url.startswith('uploads/avatars/'):
+                old_avatar_path = os.path.join(current_app.static_folder, current_user.avatar_url)
+                if os.path.exists(old_avatar_path):
+                    try:
+                        os.remove(old_avatar_path)
+                        print(f"DEBUG: Old avatar deleted: {old_avatar_path}")
+                    except Exception as e:
+                        print(f"DEBUG: Failed to delete old avatar: {e}")
+            
+            current_user.avatar_url = avatar_relative_path
+            print(f"DEBUG: User avatar_url updated to: {current_user.avatar_url}")
+        
+        # Обновляем пароль если запрошено
+        if password_change_requested and new_password:
+            current_user.set_password(new_password)
+        
+        # Сохраняем в базу данных
+        db.session.commit()
+        
+        flash('Профиль успешно обновлен!', 'success')
+        return redirect(url_for('auth.profile'))
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Ошибка при обновлении профиля: {e}')
+        flash('Произошла ошибка при сохранении данных. Попробуйте еще раз.', 'error')
+        return render_template('auth/edit_profile.html', form_data=form_data)

@@ -1,0 +1,317 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Модерация велодорожек - Админ-панель{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>Модерация велодорожек</h2>
+    
+    <div class="btn-group">
+        <button onclick="showBulkActions()" class="btn-sm btn-warning" id="bulkActionsBtn" style="display: none;">
+            Действия с выбранными
+        </button>
+    </div>
+</div>
+
+<!-- Фильтры -->
+<div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <div>
+            <strong>Фильтр:</strong>
+            <a href="{{ url_for('admin.bikelanes', status='all') }}" 
+               class="{% if status_filter == 'all' %}btn-sm btn-primary{% else %}btn-sm btn-secondary{% endif %}">
+                Все ({{ filter_stats.all }})
+            </a>
+            <a href="{{ url_for('admin.bikelanes', status='pending') }}" 
+               class="{% if status_filter == 'pending' %}btn-sm btn-primary{% else %}btn-sm btn-secondary{% endif %}">
+                На модерации ({{ filter_stats.pending }})
+            </a>
+            <a href="{{ url_for('admin.bikelanes', status='approved') }}" 
+               class="{% if status_filter == 'approved' %}btn-sm btn-primary{% else %}btn-sm btn-secondary{% endif %}">
+                Одобрено ({{ filter_stats.approved }})
+            </a>
+            <a href="{{ url_for('admin.bikelanes', status='rejected') }}" 
+               class="{% if status_filter == 'rejected' %}btn-sm btn-primary{% else %}btn-sm btn-secondary{% endif %}">
+                Отклонено ({{ filter_stats.rejected }})
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Таблица велодорожек -->
+{% if bikelanes.items %}
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th width="40">
+                    <input type="checkbox" id="selectAll" onchange="toggleAllCheckboxes()">
+                </th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Город</th>
+                <th>Тип</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th width="200">Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bikelane in bikelanes.items %}
+            <tr>
+                <td>
+                    <input type="checkbox" class="bikelane-checkbox" value="{{ bikelane.id }}" 
+                           onchange="updateBulkActions()">
+                </td>
+                <td>
+                    <strong>{{ bikelane.title }}</strong>
+                    <br>
+                    <small style="color: #6c757d;">
+                        {{ bikelane.track_type_display }} • {{ bikelane.quality_display }}
+                        {% if bikelane.photos_count > 0 %}
+                            • {{ bikelane.photos_count }} фото
+                        {% endif %}
+                    </small>
+                </td>
+                <td>
+                    {% if bikelane.author %}
+                        <a href="{{ url_for('admin.view_user', user_id=bikelane.author.id) }}">
+                            {{ bikelane.author.nickname }}
+                        </a>
+                    {% else %}
+                        <em>Аноним</em>
+                    {% endif %}
+                </td>
+                <td>{{ bikelane.city_display }}</td>
+                <td>{{ bikelane.track_type_display }}</td>
+                <td>
+                    <span class="status-badge status-{{ bikelane.status }}">
+                        {{ bikelane.status_display }}
+                    </span>
+                </td>
+                <td>{{ bikelane.created_at.strftime('%d.%m.%Y') }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ url_for('admin.view_bikelane', bikelane_id=bikelane.id) }}" 
+                           class="btn-sm btn-primary">Просмотр</a>
+                        
+                        {% if bikelane.status == 'pending' %}
+                            <button onclick="quickApprove({{ bikelane.id }})" class="btn-sm btn-success" title="Быстрое одобрение">
+                                ✓
+                            </button>
+                            <button onclick="quickReject({{ bikelane.id }})" class="btn-sm btn-danger" title="Быстрое отклонение">
+                                ✗
+                            </button>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('admin.edit_bikelane', bikelane_id=bikelane.id) }}" 
+                           class="btn-sm btn-warning">Изменить</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Пагинация -->
+{% if bikelanes.pages > 1 %}
+<div class="pagination">
+    {% if bikelanes.has_prev %}
+        <a href="{{ url_for('admin.bikelanes', page=bikelanes.prev_num, status=status_filter) }}">← Предыдущая</a>
+    {% endif %}
+    
+    {% for page_num in bikelanes.iter_pages() %}
+        {% if page_num %}
+            {% if page_num != bikelanes.page %}
+                <a href="{{ url_for('admin.bikelanes', page=page_num, status=status_filter) }}">{{ page_num }}</a>
+            {% else %}
+                <span class="current">{{ page_num }}</span>
+            {% endif %}
+        {% else %}
+            <span>…</span>
+        {% endif %}
+    {% endfor %}
+    
+    {% if bikelanes.has_next %}
+        <a href="{{ url_for('admin.bikelanes', page=bikelanes.next_num, status=status_filter) }}">Следующая →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info">
+    Велодорожки не найдены.
+</div>
+{% endif %}
+
+<!-- Модалка для массовых действий -->
+<div id="bulkModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('bulkModal')">&times;</span>
+        <h3>Действия с выбранными велодорожками</h3>
+        
+        <div class="form-group">
+            <label>Выберите действие:</label>
+            <select id="bulkAction" class="form-control">
+                <option value="">-- Выберите действие --</option>
+                <option value="approve">Одобрить все</option>
+                <option value="reject">Отклонить все</option>
+                <option value="delete">Удалить все</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Комментарий (обязателен для отклонения):</label>
+            <textarea id="bulkComment" class="form-control" placeholder="Комментарий администратора..."></textarea>
+        </div>
+        
+        <div style="text-align: right; margin-top: 20px;">
+            <button onclick="hideModal('bulkModal')" class="btn-sm btn-secondary">Отмена</button>
+            <button onclick="executeBulkAction()" class="btn-sm btn-primary">Выполнить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка быстрого отклонения -->
+<div id="quickRejectModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('quickRejectModal')">&times;</span>
+        <h3>Отклонить велодорожку</h3>
+        <p>Укажите причину отклонения:</p>
+        
+        <div class="form-group">
+            <textarea id="quickRejectComment" class="form-control" placeholder="Причина отклонения..." required></textarea>
+        </div>
+        
+        <div style="text-align: right; margin-top: 20px;">
+            <button onclick="hideModal('quickRejectModal')" class="btn-sm btn-secondary">Отмена</button>
+            <button onclick="confirmQuickReject()" class="btn-sm btn-danger">Отклонить</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedBikelanes = [];
+let currentBikelaneId = null;
+
+function toggleAllCheckboxes() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.bikelane-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateBulkActions();
+}
+
+function updateBulkActions() {
+    const checkboxes = document.querySelectorAll('.bikelane-checkbox:checked');
+    selectedBikelanes = Array.from(checkboxes).map(cb => cb.value);
+    
+    const bulkBtn = document.getElementById('bulkActionsBtn');
+    
+    if (selectedBikelanes.length > 0) {
+        bulkBtn.style.display = 'inline-block';
+        bulkBtn.textContent = `Действия с ${selectedBikelanes.length} выбранными`;
+    } else {
+        bulkBtn.style.display = 'none';
+    }
+}
+
+function showBulkActions() {
+    if (selectedBikelanes.length === 0) return;
+    showModal('bulkModal');
+}
+
+function quickApprove(bikelaneId) {
+    if (!confirm('Одобрить велодорожку?')) return;
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/admin/bikelanes/${bikelaneId}/approve`;
+    
+    // Добавляем CSRF токен если нужен
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function quickReject(bikelaneId) {
+    currentBikelaneId = bikelaneId;
+    showModal('quickRejectModal');
+}
+
+function confirmQuickReject() {
+    const comment = document.getElementById('quickRejectComment').value.trim();
+    
+    if (!comment) {
+        alert('Комментарий обязателен для отклонения');
+        return;
+    }
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/admin/bikelanes/${currentBikelaneId}/reject`;
+    
+    const commentInput = document.createElement('input');
+    commentInput.type = 'hidden';
+    commentInput.name = 'comment';
+    commentInput.value = comment;
+    form.appendChild(commentInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function executeBulkAction() {
+    const action = document.getElementById('bulkAction').value;
+    const comment = document.getElementById('bulkComment').value.trim();
+    
+    if (!action) {
+        alert('Выберите действие');
+        return;
+    }
+    
+    if (action === 'reject' && !comment) {
+        alert('Комментарий обязателен для отклонения');
+        return;
+    }
+    
+    if (!confirm(`Выполнить действие "${action}" для ${selectedBikelanes.length} велодорожек?`)) {
+        return;
+    }
+    
+    // Отправляем AJAX запрос
+    fetch('/admin/api/bikelanes/bulk-action', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            action: action,
+            bikelane_ids: selectedBikelanes,
+            comment: comment
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.reload();
+        } else {
+            alert('Ошибка: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при выполнении действия');
+    });
+    
+    hideModal('bulkModal');
+}
+</script>
+{% endblock %}

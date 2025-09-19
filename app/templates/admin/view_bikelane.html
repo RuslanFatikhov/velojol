@@ -1,0 +1,301 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ bikelane.title }} - Модерация велодорожки{% endblock %}
+
+{% block head %}
+<!-- Leaflet CSS для карт -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a href="{{ url_for('admin.bikelanes') }}" class="btn-sm btn-secondary">← Назад к списку</a>
+    
+    <div style="float: right;">
+        {% if bikelane.status == 'pending' %}
+            <button onclick="showApproveModal()" class="btn-sm btn-success">Одобрить</button>
+            <button onclick="showRejectModal()" class="btn-sm btn-danger">Отклонить</button>
+        {% endif %}
+        <a href="{{ url_for('admin.edit_bikelane', bikelane_id=bikelane.id) }}" class="btn-sm btn-warning">Изменить</a>
+        <button onclick="deleteBikelane()" class="btn-sm btn-danger">Удалить</button>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+
+<h2>{{ bikelane.title }}</h2>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 20px;">
+    <!-- Основная информация -->
+    <div>
+        <!-- Статус -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Статус модерации</h3>
+            <p>
+                <span class="status-badge status-{{ bikelane.status }}" style="font-size: 1.1em;">
+                    {{ bikelane.status_display }}
+                </span>
+                
+                {% if bikelane.moderated_at %}
+                    <br><small>
+                        Модерировано {{ bikelane.moderated_at.strftime('%d.%m.%Y в %H:%M') }}
+                        {% if bikelane.moderator %}
+                            пользователем {{ bikelane.moderator.nickname }}
+                        {% endif %}
+                    </small>
+                {% endif %}
+            </p>
+            
+            {% if bikelane.admin_comment %}
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <strong>Комментарий администратора:</strong>
+                    <p style="margin-top: 5px;">{{ bikelane.admin_comment }}</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Описание -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Описание</h3>
+            <p>{{ bikelane.description }}</p>
+        </div>
+        
+        <!-- Карта -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Местоположение на карте</h3>
+            <div id="bikelaneMap" style="height: 400px; border-radius: 8px;"></div>
+        </div>
+        
+        <!-- Фотографии -->
+        {% if bikelane.get_photos_list() %}
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Фотографии ({{ bikelane.photos_count }})</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                {% for photo_path in bikelane.get_photos_list() %}
+                    <div style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+                        <img src="{{ url_for('static', filename=photo_path) }}" 
+                             alt="Фото велодорожки" 
+                             style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;"
+                             onclick="openPhotoModal('{{ url_for('static', filename=photo_path) }}')">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Видео -->
+        {% if bikelane.get_videos_list() %}
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Видео ({{ bikelane.videos_count }})</h3>
+            <div style="display: grid; gap: 15px;">
+                {% for video_url in bikelane.get_videos_list() %}
+                    <div>
+                        <a href="{{ video_url }}" target="_blank" class="btn-sm btn-primary">Открыть видео</a>
+                        <small style="color: #6c757d; margin-left: 10px;">{{ video_url }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Боковая панель -->
+    <div>
+        <!-- Основные характеристики -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Характеристики</h3>
+            <table style="width: 100%;">
+                <tr>
+                    <td><strong>Город:</strong></td>
+                    <td>{{ bikelane.city_display }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Тип:</strong></td>
+                    <td>{{ bikelane.track_type_display }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Качество:</strong></td>
+                    <td>{{ bikelane.quality_display }} ({{ bikelane.quality }}/5)</td>
+                </tr>
+                <tr>
+                    <td><strong>Баллы:</strong></td>
+                    <td>{{ bikelane.score }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Дата создания:</strong></td>
+                    <td>{{ bikelane.created_at.strftime('%d.%m.%Y в %H:%M') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Обновлено:</strong></td>
+                    <td>{{ bikelane.updated_at.strftime('%d.%m.%Y в %H:%M') }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Автор -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Автор</h3>
+            {% if bikelane.author %}
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <img src="{{ bikelane.author.display_avatar }}" 
+                         alt="Аватар {{ bikelane.author.nickname }}"
+                         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <strong>{{ bikelane.author.nickname }}</strong>
+                        <br>
+                        <small>{{ bikelane.author.email }}</small>
+                        <br>
+                        <a href="{{ url_for('admin.view_user', user_id=bikelane.author.id) }}" 
+                           class="btn-sm btn-primary" style="margin-top: 5px;">
+                            Профиль
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <p><em>Пользователь не указан</em></p>
+            {% endif %}
+        </div>
+        
+        <!-- Статистика -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Медиа</h3>
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="stat-card" style="margin: 0;">
+                    <div class="stat-number">{{ bikelane.photos_count }}</div>
+                    <div class="stat-label">Фото</div>
+                </div>
+                <div class="stat-card" style="margin: 0;">
+                    <div class="stat-number">{{ bikelane.videos_count }}</div>
+                    <div class="stat-label">Видео</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка одобрения -->
+<div id="approveModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('approveModal')">&times;</span>
+        <h3>Одобрить велодорожку</h3>
+        <p>Велодорожка будет одобрена и станет видна пользователям.</p>
+        
+        <form method="post" action="{{ url_for('admin.approve_bikelane', bikelane_id=bikelane.id) }}">
+            <div class="form-group">
+                <label>Комментарий (необязательно):</label>
+                <textarea name="comment" class="form-control" placeholder="Комментарий для автора..."></textarea>
+            </div>
+            
+            <div style="text-align: right; margin-top: 20px;">
+                <button type="button" onclick="hideModal('approveModal')" class="btn-sm btn-secondary">Отмена</button>
+                <button type="submit" class="btn-sm btn-success">Одобрить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модалка отклонения -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('rejectModal')">&times;</span>
+        <h3>Отклонить велодорожку</h3>
+        <p>Укажите причину отклонения. Пользователь получит уведомление.</p>
+        
+        <form method="post" action="{{ url_for('admin.reject_bikelane', bikelane_id=bikelane.id) }}">
+            <div class="form-group">
+                <label>Причина отклонения (обязательно):</label>
+                <textarea name="comment" class="form-control" placeholder="Укажите, что нужно исправить..." required></textarea>
+            </div>
+            
+            <div style="text-align: right; margin-top: 20px;">
+                <button type="button" onclick="hideModal('rejectModal')" class="btn-sm btn-secondary">Отмена</button>
+                <button type="submit" class="btn-sm btn-danger">Отклонить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модалка просмотра фото -->
+<div id="photoModal" class="modal">
+    <div class="modal-content" style="max-width: 90%; text-align: center;">
+        <span class="close" onclick="hideModal('photoModal')">&times;</span>
+        <img id="modalPhoto" src="" alt="Фото велодорожки" style="max-width: 100%; max-height: 80vh; object-fit: contain;">
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+// Инициализация карты
+let bikelaneMap;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Создаем карту
+    bikelaneMap = L.map('bikelaneMap').setView([{{ bikelane.get_geometry_dict().get('coordinates', [[43.2565, 76.9286]])[0][1] }}, {{ bikelane.get_geometry_dict().get('coordinates', [[43.2565, 76.9286]])[0][0] }}], 15);
+    
+    // Добавляем тайлы
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(bikelaneMap);
+    
+    // Добавляем велодорожку на карту
+    {% if bikelane.geometry %}
+        try {
+            const geometry = {{ bikelane.geometry | safe }};
+            if (geometry && geometry.coordinates) {
+                // Конвертируем координаты из GeoJSON в формат Leaflet
+                const latlngs = geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                
+                // Добавляем линию
+                const polyline = L.polyline(latlngs, {
+                    color: '#007bff',
+                    weight: 4,
+                    opacity: 0.8
+                }).addTo(bikelaneMap);
+                
+                // Центрируем карту на линии
+                bikelaneMap.fitBounds(polyline.getBounds(), { padding: [20, 20] });
+                
+                // Добавляем попап
+                polyline.bindPopup(`
+                    <strong>{{ bikelane.title }}</strong><br>
+                    {{ bikelane.track_type_display }}<br>
+                    Качество: {{ bikelane.quality_display }}
+                `);
+            }
+        } catch (e) {
+            console.error('Ошибка загрузки геометрии:', e);
+        }
+    {% endif %}
+});
+
+function showApproveModal() {
+    showModal('approveModal');
+}
+
+function showRejectModal() {
+    showModal('rejectModal');
+}
+
+function openPhotoModal(photoUrl) {
+    document.getElementById('modalPhoto').src = photoUrl;
+    showModal('photoModal');
+}
+
+function deleteBikelane() {
+    if (!confirm('Вы уверены, что хотите удалить эту велодорожку? Это действие нельзя отменить.')) {
+        return;
+    }
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("admin.delete_bikelane", bikelane_id=bikelane.id) }}';
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+{% endblock %}

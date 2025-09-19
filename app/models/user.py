@@ -1,7 +1,10 @@
+# app/models/user.py
+
 from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timezone
+from flask import url_for
 
 class User(UserMixin, db.Model):
     """Модель пользователя"""
@@ -14,6 +17,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     nickname = db.Column(db.String(64), unique=True, nullable=False, index=True)
     
+    # Права доступа
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    
     # Дополнительные поля профиля
     avatar_url = db.Column(db.String(256))
     strava_url = db.Column(db.String(256))
@@ -22,11 +28,12 @@ class User(UserMixin, db.Model):
     instagram_url = db.Column(db.String(256))
     
     # Временные метки
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
-    # Связи с другими моделями (для будущих фич)
-    # bikelanes = db.relationship('BikeLane', backref='author', lazy='dynamic')
+    # Связи с другими моделями
+    bikelanes = db.relationship('BikeLane', foreign_keys='BikeLane.user_id', backref='author', lazy='dynamic')
+    notifications = db.relationship('Notification', backref='user', lazy='dynamic')
     
     def __repr__(self):
         return f'<User {self.nickname}>'
@@ -54,10 +61,43 @@ class User(UserMixin, db.Model):
             
         return links
     
+    def get_bikelanes_count(self):
+        """Возвращает количество велодорожек пользователя"""
+        return self.bikelanes.count()
+    
+    def get_pending_bikelanes_count(self):
+        """Возвращает количество велодорожек на модерации"""
+        return self.bikelanes.filter_by(status='pending').count()
+    
+    def get_approved_bikelanes_count(self):
+        """Возвращает количество одобренных велодорожек"""
+        return self.bikelanes.filter_by(status='approved').count()
+    
+    def get_total_score(self):
+        """Возвращает общий счет пользователя"""
+        total = db.session.query(db.func.sum(db.text('bikelanes.score')))\
+                  .filter(db.text('bikelanes.user_id = :user_id'))\
+                  .filter(db.text('bikelanes.status = :status'))\
+                  .params(user_id=self.id, status='approved').scalar()
+        return total or 0
+    
+    def get_unread_notifications_count(self):
+        """Возвращает количество непрочитанных уведомлений"""
+        return self.notifications.filter_by(is_read=False).count()
+    
     @property
     def display_avatar(self):
-        """Возвращает URL аватара или дефолтный"""
+        """Возвращает URL аватара для отображения"""
         if self.avatar_url:
-            return self.avatar_url
-        # Генерируем аватар на основе initials или используем placeholder
-        return f"https://ui-avatars.com/api/?name={self.nickname}&background=3498db&color=fff&size=150"
+            # Если это загруженный файл (начинается с uploads/)
+            if self.avatar_url.startswith('uploads/'):
+                return url_for('static', filename=self.avatar_url)
+            # Если это внешняя ссылка
+            elif self.avatar_url.startswith('http'):
+                return self.avatar_url
+            # Если это относительный путь к статическому файлу
+            else:
+                return url_for('static', filename=self.avatar_url)
+        
+        # Дефолтный аватар
+        return url_for('static', filename='img/default-avatar.svg')

@@ -1,0 +1,13 @@
+{
+  "cities": [
+    {
+      "id": "almaty",
+      "name": "Алматы",
+      "country": "Казахстан",
+      "distance": 0,
+      "rating": 0,
+      "coords": [43.2565, 76.9286],
+      "zoom": 12
+    }
+  ]
+}

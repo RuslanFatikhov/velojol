@@ -27,6 +27,11 @@ class Config:
     MIN_TITLE_LENGTH = 3
     MIN_DESCRIPTION_LENGTH = 20
 
+    def __init__(self):
+        # Создаем папки для загрузок если их нет
+        os.makedirs(os.path.join(self.UPLOAD_FOLDER, 'avatars'), exist_ok=True)
+        os.makedirs(os.path.join(self.UPLOAD_FOLDER, 'bikelanes'), exist_ok=True)
+
 class DevelopmentConfig(Config):
     """Конфигурация для разработки"""
     DEBUG = True

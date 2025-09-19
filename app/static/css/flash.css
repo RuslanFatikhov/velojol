@@ -6,6 +6,7 @@
         left: 0px;
         width: 100%;
         padding: var(--spacer-m);
+        z-index: 2000;
     }
     
     .flash-message {

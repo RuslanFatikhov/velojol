@@ -44,9 +44,11 @@ def create_app(config_name=None):
     # Регистрация Blueprint'ов
     from app.routes import main
     from app.routes import auth
+    from app.routes.admin import bp as admin_bp
     
     app.register_blueprint(main.bp)
     app.register_blueprint(auth.bp)
+    app.register_blueprint(admin_bp)
     
     # Импорт моделей (для корректной работы миграций)
     from app.models import bikelane, user, city, notification
