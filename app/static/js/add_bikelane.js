@@ -1,30 +1,77 @@
-// Скрипт для страницы добавления велодорожки (адаптированный под существующий HTML)
+// Скрипт для страницы добавления велодорожки
 
 // Глобальные переменные для карты
 let map, drawnItems, drawControl, currentPolyline, citiesData;
 
 /**
- * Загрузка данных о городах
+ * Загрузка данных о городах и заполнение селекта
  */
 async function loadCitiesData() {
     try {
+        console.log('Загрузка данных городов...');
         const response = await fetch('/static/data/cities.json');
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         citiesData = await response.json();
         console.log('Города загружены:', citiesData.cities.length);
-        // НЕ заполняем селект, так как города уже есть в HTML
+        
+        // Заполняем селект городов
+        populateCitySelect();
+        
     } catch (error) {
         console.error('Ошибка загрузки городов:', error);
-        // Fallback данные для JavaScript логики
+        
+        // Fallback данные для JavaScript логики (под вашу структуру)
         citiesData = {
             cities: [
-                { id: "almaty", name: "Алматы", coords: [43.2565, 76.9286], zoom: 12 }
+                { 
+                    id: "almaty", 
+                    name: "Алматы", 
+                    country: "Казахстан",
+                    distance: 0,
+                    rating: 0,
+                    coords: [43.2565, 76.9286], 
+                    zoom: 12 
+                }
             ]
         };
+        
         console.log('Использованы fallback города');
+        populateCitySelect();
     }
+}
+
+/**
+ * Заполняет селект городов данными из JSON
+ */
+function populateCitySelect() {
+    const citySelect = document.getElementById('city');
+    if (!citySelect) {
+        console.error('Селект городов не найден');
+        return;
+    }
+    
+    console.log('Заполнение селекта городов...');
+    
+    // Очищаем текущие опции (кроме первой "Выберите город")
+    while (citySelect.children.length > 1) {
+        citySelect.removeChild(citySelect.lastChild);
+    }
+    
+    // Добавляем города из JSON
+    citiesData.cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city.id;
+        option.textContent = city.name; // Просто "Алматы"
+        citySelect.appendChild(option);
+        
+        console.log(`Добавлен город: ${city.name} (${city.id})`);
+    });
+    
+    console.log(`Селект заполнен: ${citiesData.cities.length} городов`);
 }
 
 /**
@@ -660,28 +707,46 @@ function initInteractiveElements() {
                 if (city) {
                     map.setView(city.coords, city.zoom || 12);
                     console.log('Карта перемещена к городу:', city.name);
+                    console.log('Данные города:', {
+                        country: city.country,
+                        distance: city.distance,
+                        rating: city.rating
+                    });
                 } else {
-                    console.log('Данные города не найдены, используем fallback');
-                    // Fallback координаты для существующих в HTML городов
-                    const fallbackCoords = {
-                        'almaty': [43.2565, 76.9286],
-                        'astana': [51.1694, 71.4491],
-                        'shymkent': [42.3417, 69.5901],
-                        'aktobe': [50.2759, 57.2077],
-                        'taraz': [42.9000, 71.3667]
-                    };
-                    
-                    if (fallbackCoords[selectedCity]) {
-                        map.setView(fallbackCoords[selectedCity], 12);
-                        console.log('Использованы fallback координаты для:', selectedCity);
-                    }
+                    console.log('Данные города не найдены');
                 }
             }
         });
     }
 }
 
-
+/**
+ * Добавляет тестовую кнопку для отладки геометрии
+ */
+function addDebugButton() {
+    if (console.log) {  // Только в режиме разработки
+        const debugBtn = document.createElement('button');
+        debugBtn.textContent = 'Debug Geometry';
+        debugBtn.type = 'button';
+        debugBtn.style.position = 'fixed';
+        debugBtn.style.top = '10px';
+        debugBtn.style.right = '10px';
+        debugBtn.style.zIndex = '10000';
+        debugBtn.style.padding = '5px 10px';
+        debugBtn.style.fontSize = '12px';
+        debugBtn.onclick = function() {
+            const geometryInput = document.getElementById('geometry');
+            console.log('=== DEBUG GEOMETRY ===');
+            console.log('Поле найдено:', geometryInput ? 'ДА' : 'НЕТ');
+            if (geometryInput) {
+                console.log('Значение:', geometryInput.value);
+                console.log('Длина:', geometryInput.value.length);
+            }
+            console.log('drawnItems слои:', drawnItems ? drawnItems.getLayers().length : 'drawnItems не найден');
+        };
+        document.body.appendChild(debugBtn);
+    }
+}
 
 /**
  * Основная функция инициализации страницы
@@ -689,7 +754,7 @@ function initInteractiveElements() {
 async function initAddBikeLanePage() {
     console.log('Начало инициализации страницы');
     
-    // Загружаем данные городов (но не меняем HTML)
+    // Загружаем данные городов и заполняем селект
     await loadCitiesData();
     
     // Инициализируем компоненты

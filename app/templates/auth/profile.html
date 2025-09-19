@@ -2,8 +2,6 @@
 
 {% block title %}Профиль {{ user.nickname }} - VELOJOL{% endblock %}
 
-
-
 {% block content %}
 <div class="profile-container">
 
@@ -23,19 +21,15 @@
 
                 <span class="badge_gs">
                     <img src="{{ url_for('static', filename='img/icon/ball_icon.svg') }}" alt="Велосипед" class="icon-small">
-                    <p class="stat-number">0</p>
-                    
+                    <p class="stat-number">{{ user_stats.total_score or 0 }}</p>
                 </span>
-                
-                
         </div>
 
         <div class="hstack w100">
             <span class="vstack graph w100 aic gap-s">
-                    <p class="stat-number">0</p>
+                    <p class="stat-number">{{ user_stats.bikelanes_approved or 0 }}</p>
                     <p class="prime100">дорожек</p>
             </span>
-
 
             <span class="vstack graph w100 aic gap-s">
                     <p class="stat-number">0</p>
@@ -47,57 +41,49 @@
                     <p class="prime100">точек</p>
             </span>
         </div>
-
-            <!--div class="profile-email">{{ user.email }}</div-->
-            <!--div class="member-since">
-                Участник с {{ user.created_at.strftime('%B %Y') }}
-            </div-->
     </div>
-
-
 
     <!-- Секции профиля -->
     <div class="profile-section mt-m">
-            
-            {% set social_links = user.get_social_links() %}
-            {% if social_links %}
-                <ul class="social-links">
-                    {% for platform, url in social_links.items() %}
-                        <li>
-                            <a href="{{ url }}" class="prime100 cell" target="_blank" rel="noopener">
-                                <span class="icon-small">
-                                    {% if platform == 'Strava' %} <img src="{{ url_for('static', filename='img/icon/strava.svg') }}" alt="Strava" class="icon-small">
-                                    {% elif platform == 'Komoot' %} <img src="{{ url_for('static', filename='img/icon/komoot.svg') }}" alt="Komoot" class="icon-small">
-                                    {% elif platform == 'Telegram' %}<img src="{{ url_for('static', filename='img/icon/telegram.svg') }}" alt="Telegram" class="icon-small">
-                                    {% elif platform == 'Instagram' %}<img src="{{ url_for('static', filename='img/icon/instagram.svg') }}" alt="Instagram" class="icon-small">
-                                    {% else %}🔗
-                                    {% endif %}
-                                </span>
-                                {{ platform }}
-                                <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
-                            </a>
-
-
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                
-            {% endif %}
+        {% set social_links = user.get_social_links() %}
+        {% if social_links %}
+            <ul class="social-links">
+                {% for platform, url in social_links.items() %}
+                    <li>
+                        <a href="{{ url }}" class="prime100 cell" target="_blank" rel="noopener">
+                            <span class="icon-small">
+                                {% if platform == 'Strava' %} <img src="{{ url_for('static', filename='img/icon/strava.svg') }}" alt="Strava" class="icon-small">
+                                {% elif platform == 'Komoot' %} <img src="{{ url_for('static', filename='img/icon/komoot.svg') }}" alt="Komoot" class="icon-small">
+                                {% elif platform == 'Telegram' %}<img src="{{ url_for('static', filename='img/icon/telegram.svg') }}" alt="Telegram" class="icon-small">
+                                {% elif platform == 'Instagram' %}<img src="{{ url_for('static', filename='img/icon/instagram.svg') }}" alt="Instagram" class="icon-small">
+                                {% else %}🔗
+                                {% endif %}
+                            </span>
+                            {{ platform }}
+                            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 
     <span class="divider"></span>
 
     <!-- Действия -->
     <div class="profile-actions">
-
+        {% if user.is_admin %}
+        <a href="{{ url_for('admin.dashboard') }}" class="cell">
+            <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="admin" class="icon-small">
+            Админ-панель
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
+        </a>
+        {% endif %}
         <a href="{{ url_for('auth.edit_profile') }}" class="cell">
             <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="help" class="icon-small">
             Редактировать профиль
-
             <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
         </a>
-
 
         <a href="{{ url_for('auth.logout') }}" class="cell">
             <img src="{{ url_for('static', filename='img/icon/help.svg') }}" alt="help" class="icon-small">
@@ -115,4 +101,3 @@
     </div>
 </div>
 {% endblock %}
-

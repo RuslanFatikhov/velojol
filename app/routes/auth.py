@@ -195,7 +195,15 @@ def logout():
 @login_required
 def profile():
     """Профиль пользователя"""
-    return render_template('auth/profile.html', user=current_user)
+    # Получаем статистику пользователя
+    user_stats = {
+        'bikelanes_total': current_user.get_bikelanes_count(),
+        'bikelanes_pending': current_user.get_pending_bikelanes_count(),
+        'bikelanes_approved': current_user.get_approved_bikelanes_count(),
+        'total_score': current_user.get_total_score()
+    }
+    
+    return render_template('auth/profile.html', user=current_user, user_stats=user_stats)
 
 @bp.route('/edit-profile', methods=['GET', 'POST'])
 @login_required

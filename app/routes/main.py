@@ -1,3 +1,4 @@
+from flask_login import current_user
 # app/routes/main.py
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
@@ -138,7 +139,7 @@ def add_bikelane():
                 quality=int(form_data['quality']),
                 geometry=form_data['geometry'],
                 status='pending',
-                user_id=None  # Пока без авторизации
+                user_id=current_user.id if current_user.is_authenticated else None
             )
             
             # Устанавливаем фотографии и видео

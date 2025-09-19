@@ -75,29 +75,5 @@ class User(UserMixin, db.Model):
     
     def get_total_score(self):
         """Возвращает общий счет пользователя"""
-        total = db.session.query(db.func.sum(db.text('bikelanes.score')))\
-                  .filter(db.text('bikelanes.user_id = :user_id'))\
-                  .filter(db.text('bikelanes.status = :status'))\
-                  .params(user_id=self.id, status='approved').scalar()
-        return total or 0
-    
-    def get_unread_notifications_count(self):
-        """Возвращает количество непрочитанных уведомлений"""
-        return self.notifications.filter_by(is_read=False).count()
-    
-    @property
-    def display_avatar(self):
-        """Возвращает URL аватара для отображения"""
-        if self.avatar_url:
-            # Если это загруженный файл (начинается с uploads/)
-            if self.avatar_url.startswith('uploads/'):
-                return url_for('static', filename=self.avatar_url)
-            # Если это внешняя ссылка
-            elif self.avatar_url.startswith('http'):
-                return self.avatar_url
-            # Если это относительный путь к статическому файлу
-            else:
-                return url_for('static', filename=self.avatar_url)
-        
-        # Дефолтный аватар
-        return url_for('static', filename='img/default-avatar.svg')
+        approved_bikelanes = self.bikelanes.filter_by(status='approved')
+        return sum(bl.score for bl in approved_bikelanes if bl.score)
