@@ -1,0 +1,91 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h2>Управление пользователями</h2>
+
+<!-- Поиск -->
+<div style="margin-bottom: 20px;">
+    <form method="get" style="display: flex; gap: 10px; align-items: center;">
+        <input type="text" name="search" value="{{ search }}" placeholder="Поиск по нику или email"
+               style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 300px;">
+        <button type="submit" style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+            Найти
+        </button>
+        {% if search %}
+        <a href="{{ url_for('admin.users') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+            Сбросить
+        </a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Статистика -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+        <strong>{{ stats.total_users }}</strong><br>
+        Всего пользователей
+    </div>
+    <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; text-align: center;">
+        <strong>{{ stats.admin_users }}</strong><br>
+        Администраторов
+    </div>
+    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+        <strong>{{ stats.users_with_bikelanes }}</strong><br>
+        С велодорожками
+    </div>
+</div>
+
+<!-- Таблица пользователей -->
+{% if users.items %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background: #f8f9fa;">
+            <th style="padding: 12px; border: 1px solid #dee2e6;">Пользователь</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">Email</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">Статус</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">Велодорожек</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">Баллы</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">Регистрация</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users.items %}
+        <tr>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="{{ user.display_avatar }}" alt="Аватар" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <strong>{{ user.nickname }}</strong>
+                        {% if user.is_admin %}
+                            <span style="background: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7em; margin-left: 5px;">АДМИН</span>
+                        {% endif %}
+                        {% if user.is_banned %}
+                            <span style="background: #dc3545; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7em; margin-left: 5px;">БАН</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.email }}</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">
+                {% if user.is_banned %}
+                    <span style="color: #dc3545;">Заблокирован</span>
+                {% else %}
+                    <span style="color: #28a745;">Активен</span>
+                {% endif %}
+            </td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.get_bikelanes_count() }}</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.get_total_score() }}</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.created_at.strftime('%d.%m.%Y') }}</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">
+                <a href="{{ url_for('admin.view_user', user_id=user.id) }}" class="btn-sm btn-primary">Просмотр</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<p>Пользователи не найдены.</p>
+{% endif %}
+{% endblock %}

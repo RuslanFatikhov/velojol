@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a href="{{ url_for('admin.cities') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+        ← Назад к городам
+    </a>
+</div>
+
+<h2>Добавить город</h2>
+
+<form method="post" enctype="multipart/form-data" style="max-width: 600px;">
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">ID города (уникальный):</label>
+        <input type="text" name="city_id" value="{{ form_data.city_id or '' }}" required 
+               placeholder="almaty, moscow, berlin"
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        <small style="color: #666;">Используется в URL и API. Только латинские буквы и цифры.</small>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Название города:</label>
+        <input type="text" name="name" value="{{ form_data.name or '' }}" required
+               placeholder="Алматы"
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Страна:</label>
+        <input type="text" name="country" value="{{ form_data.country or '' }}" required
+               placeholder="Казахстан"
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Широта:</label>
+            <input type="number" step="any" name="coords_lat" value="{{ form_data.coords_lat or '' }}" required
+                   placeholder="43.2565"
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Долгота:</label>
+            <input type="number" step="any" name="coords_lng" value="{{ form_data.coords_lng or '' }}" required
+                   placeholder="76.9286"
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Уровень зума:</label>
+        <input type="number" name="zoom" value="{{ form_data.zoom or 12 }}" min="8" max="18"
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        <small style="color: #666;">От 8 до 18. По умолчанию 12.</small>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Герб города (PNG):</label>
+        <input type="file" name="coat_of_arms" accept=".png"
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        <small style="color: #666;">Рекомендуемый размер: 256x256px, формат PNG</small>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Фон города (JPG):</label>
+        <input type="file" name="background_image" accept=".jpg,.jpeg"
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        <small style="color: #666;">Рекомендуемый размер: 1920x1080px, формат JPG</small>
+    </div>
+    
+    <div style="display: flex; gap: 10px;">
+        <button type="submit" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer;">
+            Добавить город
+        </button>
+        <a href="{{ url_for('admin.cities') }}" 
+           style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+            Отмена
+        </a>
+    </div>
+</form>
+{% endblock %}

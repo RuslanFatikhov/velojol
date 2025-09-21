@@ -1,0 +1,166 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a href="{{ url_for('admin.users') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+        ← Назад к пользователям
+    </a>
+</div>
+
+<h2>Пользователь: {{ user.nickname }}</h2>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+    <!-- Основная информация -->
+    <div>
+        <!-- Профиль пользователя -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <img src="{{ user.display_avatar }}" alt="Аватар" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                <div>
+                    <h3>{{ user.nickname }}</h3>
+                    <p style="color: #666; margin: 0;">{{ user.email }}</p>
+                    {% if user.is_admin %}
+                        <span style="background: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">Администратор</span>
+                    {% endif %}
+                    {% if user.is_banned %}
+                        <span style="background: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">Заблокирован</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if user.is_banned %}
+            <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <strong>Пользователь заблокирован</strong><br>
+                <strong>Причина:</strong> {{ user.ban_reason }}<br>
+                <strong>Заблокирован:</strong> {{ user.banned_at.strftime('%d.%m.%Y %H:%M') }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Велодорожки пользователя -->
+        {% if recent_bikelanes %}
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Последние велодорожки</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; text-align: left;">Название</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; text-align: left;">Статус</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; text-align: left;">Дата</th>
+                        <th style="padding: 8px; border-bottom: 1px solid #ddd; text-align: left;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bikelane in recent_bikelanes %}
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ bikelane.title }}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                            <span style="padding: 2px 6px; border-radius: 3px; font-size: 0.8em;
+                                background: {% if bikelane.status == 'pending' %}#fff3cd{% elif bikelane.status == 'approved' %}#d4edda{% else %}#f8d7da{% endif %};">
+                                {{ bikelane.status_display }}
+                            </span>
+                        </td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ bikelane.created_at.strftime('%d.%m.%Y') }}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                            <a href="{{ url_for('admin.view_bikelane', bikelane_id=bikelane.id) }}" style="color: #007bff; text-decoration: none;">Просмотр</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Боковая панель -->
+    <div>
+        <!-- Статистика -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Статистика</h3>
+            <p><strong>Всего велодорожек:</strong> {{ user_stats.bikelanes_total }}</p>
+            <p><strong>На модерации:</strong> {{ user_stats.bikelanes_pending }}</p>
+            <p><strong>Одобрено:</strong> {{ user_stats.bikelanes_approved }}</p>
+            <p><strong>Баллы от велодорожек:</strong> {{ user_stats.total_score - user.manual_score }}</p>
+            <p><strong>Баллы от админа:</strong> {{ user.manual_score }}</p>
+            <p><strong>Всего баллов:</strong> {{ user_stats.total_score }}</p>
+        </div>
+
+        <!-- Действия администратора -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Действия</h3>
+            
+            <!-- Управление баллами -->
+            <form method="post" action="{{ url_for('admin.edit_user_score', user_id=user.id) }}" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Баллы от админа:</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="number" name="manual_score" value="{{ user.manual_score }}" 
+                           style="flex: 1; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                    <button type="submit" style="background: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px;">
+                        Обновить
+                    </button>
+                </div>
+            </form>
+
+            <!-- Блокировка/разблокировка -->
+            {% if not user.is_banned %}
+                <button onclick="showBanForm()" style="width: 100%; background: #dc3545; color: white; border: none; padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                    Заблокировать пользователя
+                </button>
+            {% else %}
+                <form method="post" action="{{ url_for('admin.unban_user', user_id=user.id) }}" style="margin-bottom: 10px;">
+                    <button type="submit" style="width: 100%; background: #28a745; color: white; border: none; padding: 10px; border-radius: 4px;">
+                        Разблокировать пользователя
+                    </button>
+                </form>
+            {% endif %}
+
+            <!-- Админские права -->
+            {% if user.id != current_user.id %}
+            <form method="post" action="{{ url_for('admin.toggle_admin', user_id=user.id) }}">
+                <button type="submit" style="width: 100%; background: #ffc107; color: #212529; border: none; padding: 10px; border-radius: 4px;">
+                    {% if user.is_admin %}Убрать права админа{% else %}Дать права админа{% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+
+        <!-- Информация -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+            <h3>Информация</h3>
+            <p><strong>Регистрация:</strong> {{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+            <p><strong>Последнее обновление:</strong> {{ user.updated_at.strftime('%d.%m.%Y %H:%M') }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка блокировки -->
+<div id="banModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4);">
+    <div style="background: white; margin: 10% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 500px;">
+        <h3>Заблокировать пользователя {{ user.nickname }}</h3>
+        <form method="post" action="{{ url_for('admin.ban_user', user_id=user.id) }}">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Причина блокировки:</label>
+                <textarea name="ban_reason" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; min-height: 80px;" placeholder="Укажите причину блокировки..."></textarea>
+            </div>
+            <div style="text-align: right;">
+                <button type="button" onclick="hideBanForm()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-right: 10px;">
+                    Отмена
+                </button>
+                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+                    Заблокировать
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showBanForm() {
+    document.getElementById('banModal').style.display = 'block';
+}
+
+function hideBanForm() {
+    document.getElementById('banModal').style.display = 'none';
+}
+</script>
+{% endblock %}

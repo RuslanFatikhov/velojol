@@ -17,6 +17,8 @@ class City(db.Model):
     coords_lat = db.Column(db.Float, nullable=False)  # широта
     coords_lng = db.Column(db.Float, nullable=False)  # долгота
     zoom = db.Column(db.Integer, default=12)  # уровень зума для карты
+    coat_of_arms = db.Column(db.String(256), nullable=True)  # Путь к гербу
+    background_image = db.Column(db.String(256), nullable=True)  # Путь к фону
     status = db.Column(db.String(20), default='active')  # active, inactive
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

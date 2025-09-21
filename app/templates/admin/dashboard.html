@@ -20,5 +20,22 @@
     </div>
 </div>
 
+<div style="margin-top: 30px;">
+    <h3>Быстрые действия</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <a href="{{ url_for('admin.bikelanes', status='pending') }}" style="display: block; padding: 20px; background: #fff3cd; border-radius: 8px; text-decoration: none; color: #856404; text-align: center;">
+            <strong>{{ stats.pending_bikelanes }}</strong><br>
+            На модерации
+        </a>
+        <a href="{{ url_for('admin.users') }}" style="display: block; padding: 20px; background: #e3f2fd; border-radius: 8px; text-decoration: none; color: #1976d2; text-align: center;">
+            <strong>{{ stats.total_users }}</strong><br>
+            Пользователей
+        </a>
+        <a href="{{ url_for('admin.cities') }}" style="display: block; padding: 20px; background: #f3e5f5; border-radius: 8px; text-decoration: none; color: #7b1fa2; text-align: center;">
+            <strong>{{ stats.total_cities }}</strong><br>
+            Городов
+        </a>
+    </div>
+</div>
 <p>Админка успешно настроена! Базовый функционал работает.</p>
 {% endblock %}

@@ -45,7 +45,7 @@ def users():
     stats = {
         'total_users': User.query.count(),
         'admin_users': User.query.filter_by(is_admin=True).count(),
-        'users_with_bikelanes': db.session.query(User.id).join(BikeLane).distinct().count(),
+        'users_with_bikelanes': db.session.query(User.id).join(BikeLane, User.id == BikeLane.user_id).distinct().count(),
         'active_users_30d': User.query.filter(
             User.created_at >= db.func.date('now', '-30 days')
         ).count()
@@ -68,7 +68,7 @@ def view_user(user_id):
         'bikelanes_pending': user.get_pending_bikelanes_count(),
         'bikelanes_approved': user.get_approved_bikelanes_count(),
         'total_score': user.get_total_score(),
-        'notifications_unread': user.get_unread_notifications_count()
+        'notifications_unread': 0  # TODO: реализовать подсчет уведомлений
     }
     
     # Последние велодорожки пользователя
@@ -167,3 +167,72 @@ def api_search_users():
         })
     
     return jsonify(results)
+@bp.route('/users/<int:user_id>/ban', methods=['POST'])
+@admin_required
+def ban_user(user_id):
+    """Заблокировать пользователя"""
+    user = User.query.get_or_404(user_id)
+    ban_reason = request.form.get('ban_reason', '').strip()
+    
+    if user.id == current_user.id:
+        flash('Нельзя заблокировать самого себя', 'error')
+        return redirect(url_for('admin.view_user', user_id=user_id))
+    
+    if not ban_reason:
+        flash('Причина блокировки обязательна', 'error')
+        return redirect(url_for('admin.view_user', user_id=user_id))
+    
+    try:
+        from datetime import datetime
+        user.is_banned = True
+        user.ban_reason = ban_reason
+        user.banned_at = datetime.utcnow()
+        user.banned_by = current_user.id
+        
+        db.session.commit()
+        flash(f'Пользователь {user.nickname} заблокирован', 'info')
+    except Exception as e:
+        db.session.rollback()
+        flash('Ошибка при блокировке пользователя', 'error')
+    
+    return redirect(url_for('admin.view_user', user_id=user_id))
+
+@bp.route('/users/<int:user_id>/unban', methods=['POST'])
+@admin_required  
+def unban_user(user_id):
+    """Разблокировать пользователя"""
+    user = User.query.get_or_404(user_id)
+    
+    try:
+        user.is_banned = False
+        user.ban_reason = None
+        user.banned_at = None
+        user.banned_by = None
+        
+        db.session.commit()
+        flash(f'Пользователь {user.nickname} разблокирован', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Ошибка при разблокировке пользователя', 'error')
+    
+    return redirect(url_for('admin.view_user', user_id=user_id))
+
+@bp.route('/users/<int:user_id>/edit-score', methods=['POST'])
+@admin_required
+def edit_user_score(user_id):
+    """Изменить баллы пользователя"""
+    user = User.query.get_or_404(user_id)
+    
+    try:
+        manual_score = int(request.form.get('manual_score', 0))
+        user.manual_score = manual_score
+        
+        db.session.commit()
+        flash(f'Баллы пользователя {user.nickname} обновлены', 'success')
+    except (ValueError, TypeError):
+        flash('Некорректное значение баллов', 'error')
+    except Exception as e:
+        db.session.rollback()
+        flash('Ошибка при обновлении баллов', 'error')
+    
+    return redirect(url_for('admin.view_user', user_id=user_id))

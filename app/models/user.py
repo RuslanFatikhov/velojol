@@ -1,5 +1,3 @@
-# app/models/user.py
-
 from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,6 +17,11 @@ class User(UserMixin, db.Model):
     
     # Права доступа
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_banned = db.Column(db.Boolean, default=False, nullable=False)
+    ban_reason = db.Column(db.Text, nullable=True)
+    manual_score = db.Column(db.Integer, default=0, nullable=False)  # Баллы от админа
+    banned_at = db.Column(db.DateTime, nullable=True)
+    banned_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Дополнительные поля профиля
     avatar_url = db.Column(db.String(256))
@@ -45,6 +48,29 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         """Проверяет пароль"""
         return check_password_hash(self.password_hash, password)
+    
+    @property
+    def display_avatar(self):
+        """Возвращает URL аватара для отображения"""
+        print(f"DEBUG: display_avatar called, avatar_url = {self.avatar_url}")
+        
+        if self.avatar_url:
+            # Если это загруженный файл (начинается с uploads/)
+            if self.avatar_url.startswith('uploads/'):
+                avatar_url = url_for('static', filename=self.avatar_url)
+                print(f"DEBUG: Generated avatar URL: {avatar_url}")
+                return avatar_url
+            # Если это внешняя ссылка
+            elif self.avatar_url.startswith('http'):
+                return self.avatar_url
+            # Если это относительный путь к статическому файлу
+            else:
+                return url_for('static', filename=self.avatar_url)
+        
+        # Дефолтный аватар
+        default_url = url_for('static', filename='img/default-avatar.svg')
+        print(f"DEBUG: Using default avatar: {default_url}")
+        return default_url
     
     def get_social_links(self):
         """Возвращает словарь с социальными ссылками"""
@@ -76,4 +102,4 @@ class User(UserMixin, db.Model):
     def get_total_score(self):
         """Возвращает общий счет пользователя"""
         approved_bikelanes = self.bikelanes.filter_by(status='approved')
-        return sum(bl.score for bl in approved_bikelanes if bl.score)
+        return sum(bl.score for bl in approved_bikelanes if bl.score) + self.manual_score

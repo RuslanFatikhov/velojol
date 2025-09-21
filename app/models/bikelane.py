@@ -103,27 +103,33 @@ class BikeLane(db.Model):
         self.admin_comment = comment
         self.score = 0
     
+/*************  ✨ Windsurf Command 🌟  *************/
     def calculate_score(self):
+        """
+        Рассчитать баллы за велодорожку
         """Рассчитать баллы за велодорожку"""
-        base_score = 10  # Базовые баллы
+        base_score = 5  # Базовые 5 баллов за отправленную велодорожку
         
-        # Бонус за качество
-        quality_bonus = {1: 0, 2: 2, 3: 5, 4: 8, 5: 12}
-        score = base_score + quality_bonus.get(self.quality, 0)
+        Базовые баллы за отправленную велодорожку - 5 баллов
+        """
+        base_score = 5
         
-        # Бонус за фото
+        """
+        Добавляем 1 балл за каждое фото
+        """
+        # +1 балл за каждое фото
         photos_count = len(self.get_photos_list())
-        score += min(photos_count * 2, 10)  # Максимум 10 баллов за фото
+        score = base_score + photos_count
         
-        # Бонус за видео
+        """
+        Добавляем 5 баллов за каждое видео
+        """
+        # +5 баллов за каждое видео
         videos_count = len(self.get_videos_list())
-        score += min(videos_count * 5, 15)  # Максимум 15 баллов за видео
-        
-        # Бонус за детальное описание
-        if len(self.description) > 100:
-            score += 5
+        score += videos_count * 5
         
         return score
+/*******  5579b26f-7dfb-42be-8851-54e5b45036fa  *******/
     
     @property
     def photos_count(self):
