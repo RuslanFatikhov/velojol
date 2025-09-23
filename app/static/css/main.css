@@ -20,10 +20,9 @@ body{
 }
 
 header, .page-header{
-    position: fixed;
+    position: absolute;
     left: 0px;
     top: 0px;
-    z-index: 100;
     width: 100vw;
     height: 80px;
     display: flex;
@@ -190,9 +189,6 @@ input:focus-visible{
     line-height: var(--spacer-xxl);
 }
 
-.graph{
-    border-right: 1px solid var(--secondary40);
-}
 
 .badge_gs{
     display: flex;
@@ -220,3 +216,539 @@ input:focus-visible{
     }
 
 }
+
+
+
+/* Refactor later */
+/* Стили для страниц велодорожек пользователя - добавляем в app/static/css/main.css */
+
+/* Статистика на главной странице велодорожек */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacer-m);
+    margin-top: var(--spacer-m);
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--spacer-s);
+}
+
+
+.stat-label {
+    font-size: 12px;
+    color: var(--secondary100);
+    margin-top: var(--spacer-xs);
+}
+
+/* Фильтры */
+.filter-tabs {
+    display: flex;
+    gap: var(--spacer-xs);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.filter-tab {
+    padding: var(--spacer-s) var(--spacer-m);
+    background: var(--bg3);
+    color: var(--secondary100);
+    text-decoration: none;
+    border-radius: var(--spacer-s);
+    font-size: 14px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.filter-tab:hover {
+    background: var(--bg4);
+}
+
+.filter-tab.active {
+    background: var(--accent100);
+    color: var(--prime_invert100);
+}
+
+/* Карточки велодорожек */
+.bikelane-card {
+    margin-bottom: var(--spacer-sm);
+}
+
+.bikelane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacer-s);
+}
+
+.bikelane-info {
+    flex: 1;
+}
+
+.bikelane-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: var(--spacer-xs);
+}
+
+.bikelane-meta {
+    font-size: 14px;
+    color: var(--secondary100);
+}
+
+.bikelane-status {
+    margin-left: var(--spacer-s);
+}
+
+.status-badge {
+    padding: var(--spacer-xs) var(--spacer-s);
+    border-radius: var(--spacer-s);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.bikelane-description {
+    margin-bottom: var(--spacer-m);
+}
+
+.bikelane-description p {
+    color: var(--secondary100);
+    line-height: 1.4;
+}
+
+.bikelane-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacer-m);
+    margin-bottom: var(--spacer-m);
+    padding-bottom: var(--spacer-s);
+    border-bottom: 1px solid var(--bg3);
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-xs);
+    font-size: 14px;
+}
+
+/* Комментарий админа */
+.admin-comment {
+    background: #f8f9fa;
+    border-left: 4px solid var(--accent100);
+    padding: var(--spacer-m);
+    border-radius: var(--spacer-s);
+    margin-bottom: var(--spacer-m);
+}
+
+.admin-comment-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    margin-bottom: var(--spacer-s);
+}
+
+.admin-comment p {
+    margin: 0;
+    font-style: italic;
+}
+
+/* Действия с велодорожками */
+.bikelane-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-xs);
+}
+
+.action-link {
+    display: flex;
+    align-items: center;
+    padding: var(--spacer-s) 0;
+    text-decoration: none;
+    color: var(--prime100);
+    transition: background-color 0.2s ease;
+}
+
+.action-link:hover {
+    background-color: var(--bg3);
+    border-radius: var(--spacer-s);
+    padding-left: var(--spacer-s);
+    padding-right: var(--spacer-s);
+}
+
+.delete-action {
+    color: #dc3545;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.delete-action:hover {
+    background-color: #fff5f5;
+}
+
+/* Пустое состояние */
+.empty-state {
+    text-align: center;
+    padding: var(--spacer-xl) var(--spacer-m);
+}
+
+.empty-state-icon {
+    margin-bottom: var(--spacer-m);
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    margin-bottom: var(--spacer-s);
+    color: var(--prime100);
+}
+
+.empty-state p {
+    color: var(--secondary100);
+    line-height: 1.5;
+}
+
+/* Пагинация */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacer-m);
+    gap: var(--spacer-m);
+}
+
+.pagination-info {
+    text-align: center;
+}
+
+/* Модальные окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal {
+    background: white;
+    border-radius: var(--spacer-m);
+    padding: var(--spacer-l);
+    max-width: 400px;
+    width: 90%;
+    margin: var(--spacer-m);
+}
+
+.modal-header {
+    margin-bottom: var(--spacer-m);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.modal-body {
+    margin-bottom: var(--spacer-l);
+}
+
+.modal-body p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--spacer-s);
+}
+
+.modal-actions .button_square_label {
+    flex: 1;
+}
+
+/* Модальное окно фотографий */
+.photo-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+}
+
+.photo-modal {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.photo-modal img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: var(--spacer-s);
+}
+
+.photo-modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+}
+
+.photo-modal-close:hover {
+    background: white;
+}
+
+/* Страница просмотра отдельной велодорожки */
+.navigation-header {
+    margin-bottom: var(--spacer-m);
+}
+
+.nav-back {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    color: var(--secondary100);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-back:hover {
+    color: var(--prime100);
+}
+
+.bikelane-title-section h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: var(--spacer-xs);
+}
+
+.bikelane-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    font-size: 14px;
+}
+
+.dot {
+    color: var(--secondary100);
+}
+
+/* Характеристики */
+.characteristics-grid {
+    display: grid;
+    gap: var(--spacer-m);
+}
+
+.char-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: var(--spacer-s);
+    border-bottom: 1px solid var(--bg3);
+}
+
+.char-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.char-label {
+    font-size: 14px;
+    color: var(--secondary100);
+}
+
+.char-value {
+    font-weight: 500;
+    text-align: right;
+}
+
+.quality-stars {
+    margin-top: var(--spacer-xs);
+    font-size: 14px;
+}
+
+.star {
+    color: #ddd;
+}
+
+.star.filled {
+    color: #ffc107;
+}
+
+/* Сетка фотографий */
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacer-s);
+}
+
+.photo-item {
+    aspect-ratio: 1;
+    border-radius: var(--spacer-s);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.photo-item:hover {
+    transform: scale(1.05);
+}
+
+.photo-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Список видео */
+.videos-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-xs);
+}
+
+.video-link {
+    padding: var(--spacer-s) 0;
+    text-decoration: none;
+    color: var(--prime100);
+    transition: background-color 0.2s ease;
+}
+
+.video-link:hover {
+    background-color: var(--bg3);
+    border-radius: var(--spacer-s);
+    padding-left: var(--spacer-s);
+    padding-right: var(--spacer-s);
+}
+
+/* Действия на странице просмотра */
+.actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    padding: var(--spacer-m);
+    border: none;
+    border-radius: var(--spacer-s);
+    background: var(--bg3);
+    color: var(--prime100);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.action-button:hover {
+    background: var(--bg4);
+}
+
+.delete-button {
+    background: #fff5f5;
+    color: #dc3545;
+    border: 1px solid #f8d7da;
+}
+
+.delete-button:hover {
+    background: #f8d7da;
+}
+
+.secondary-button {
+    background: var(--accent80);
+    color: var(--prime100);
+}
+
+.secondary-button:hover {
+    background: var(--accent100);
+    color: var(--prime_invert100);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacer-s);
+    }
+    
+    .bikelane-header {
+        flex-direction: column;
+        gap: var(--spacer-s);
+    }
+    
+    .bikelane-status {
+        margin-left: 0;
+        align-self: flex-start;
+    }
+    
+    .bikelane-details {
+        flex-direction: column;
+        gap: var(--spacer-s);
+    }
+    
+    .char-item {
+        flex-direction: column;
+        gap: var(--spacer-xs);
+        align-items: flex-start;
+    }
+    
+    .char-value {
+        text-align: left;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        gap: var(--spacer-s);
+    }
+    
+    .photos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+

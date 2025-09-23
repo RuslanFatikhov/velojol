@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}{{ bikelane.title }} - Мои велодорожки - VELOJOL{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    
+    <!-- Навигация -->
+    <div class="island">
+        <div class="navigation-header">
+            <a href="{{ url_for('auth.my_bikelanes') }}" class="nav-back">
+                <span class="secondary100">← Мои велодорожки</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Заголовок и статус -->
+    <div class="island">
+        <div class="bikelane-header">
+            <div class="bikelane-title-section">
+                <h1 class="prime100">{{ bikelane.title }}</h1>
+                <div class="bikelane-meta">
+                    <span class="secondary100">{{ bikelane.city_display }}</span>
+                    <span class="dot">•</span>
+                    <span class="secondary100">{{ bikelane.track_type_display }}</span>
+                </div>
+            </div>
+            <div class="status-section">
+                <span class="status-badge status-{{ bikelane.status }}">
+                    {{ bikelane.status_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Описание -->
+    <div class="island">
+        <h3 class="prime100 island_heading">Описание</h3>
+        <p class="secondary100" style="line-height: 1.5;">{{ bikelane.description }}</p>
+    </div>
+
+    <!-- Характеристики -->
+    <div class="island">
+        <h3 class="prime100 island_heading">Характеристики</h3>
+        
+        <div class="characteristics-grid">
+            <div class="char-item">
+                <div class="char-label secondary100">Тип дорожки</div>
+                <div class="char-value prime100">{{ bikelane.track_type_display }}</div>
+            </div>
+            
+            <div class="char-item">
+                <div class="char-label secondary100">Качество покрытия</div>
+                <div class="char-value prime100">
+                    {{ bikelane.quality_display }}
+                    <div class="quality-stars">
+                        {% for i in range(1, 6) %}
+                            <span class="star {% if i <= bikelane.quality %}filled{% endif %}">★</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="char-item">
+                <div class="char-label secondary100">Дата добавления</div>
+                <div class="char-value prime100">{{ bikelane.created_at.strftime('%d.%m.%Y в %H:%M') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Действия -->
+    <div class="island">
+        <div class="actions-grid">
+            {% if bikelane.status == 'pending' %}
+            <button onclick="deleteBikelane({{ bikelane.id }}, '{{ bikelane.title }}')" 
+                    class="action-button delete-button">
+                <span>🗑️ Удалить велодорожку</span>
+            </button>
+            {% endif %}
+            
+            <a href="{{ url_for('auth.my_bikelanes') }}" class="action-button secondary-button">
+                <span>📋 Все мои велодорожки</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно удаления -->
+<div id="deleteModal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="prime100">Удалить велодорожку?</h3>
+        </div>
+        <div class="modal-body">
+            <p class="secondary100">
+                Вы действительно хотите удалить велодорожку "{{ bikelane.title }}"? 
+                Это действие нельзя отменить.
+            </p>
+        </div>
+        <div class="modal-actions">
+            <button onclick="closeDeleteModal()" class="button_square_label btn_gray">
+                Отмена
+            </button>
+            <form method="post" action="{{ url_for('auth.delete_bikelane', bikelane_id=bikelane.id) }}" style="display: inline;">
+                <button type="submit" class="button_square_label" 
+                        style="background: #dc3545; color: white;">
+                    Удалить
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Модальное окно удаления
+function deleteBikelane(bikelaneId, title) {
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Закрытие модального окна по клику вне него
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+});
+</script>
+{% endblock %}

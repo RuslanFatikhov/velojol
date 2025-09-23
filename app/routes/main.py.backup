@@ -150,17 +150,16 @@ def add_bikelane():
                 track_type=form_data['track_type'],
                 quality=int(form_data['quality']),
                 geometry=form_data['geometry'],
+                distance=distance_value,  # Устанавливаем дистанцию
                 status='pending',
                 user_id=current_user.id if current_user.is_authenticated else None
             )
             
-            # Устанавливаем дистанцию
-            if distance_value is not None:
-                bikelane.distance = distance_value
-            else:
-                # Рассчитываем дистанцию автоматически
+            # Если дистанция не была передана, рассчитываем её автоматически
+            if distance_value is None and bikelane.geometry:
                 bikelane.distance = bikelane.calculate_distance()
-                current_app.logger.info(f"Дистанция рассчитана автоматически: {bikelane.distance} м")            
+                current_app.logger.info(f"Дистанция рассчитана автоматически: {bikelane.distance} м")
+            
             # Устанавливаем фотографии и видео
             if photo_paths:
                 if hasattr(bikelane, 'set_photos_list'):
@@ -195,7 +194,7 @@ def add_bikelane():
                 'bikelane_id': bikelane.id,
                 'title': form_data['title'],
                 'city': form_data['city'],
-                'distance': f'{bikelane.distance:.1f} м' if bikelane.distance else None
+                'distance': bikelane.distance_display if bikelane.distance else None
             })
             
         except Exception as e:

@@ -1,183 +1,34 @@
-// Скрипт для страницы добавления велодорожки
+// Скрипт для страницы добавления велодорожки (адаптированный под существующий HTML)
 
 // Глобальные переменные для карты
 let map, drawnItems, drawControl, currentPolyline, citiesData;
 
 /**
- * Загрузка данных о городах и заполнение селекта
+ * Загрузка данных о городах
  */
 async function loadCitiesData() {
     try {
-        console.log('Загрузка данных городов...');
         const response = await fetch('/static/data/cities.json');
-        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
         citiesData = await response.json();
         console.log('Города загружены:', citiesData.cities.length);
-        
-        // Заполняем селект городов
-        populateCitySelect();
-        
+        // НЕ заполняем селект, так как города уже есть в HTML
     } catch (error) {
         console.error('Ошибка загрузки городов:', error);
-        
-        // Fallback данные для JavaScript логики (под вашу структуру)
+        // Fallback данные для JavaScript логики
         citiesData = {
             cities: [
-                { 
-                    id: "almaty", 
-                    name: "Алматы", 
-                    country: "Казахстан",
-                    distance: 0,
-                    rating: 0,
-                    coords: [43.2565, 76.9286], 
-                    zoom: 12 
-                }
+                { id: "almaty", name: "Алматы", coords: [43.2565, 76.9286], zoom: 12 },
+                { id: "astana", name: "Астана", coords: [51.1694, 71.4491], zoom: 12 },
+                { id: "shymkent", name: "Шымкент", coords: [42.3417, 69.5901], zoom: 12 },
+                { id: "aktobe", name: "Актобе", coords: [50.2759, 57.2077], zoom: 12 },
+                { id: "taraz", name: "Тараз", coords: [42.9000, 71.3667], zoom: 12 }
             ]
         };
-        
         console.log('Использованы fallback города');
-        populateCitySelect();
     }
-}
-
-/**
- * Заполняет селект городов данными из JSON
- */
-function populateCitySelect() {
-    const citySelect = document.getElementById('city');
-    if (!citySelect) {
-        console.error('Селект городов не найден');
-        return;
-    }
-    
-    console.log('Заполнение селекта городов...');
-    
-    // Очищаем текущие опции (кроме первой "Выберите город")
-    while (citySelect.children.length > 1) {
-        citySelect.removeChild(citySelect.lastChild);
-    }
-    
-    // Добавляем города из JSON
-    citiesData.cities.forEach(city => {
-        const option = document.createElement('option');
-        option.value = city.id;
-        option.textContent = city.name; // Просто "Алматы"
-        citySelect.appendChild(option);
-        
-        console.log(`Добавлен город: ${city.name} (${city.id})`);
-    });
-    
-    console.log(`Селект заполнен: ${citiesData.cities.length} городов`);
-}
-
-/**
- * Рассчитывает дистанцию линии в метрах
- */
-function calculateLineDistance(coordinates) {
-    if (!coordinates || coordinates.length < 2) {
-        return 0;
-    }
-    
-    let totalDistance = 0;
-    
-    for (let i = 0; i < coordinates.length - 1; i++) {
-        const [lon1, lat1] = coordinates[i];
-        const [lon2, lat2] = coordinates[i + 1];
-        
-        const distance = haversineDistance(lat1, lon1, lat2, lon2);
-        totalDistance += distance;
-    }
-    
-    return totalDistance;
-}
-
-/**
- * Формула гаверсинуса для расчета расстояния между двумя точками
- */
-function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371000; // Радиус Земли в метрах
-    
-    const lat1Rad = lat1 * Math.PI / 180;
-    const lon1Rad = lon1 * Math.PI / 180;
-    const lat2Rad = lat2 * Math.PI / 180;
-    const lon2Rad = lon2 * Math.PI / 180;
-    
-    const dlat = lat2Rad - lat1Rad;
-    const dlon = lon2Rad - lon1Rad;
-    
-    const a = Math.sin(dlat/2) * Math.sin(dlat/2) + 
-              Math.cos(lat1Rad) * Math.cos(lat2Rad) * 
-              Math.sin(dlon/2) * Math.sin(dlon/2);
-    
-    const c = 2 * Math.asin(Math.sqrt(a));
-    
-    return R * c;
-}
-
-/**
- * Форматирует дистанцию для отображения
- */
-function formatDistance(distanceInMeters) {
-    if (distanceInMeters >= 1000) {
-        return `${(distanceInMeters / 1000).toFixed(1)} км`;
-    } else {
-        return `${Math.round(distanceInMeters)} м`;
-    }
-}
-
-/**
- * Обновляет отображение дистанции
- */
-function updateDistanceDisplay(coordinates) {
-    const distance = calculateLineDistance(coordinates);
-    const formattedDistance = formatDistance(distance);
-    
-    // Находим или создаем элемент для отображения дистанции
-    let distanceElement = document.getElementById('distance-display');
-    if (!distanceElement) {
-        distanceElement = document.createElement('div');
-        distanceElement.id = 'distance-display';
-        distanceElement.className = 'distance-display';
-        
-        const geometryStatus = document.getElementById('geometry-status');
-        if (geometryStatus) {
-            geometryStatus.parentNode.insertBefore(distanceElement, geometryStatus.nextSibling);
-        }
-    }
-    
-    distanceElement.innerHTML = `
-        <span class="distance-label">Дистанция:</span>
-        <span class="distance-value">${formattedDistance}</span>
-    `;
-    
-    console.log(`Дистанция обновлена: ${formattedDistance} (${distance.toFixed(2)} м)`);
-    
-    return distance;
-}
-
-/**
- * Добавляет скрытое поле для дистанции в форму
- */
-function addDistanceField(distance) {
-    let distanceInput = document.getElementById('distance');
-    if (!distanceInput) {
-        distanceInput = document.createElement('input');
-        distanceInput.type = 'hidden';
-        distanceInput.id = 'distance';
-        distanceInput.name = 'distance';
-        
-        const form = document.getElementById('bikelane-form');
-        if (form) {
-            form.appendChild(distanceInput);
-        }
-    }
-    
-    distanceInput.value = distance.toFixed(2);
-    console.log(`Поле distance установлено: ${distance.toFixed(2)} м`);
 }
 
 /**
@@ -283,12 +134,6 @@ function initDrawingHandlers() {
             console.log('Поле геометрии очищено');
         }
         
-        // Очищаем дистанцию
-        const distanceElement = document.getElementById('distance-display');
-        if (distanceElement) {
-            distanceElement.style.display = 'none';
-        }
-        
         // Начинаем новую линию
         currentPoints = [latlng];
         currentPolyline = L.polyline(currentPoints, {
@@ -339,8 +184,7 @@ function initDrawingHandlers() {
         
         // Рассчитываем и отображаем дистанцию
         const distance = updateDistanceDisplay(coordinates);
-        addDistanceField(distance);
-        
+        addDistanceField(distance);        
         // Сохраняем в скрытое поле
         const geometryInput = document.getElementById('geometry');
         if (!geometryInput) {
@@ -356,7 +200,6 @@ function initDrawingHandlers() {
         console.log('- Значение установлено:', geometryString);
         console.log('- Проверяем значение поля сейчас:', geometryInput.value);
         console.log('- Длина:', geometryInput.value.length);
-        console.log('- Дистанция:', distance.toFixed(2), 'м');
         
         // Делаем линию редактируемой
         if (currentPolyline && currentPolyline.editing) {
@@ -365,7 +208,7 @@ function initDrawingHandlers() {
             
             // Добавляем обработчик изменения линии
             currentPolyline.on('edit', function() {
-                console.log('Линия отредактирована, обновляем геометрию и дистанцию');
+                console.log('Линия отредактирована, обновляем геометрию');
                 updateGeometryFromMap();
             });
         }
@@ -379,7 +222,7 @@ function initDrawingHandlers() {
         // Обновляем статус
         validateGeometry();
         
-        updateGeometryStatus(`Линия нарисована! Дистанция: ${formatDistance(distance)}. Можете перетаскивать точки для корректировки.`, 'valid');
+        updateGeometryStatus('Линия нарисована! Можете перетаскивать точки для корректировки.', 'valid');
         
         console.log('=== ЗАВЕРШЕНИЕ ОБРАБОТКИ ЛИНИИ ===');
     }
@@ -407,10 +250,6 @@ function loadExistingGeometry() {
                 
                 // Подгоняем карту под линию
                 map.fitBounds(polyline.getBounds());
-                
-                // Показываем дистанцию для существующей геометрии
-                const distance = updateDistanceDisplay(geojson.coordinates);
-                addDistanceField(distance);
                 
                 updateGeometryStatus('Линия загружена из сохраненных данных', 'valid');
             }
@@ -486,18 +325,13 @@ function updateGeometryFromMap() {
             const geometryString = JSON.stringify(geojson);
             geometryInput.value = geometryString;
             
+            console.log('Геометрия обновлена:', geometryString);
+            
             // Обновляем дистанцию
             const distance = updateDistanceDisplay(coordinates);
-            addDistanceField(distance);
-            
-            console.log('Геометрия и дистанция обновлены:', geometryString);
-            console.log('Новая дистанция:', distance.toFixed(2), 'м');
-        }
+            addDistanceField(distance);        }
     });
 }
-
-// Остальные функции остаются такими же, как были в рабочем коде...
-// (продолжение в следующем сообщении из-за ограничения длины)
 
 /**
  * Инициализация обработки загрузки фотографий
@@ -723,13 +557,6 @@ function initFormValidation() {
                 if (!parsed.coordinates || parsed.coordinates.length < 2) {
                     errors.push('Линия должна содержать минимум 2 точки');
                     console.log('ОШИБКА: Недостаточно точек в геометрии');
-                } else {
-                    // Проверяем минимальную дистанцию
-                    const distance = calculateLineDistance(parsed.coordinates);
-                    if (distance < 10) {
-                        errors.push('Велодорожка должна быть длиннее 10 метров');
-                        console.log('ОШИБКА: Дистанция слишком мала:', distance.toFixed(2), 'м');
-                    }
                 }
             } catch (e) {
                 errors.push('Ошибка в данных геометрии');
@@ -804,12 +631,8 @@ function initFormValidation() {
                     preview.innerHTML = '';
                 }
                 
-                // Очищаем статус геометрии и дистанцию
+                // Очищаем статус геометрии
                 updateGeometryStatus('', 'info');
-                const distanceElement = document.getElementById('distance-display');
-                if (distanceElement) {
-                    distanceElement.style.display = 'none';
-                }
                 
             } else {
                 console.log('Сервер вернул ошибку:', data.error);
@@ -847,13 +670,21 @@ function initInteractiveElements() {
                 if (city) {
                     map.setView(city.coords, city.zoom || 12);
                     console.log('Карта перемещена к городу:', city.name);
-                    console.log('Данные города:', {
-                        country: city.country,
-                        distance: city.distance,
-                        rating: city.rating
-                    });
                 } else {
-                    console.log('Данные города не найдены');
+                    console.log('Данные города не найдены, используем fallback');
+                    // Fallback координаты для существующих в HTML городов
+                    const fallbackCoords = {
+                        'almaty': [43.2565, 76.9286],
+                        'astana': [51.1694, 71.4491],
+                        'shymkent': [42.3417, 69.5901],
+                        'aktobe': [50.2759, 57.2077],
+                        'taraz': [42.9000, 71.3667]
+                    };
+                    
+                    if (fallbackCoords[selectedCity]) {
+                        map.setView(fallbackCoords[selectedCity], 12);
+                        console.log('Использованы fallback координаты для:', selectedCity);
+                    }
                 }
             }
         });
@@ -861,32 +692,54 @@ function initInteractiveElements() {
 }
 
 /**
- * Добавляет тестовую кнопку для отладки геометрии
+ * Добавляет кнопку для отладки геометрии
  */
 function addDebugButton() {
-    if (console.log) {  // Только в режиме разработки
-        const debugBtn = document.createElement('button');
-        debugBtn.textContent = 'Debug Geometry';
-        debugBtn.type = 'button';
-        debugBtn.className = 'debug-geometry-btn';
-        debugBtn.style.position = 'fixed';
-        debugBtn.style.top = '10px';
-        debugBtn.style.right = '10px';
-        debugBtn.style.zIndex = '10000';
-        debugBtn.style.padding = '5px 10px';
-        debugBtn.style.fontSize = '12px';
-        debugBtn.onclick = function() {
-            const geometryInput = document.getElementById('geometry');
-            console.log('=== DEBUG GEOMETRY ===');
-            console.log('Поле найдено:', geometryInput ? 'ДА' : 'НЕТ');
-            if (geometryInput) {
-                console.log('Значение:', geometryInput.value);
-                console.log('Длина:', geometryInput.value.length);
+    const debugBtn = document.createElement('button');
+    debugBtn.textContent = 'ТЕСТ: Проверить геометрию';
+    debugBtn.type = 'button';
+    debugBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;background:red;color:white;padding:10px;border:none;border-radius:4px;cursor:pointer;';
+    
+    debugBtn.onclick = function() {
+        console.log('=== ТЕСТ ГЕОМЕТРИИ ===');
+        
+        const geometryInput = document.getElementById('geometry');
+        console.log('Поле geometry найдено:', !!geometryInput);
+        
+        if (geometryInput) {
+            console.log('Значение поля:', geometryInput.value);
+            console.log('Длина значения:', geometryInput.value.length);
+            console.log('Поле пустое:', geometryInput.value === '');
+            
+            if (geometryInput.value) {
+                try {
+                    const parsed = JSON.parse(geometryInput.value);
+                    console.log('JSON валидный:', parsed);
+                    console.log('Тип:', parsed.type);
+                    console.log('Координаты:', parsed.coordinates);
+                    console.log('Количество точек:', parsed.coordinates ? parsed.coordinates.length : 0);
+                } catch (e) {
+                    console.log('JSON невалидный:', e.message);
+                }
             }
-            console.log('drawnItems слои:', drawnItems ? drawnItems.getLayers().length : 'drawnItems не найден');
-        };
-        document.body.appendChild(debugBtn);
-    }
+        }
+        
+        // Проверяем слои на карте
+        if (drawnItems) {
+            console.log('Слоев на карте:', drawnItems.getLayers().length);
+            drawnItems.eachLayer(function(layer) {
+                if (layer instanceof L.Polyline) {
+                    const latlngs = layer.getLatLngs();
+                    console.log('Полилиния найдена, точек:', latlngs.length);
+                    console.log('Координаты:', latlngs);
+                }
+            });
+        }
+        
+        alert('Проверьте консоль для подробностей');
+    };
+    
+    document.body.appendChild(debugBtn);
 }
 
 /**
@@ -895,7 +748,7 @@ function addDebugButton() {
 async function initAddBikeLanePage() {
     console.log('Начало инициализации страницы');
     
-    // Загружаем данные городов и заполняем селект
+    // Загружаем данные городов (но не меняем HTML)
     await loadCitiesData();
     
     // Инициализируем компоненты
@@ -1004,4 +857,109 @@ function closeSuccessModal() {
         modal.style.animation = 'fadeIn 0.3s ease reverse';
         setTimeout(() => modal.remove(), 300);
     }
+}
+/**
+ * Рассчитывает дистанцию линии в метрах
+ */
+function calculateLineDistance(coordinates) {
+    if (!coordinates || coordinates.length < 2) {
+        return 0;
+    }
+    
+    let totalDistance = 0;
+    
+    for (let i = 0; i < coordinates.length - 1; i++) {
+        const [lon1, lat1] = coordinates[i];
+        const [lon2, lat2] = coordinates[i + 1];
+        
+        const distance = haversineDistance(lat1, lon1, lat2, lon2);
+        totalDistance += distance;
+    }
+    
+    return totalDistance;
+}
+
+/**
+ * Формула гаверсинуса для расчета расстояния между двумя точками
+ */
+function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // Радиус Земли в метрах
+    
+    const lat1Rad = lat1 * Math.PI / 180;
+    const lon1Rad = lon1 * Math.PI / 180;
+    const lat2Rad = lat2 * Math.PI / 180;
+    const lon2Rad = lon2 * Math.PI / 180;
+    
+    const dlat = lat2Rad - lat1Rad;
+    const dlon = lon2Rad - lon1Rad;
+    
+    const a = Math.sin(dlat/2) * Math.sin(dlat/2) + 
+              Math.cos(lat1Rad) * Math.cos(lat2Rad) * 
+              Math.sin(dlon/2) * Math.sin(dlon/2);
+    
+    const c = 2 * Math.asin(Math.sqrt(a));
+    
+    return R * c;
+}
+
+/**
+ * Форматирует дистанцию для отображения
+ */
+function formatDistance(distanceInMeters) {
+    if (distanceInMeters >= 1000) {
+        return `${(distanceInMeters / 1000).toFixed(1)} км`;
+    } else {
+        return `${Math.round(distanceInMeters)} м`;
+    }
+}
+
+/**
+ * Обновляет отображение дистанции
+ */
+function updateDistanceDisplay(coordinates) {
+    const distance = calculateLineDistance(coordinates);
+    const formattedDistance = formatDistance(distance);
+    
+    // Находим или создаем элемент для отображения дистанции
+    let distanceElement = document.getElementById('distance-display');
+    if (!distanceElement) {
+        distanceElement = document.createElement('div');
+        distanceElement.id = 'distance-display';
+        distanceElement.className = 'distance-display';
+        
+        const geometryStatus = document.getElementById('geometry-status');
+        if (geometryStatus) {
+            geometryStatus.parentNode.insertBefore(distanceElement, geometryStatus.nextSibling);
+        }
+    }
+    
+    distanceElement.innerHTML = `
+        <span class="distance-label">Дистанция:</span>
+        <span class="distance-value">${formattedDistance}</span>
+    `;
+    
+    console.log(`Дистанция обновлена: ${formattedDistance} (${distance.toFixed(2)} м)`);
+    
+    return distance;
+}
+
+/**
+ * Добавляет скрытое поле для дистанции в форму
+ */
+function addDistanceField(distance) {
+    let distanceInput = document.getElementById('distance');
+    if (!distanceInput) {
+        distanceInput = document.createElement('input');
+        distanceInput.type = 'hidden';
+        distanceInput.id = 'distance';
+        distanceInput.name = 'distance';
+        
+        const form = document.getElementById('bikelane-form');
+        if (form) {
+            form.appendChild(distanceInput);
+        }
+    }
+    
+    distanceInput.value = distance.toFixed(2);
+    console.log(`Поле distance установлено: ${distance.toFixed(2)} м`);
 }

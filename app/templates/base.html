@@ -19,7 +19,9 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    {% include 'components/header.html' %}
+    {% if not hide_header %}
+        {% include 'components/header.html' %}
+    {% endif %}
 
     <div class="container">
         <!-- Flash сообщения -->

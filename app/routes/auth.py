@@ -4,7 +4,9 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models.user import User
+from app.models.bikelane import BikeLane
 import re
+import os
 
 # Создаем Blueprint для аутентификации
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -205,13 +207,99 @@ def profile():
     
     return render_template('auth/profile.html', user=current_user, user_stats=user_stats)
 
+@bp.route('/my-bikelanes')
+@login_required
+def my_bikelanes():
+    """Список велодорожек пользователя"""
+    page = request.args.get('page', 1, type=int)
+    status_filter = request.args.get('status', 'all')
+    per_page = 10
+    
+    # Базовый запрос велодорожек текущего пользователя
+    query = BikeLane.query.filter_by(user_id=current_user.id)
+    
+    # Фильтр по статусу
+    if status_filter != 'all':
+        query = query.filter_by(status=status_filter)
+    
+    # Сортировка по дате создания (новые первыми)
+    query = query.order_by(BikeLane.created_at.desc())
+    
+    # Пагинация
+    bikelanes = query.paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
+    
+    # Статистика для пользователя
+    user_stats = {
+        'total': current_user.bikelanes.count(),
+        'pending': current_user.bikelanes.filter_by(status='pending').count(),
+        'approved': current_user.bikelanes.filter_by(status='approved').count(),
+        'rejected': current_user.bikelanes.filter_by(status='rejected').count(),
+        'total_score': current_user.get_total_score()
+    }
+    
+    return render_template('auth/my_bikelanes.html', 
+                         bikelanes=bikelanes,
+                         user_stats=user_stats,
+                         status_filter=status_filter)
+
+@bp.route('/bikelane/<int:bikelane_id>')
+@login_required
+def view_bikelane(bikelane_id):
+    """Просмотр конкретной велодорожки пользователя"""
+    bikelane = BikeLane.query.filter_by(
+        id=bikelane_id, 
+        user_id=current_user.id
+    ).first_or_404()
+    
+    return render_template('auth/view_bikelane.html', bikelane=bikelane)
+
+@bp.route('/bikelane/<int:bikelane_id>/delete', methods=['POST'])
+@login_required
+def delete_bikelane(bikelane_id):
+    """Удаление велодорожки пользователем (только если статус pending)"""
+    bikelane = BikeLane.query.filter_by(
+        id=bikelane_id, 
+        user_id=current_user.id
+    ).first_or_404()
+    
+    # Можно удалять только велодорожки на модерации
+    if bikelane.status != 'pending':
+        flash('Можно удалять только велодорожки на модерации', 'error')
+        return redirect(url_for('auth.my_bikelanes'))
+    
+    try:
+        title = bikelane.title
+        
+        # Удаляем связанные фотографии
+        photos = bikelane.get_photos_list()
+        for photo_path in photos:
+            try:
+                full_path = os.path.join(current_app.static_folder, photo_path)
+                if os.path.exists(full_path):
+                    os.remove(full_path)
+            except Exception as e:
+                current_app.logger.error(f'Ошибка при удалении фото {photo_path}: {e}')
+        
+        db.session.delete(bikelane)
+        db.session.commit()
+        
+        flash(f'Велодорожка "{title}" удалена', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Ошибка при удалении велодорожки: {e}')
+        flash('Ошибка при удалении велодорожки', 'error')
+    
+    return redirect(url_for('auth.my_bikelanes'))
+
 @bp.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     """Редактирование профиля пользователя"""
-    
-    import os
-    from datetime import datetime
     
     if request.method == 'GET':
         # Заполняем форму текущими данными пользователя
@@ -311,6 +399,7 @@ def edit_profile():
                 errors.append('Размер файла аватара не должен превышать 5MB')
             else:
                 try:
+                    from datetime import datetime
                     # Создаем папку для аватаров пользователя в static
                     static_folder = current_app.static_folder
                     user_avatar_dir = os.path.join(static_folder, 'uploads', 'avatars', str(current_user.id))

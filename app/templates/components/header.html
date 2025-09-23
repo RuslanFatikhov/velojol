@@ -1,11 +1,19 @@
 <header>
-
-
     <a href="{{ url_for('main.index') }}">
-        <img src="{{ url_for('static', filename='img/icon/velojol_logo.svg') }}">
+        <img src="{{ url_for('static', filename='img/icon/velojol_logo.svg') }}" alt="Velojol">
     </a>
 
     <span class="hstack gap-s">
-        <a href="{{ url_for('auth.login') }}" class="button_square_label">Войти</a>
+        {% if current_user.is_authenticated %}
+            <!-- Залогиненный пользователь -->
+            <a href="{{ url_for('auth.profile') }}" class="button_square_label hstack gap-s aic">
+                <img src="{{ current_user.display_avatar }}" alt="Аватар {{ current_user.nickname }}" 
+                     style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                <p>Профиль</p>
+            </a>
+        {% else %}
+            <!-- Незалогиненный пользователь -->
+            <a href="{{ url_for('auth.login') }}" class="button_square_label">Войти</a>
+        {% endif %}
     </span>
 </header>

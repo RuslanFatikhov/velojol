@@ -1,3 +1,4 @@
+{% set hide_header = true %}
 {% extends "base.html" %}
 
 {% block title %}Добавление велодорожки - Velojol 4.0{% endblock %}
@@ -17,7 +18,10 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>Добавление велодорожки</h1>
+    <h1 class="prime100">Добавление велодорожки</h1>
+    <a href="javascript:history.back()" class="button_square_icon">
+        <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="Назад" class="icon-left">
+    </a>
 </div>
 
 <form method="POST" enctype="multipart/form-data" id="bikelane-form">

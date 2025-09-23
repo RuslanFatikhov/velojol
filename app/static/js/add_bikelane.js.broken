@@ -75,112 +75,6 @@ function populateCitySelect() {
 }
 
 /**
- * Рассчитывает дистанцию линии в метрах
- */
-function calculateLineDistance(coordinates) {
-    if (!coordinates || coordinates.length < 2) {
-        return 0;
-    }
-    
-    let totalDistance = 0;
-    
-    for (let i = 0; i < coordinates.length - 1; i++) {
-        const [lon1, lat1] = coordinates[i];
-        const [lon2, lat2] = coordinates[i + 1];
-        
-        const distance = haversineDistance(lat1, lon1, lat2, lon2);
-        totalDistance += distance;
-    }
-    
-    return totalDistance;
-}
-
-/**
- * Формула гаверсинуса для расчета расстояния между двумя точками
- */
-function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371000; // Радиус Земли в метрах
-    
-    const lat1Rad = lat1 * Math.PI / 180;
-    const lon1Rad = lon1 * Math.PI / 180;
-    const lat2Rad = lat2 * Math.PI / 180;
-    const lon2Rad = lon2 * Math.PI / 180;
-    
-    const dlat = lat2Rad - lat1Rad;
-    const dlon = lon2Rad - lon1Rad;
-    
-    const a = Math.sin(dlat/2) * Math.sin(dlat/2) + 
-              Math.cos(lat1Rad) * Math.cos(lat2Rad) * 
-              Math.sin(dlon/2) * Math.sin(dlon/2);
-    
-    const c = 2 * Math.asin(Math.sqrt(a));
-    
-    return R * c;
-}
-
-/**
- * Форматирует дистанцию для отображения
- */
-function formatDistance(distanceInMeters) {
-    if (distanceInMeters >= 1000) {
-        return `${(distanceInMeters / 1000).toFixed(1)} км`;
-    } else {
-        return `${Math.round(distanceInMeters)} м`;
-    }
-}
-
-/**
- * Обновляет отображение дистанции
- */
-function updateDistanceDisplay(coordinates) {
-    const distance = calculateLineDistance(coordinates);
-    const formattedDistance = formatDistance(distance);
-    
-    // Находим или создаем элемент для отображения дистанции
-    let distanceElement = document.getElementById('distance-display');
-    if (!distanceElement) {
-        distanceElement = document.createElement('div');
-        distanceElement.id = 'distance-display';
-        distanceElement.className = 'distance-display';
-        
-        const geometryStatus = document.getElementById('geometry-status');
-        if (geometryStatus) {
-            geometryStatus.parentNode.insertBefore(distanceElement, geometryStatus.nextSibling);
-        }
-    }
-    
-    distanceElement.innerHTML = `
-        <span class="distance-label">Дистанция:</span>
-        <span class="distance-value">${formattedDistance}</span>
-    `;
-    
-    console.log(`Дистанция обновлена: ${formattedDistance} (${distance.toFixed(2)} м)`);
-    
-    return distance;
-}
-
-/**
- * Добавляет скрытое поле для дистанции в форму
- */
-function addDistanceField(distance) {
-    let distanceInput = document.getElementById('distance');
-    if (!distanceInput) {
-        distanceInput = document.createElement('input');
-        distanceInput.type = 'hidden';
-        distanceInput.id = 'distance';
-        distanceInput.name = 'distance';
-        
-        const form = document.getElementById('bikelane-form');
-        if (form) {
-            form.appendChild(distanceInput);
-        }
-    }
-    
-    distanceInput.value = distance.toFixed(2);
-    console.log(`Поле distance установлено: ${distance.toFixed(2)} м`);
-}
-
-/**
  * Инициализация карты с функциональностью рисования
  */
 function initMap() {
@@ -283,12 +177,6 @@ function initDrawingHandlers() {
             console.log('Поле геометрии очищено');
         }
         
-        // Очищаем дистанцию
-        const distanceElement = document.getElementById('distance-display');
-        if (distanceElement) {
-            distanceElement.style.display = 'none';
-        }
-        
         // Начинаем новую линию
         currentPoints = [latlng];
         currentPolyline = L.polyline(currentPoints, {
@@ -312,6 +200,9 @@ function initDrawingHandlers() {
         console.log('Всего точек в линии:', currentPoints.length);
     }
     
+    /**
+     * Завершает рисование линии
+     */
     /**
      * Завершает рисование линии
      */
@@ -366,14 +257,14 @@ function initDrawingHandlers() {
             // Добавляем обработчик изменения линии
             currentPolyline.on('edit', function() {
                 console.log('Линия отредактирована, обновляем геометрию и дистанцию');
-                updateGeometryFromMap();
+                updateGeometryFromMapWithDistance();
             });
         }
         
         // Принудительно обновляем геометрию из карты
         setTimeout(() => {
             console.log('Принудительное обновление геометрии через 100мс');
-            updateGeometryFromMap();
+            updateGeometryFromMapWithDistance();
         }, 100);
         
         // Обновляем статус
@@ -382,7 +273,7 @@ function initDrawingHandlers() {
         updateGeometryStatus(`Линия нарисована! Дистанция: ${formatDistance(distance)}. Можете перетаскивать точки для корректировки.`, 'valid');
         
         console.log('=== ЗАВЕРШЕНИЕ ОБРАБОТКИ ЛИНИИ ===');
-    }
+    }    }
 }
 
 /**
@@ -407,10 +298,6 @@ function loadExistingGeometry() {
                 
                 // Подгоняем карту под линию
                 map.fitBounds(polyline.getBounds());
-                
-                // Показываем дистанцию для существующей геометрии
-                const distance = updateDistanceDisplay(geojson.coordinates);
-                addDistanceField(distance);
                 
                 updateGeometryStatus('Линия загружена из сохраненных данных', 'valid');
             }
@@ -486,18 +373,10 @@ function updateGeometryFromMap() {
             const geometryString = JSON.stringify(geojson);
             geometryInput.value = geometryString;
             
-            // Обновляем дистанцию
-            const distance = updateDistanceDisplay(coordinates);
-            addDistanceField(distance);
-            
-            console.log('Геометрия и дистанция обновлены:', geometryString);
-            console.log('Новая дистанция:', distance.toFixed(2), 'м');
+            console.log('Геометрия обновлена:', geometryString);
         }
     });
 }
-
-// Остальные функции остаются такими же, как были в рабочем коде...
-// (продолжение в следующем сообщении из-за ограничения длины)
 
 /**
  * Инициализация обработки загрузки фотографий
@@ -730,8 +609,7 @@ function initFormValidation() {
                         errors.push('Велодорожка должна быть длиннее 10 метров');
                         console.log('ОШИБКА: Дистанция слишком мала:', distance.toFixed(2), 'м');
                     }
-                }
-            } catch (e) {
+                }            } catch (e) {
                 errors.push('Ошибка в данных геометрии');
                 console.log('ОШИБКА: Некорректный JSON геометрии:', e);
             }
@@ -804,12 +682,8 @@ function initFormValidation() {
                     preview.innerHTML = '';
                 }
                 
-                // Очищаем статус геометрии и дистанцию
+                // Очищаем статус геометрии
                 updateGeometryStatus('', 'info');
-                const distanceElement = document.getElementById('distance-display');
-                if (distanceElement) {
-                    distanceElement.style.display = 'none';
-                }
                 
             } else {
                 console.log('Сервер вернул ошибку:', data.error);
@@ -868,7 +742,6 @@ function addDebugButton() {
         const debugBtn = document.createElement('button');
         debugBtn.textContent = 'Debug Geometry';
         debugBtn.type = 'button';
-        debugBtn.className = 'debug-geometry-btn';
         debugBtn.style.position = 'fixed';
         debugBtn.style.top = '10px';
         debugBtn.style.right = '10px';
@@ -1004,4 +877,150 @@ function closeSuccessModal() {
         modal.style.animation = 'fadeIn 0.3s ease reverse';
         setTimeout(() => modal.remove(), 300);
     }
+}
+/**
+ * Рассчитывает дистанцию линии в метрах
+ */
+function calculateLineDistance(coordinates) {
+    if (!coordinates || coordinates.length < 2) {
+        return 0;
+    }
+    
+    let totalDistance = 0;
+    
+    for (let i = 0; i < coordinates.length - 1; i++) {
+        const [lon1, lat1] = coordinates[i];
+        const [lon2, lat2] = coordinates[i + 1];
+        
+        const distance = haversineDistance(lat1, lon1, lat2, lon2);
+        totalDistance += distance;
+    }
+    
+    return totalDistance;
+}
+
+/**
+ * Формула гаверсинуса для расчета расстояния между двумя точками
+ */
+function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // Радиус Земли в метрах
+    
+    const lat1Rad = lat1 * Math.PI / 180;
+    const lon1Rad = lon1 * Math.PI / 180;
+    const lat2Rad = lat2 * Math.PI / 180;
+    const lon2Rad = lon2 * Math.PI / 180;
+    
+    const dlat = lat2Rad - lat1Rad;
+    const dlon = lon2Rad - lon1Rad;
+    
+    const a = Math.sin(dlat/2) * Math.sin(dlat/2) + 
+              Math.cos(lat1Rad) * Math.cos(lat2Rad) * 
+              Math.sin(dlon/2) * Math.sin(dlon/2);
+    
+    const c = 2 * Math.asin(Math.sqrt(a));
+    
+    return R * c;
+}
+
+/**
+ * Форматирует дистанцию для отображения
+ */
+function formatDistance(distanceInMeters) {
+    if (distanceInMeters >= 1000) {
+        return `${(distanceInMeters / 1000).toFixed(1)} км`;
+    } else {
+        return `${Math.round(distanceInMeters)} м`;
+    }
+}
+
+/**
+ * Обновляет отображение дистанции
+ */
+function updateDistanceDisplay(coordinates) {
+    const distance = calculateLineDistance(coordinates);
+    const formattedDistance = formatDistance(distance);
+    
+    // Находим или создаем элемент для отображения дистанции
+    let distanceElement = document.getElementById('distance-display');
+    if (!distanceElement) {
+        distanceElement = document.createElement('div');
+        distanceElement.id = 'distance-display';
+        distanceElement.className = 'distance-display';
+        
+        const geometryStatus = document.getElementById('geometry-status');
+        if (geometryStatus) {
+            geometryStatus.parentNode.insertBefore(distanceElement, geometryStatus.nextSibling);
+        }
+    }
+    
+    distanceElement.innerHTML = `
+        <span class="distance-label">Дистанция:</span>
+        <span class="distance-value">${formattedDistance}</span>
+    `;
+    
+    console.log(`Дистанция обновлена: ${formattedDistance} (${distance.toFixed(2)} м)`);
+    
+    return distance;
+}
+
+/**
+ * Добавляет скрытое поле для дистанции в форму
+ */
+function addDistanceField(distance) {
+    let distanceInput = document.getElementById('distance');
+    if (!distanceInput) {
+        distanceInput = document.createElement('input');
+        distanceInput.type = 'hidden';
+        distanceInput.id = 'distance';
+        distanceInput.name = 'distance';
+        
+        const form = document.getElementById('bikelane-form');
+        if (form) {
+            form.appendChild(distanceInput);
+        }
+    }
+    
+    distanceInput.value = distance.toFixed(2);
+    console.log(`Поле distance установлено: ${distance.toFixed(2)} м`);
+}
+
+/**
+ * Обновляет геометрию при редактировании линии с пересчетом дистанции
+ */
+function updateGeometryFromMapWithDistance() {
+    console.log('Обновление геометрии и дистанции после редактирования...');
+    
+    if (!drawnItems) {
+        console.log('drawnItems не найден');
+        return;
+    }
+    
+    const geometryInput = document.getElementById('geometry');
+    if (!geometryInput) {
+        console.log('Поле geometry не найдено');
+        return;
+    }
+    
+    drawnItems.eachLayer(function(layer) {
+        if (layer instanceof L.Polyline) {
+            const latlngs = layer.getLatLngs();
+            console.log('Найдена полилиния с', latlngs.length, 'точками');
+            
+            const coordinates = latlngs.map(latlng => [latlng.lng, latlng.lat]);
+            const geojson = {
+                type: "LineString",
+                coordinates: coordinates
+            };
+            
+            const geometryString = JSON.stringify(geojson);
+            geometryInput.value = geometryString;
+            
+            // Обновляем дистанцию
+            const distance = updateDistanceDisplay(coordinates);
+            addDistanceField(distance);
+            
+            console.log('Геометрия и дистанция обновлены:', geometryString);
+            console.log('Новая дистанция:', distance.toFixed(2), 'м');
+        }
+    });
 }

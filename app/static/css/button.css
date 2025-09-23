@@ -75,3 +75,22 @@ a{
     right: var(--spacer-m)
 }
 
+.debug-geometry-btn{
+    display: none;
+}
+
+.button_square_icon{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--spacer-m);
+    background-color: var(--bg3);
+}
+
+.button_square_icon img{
+    width: 24px;
+    height: 24px;
+}

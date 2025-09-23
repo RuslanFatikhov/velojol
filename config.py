@@ -1,48 +1,44 @@
-import os
-from dotenv import load_dotenv
+# Добавляем в config.py
 
-# Загружаем переменные из .env файла
-load_dotenv()
+import os
 
 class Config:
-    """Базовая конфигурация приложения"""
-    
-    # Flask настройки
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key'
-    
-    # База данных
+    # Существующие настройки...
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///velojol.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # Настройки загрузки файлов
-    MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))  # 16MB
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'app/static/uploads')
+    # Настройки для загрузки файлов
+    UPLOAD_FOLDER = 'app/static/uploads'
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB максимальный размер файла
     
-    # Допустимые форматы изображений
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-    
-    # Ограничения для велодорожек
+    # Настройки для велодорожек
     MAX_PHOTOS_PER_BIKELANE = 10
-    MAX_VIDEOS_PER_BIKELANE = 10
+    MAX_VIDEOS_PER_BIKELANE = 5
+    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+    
+    # Настройки валидации
     MIN_TITLE_LENGTH = 3
     MIN_DESCRIPTION_LENGTH = 20
-
-    def __init__(self):
-        # Создаем папки для загрузок если их нет
-        os.makedirs(os.path.join(self.UPLOAD_FOLDER, 'avatars'), exist_ok=True)
-        os.makedirs(os.path.join(self.UPLOAD_FOLDER, 'bikelanes'), exist_ok=True)
+    
+    # Настройки пагинации
+    BIKELANES_PER_PAGE = 10
+    USERS_PER_PAGE = 20
 
 class DevelopmentConfig(Config):
-    """Конфигурация для разработки"""
     DEBUG = True
 
 class ProductionConfig(Config):
-    """Конфигурация для продакшена"""
     DEBUG = False
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
 
 # Словарь конфигураций
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
+    'testing': TestingConfig,
     'default': DevelopmentConfig
 }

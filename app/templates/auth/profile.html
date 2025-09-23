@@ -1,6 +1,7 @@
+{% set hide_header = true %}
 {% extends "base.html" %}
 
-{% block title %}Профиль {{ user.nickname }} - VELOJOL{% endblock %}
+{% block title %}{{ user.nickname }} - VELOJOL{% endblock %}
 
 {% block content %}
 <div class="profile-container">
@@ -20,26 +21,31 @@
                 <h2 class="prime100 profile-name">{{ user.nickname }}</h2>
 
                 <span class="badge_gs">
-                    <img src="{{ url_for('static', filename='img/icon/ball_icon.svg') }}" alt="Велосипед" class="icon-small">
+                    <img src="{{ url_for('static', filename='img/icon/ball_icon.svg') }}" alt="Очки" class="icon-small">
                     <p class="stat-number">{{ user_stats.total_score or 0 }}</p>
                 </span>
+            </span>
         </div>
 
         <div class="hstack w100">
+            <!-- Кликабельная ссылка на велодорожки -->
+            <a href="{{ url_for('auth.my_bikelanes') }}" class="vstack graph w100 aic gap-s bikelanes-link">
+                <p class="prime100">{{ user_stats.bikelanes_approved or 0 }}</p>
+                <p class="prime100">велодорожек</p>
+            </a>
+
+            <!-- Будущие секции для маршрутов и точек -->
+            <!--
             <span class="vstack graph w100 aic gap-s">
-                    <p class="stat-number">{{ user_stats.bikelanes_approved or 0 }}</p>
-                    <p class="prime100">дорожек</p>
+                <p class="stat-number">0</p>
+                <p class="prime100">маршрутов</p>
             </span>
 
-            <!--span class="vstack graph w100 aic gap-s">
-                    <p class="stat-number">0</p>
-                    <p class="prime100">маршрутов</p>
-            </span-->
-
-            <!--span class="vstack w100 aic gap-s">
-                    <p class="stat-number">0</p>
-                    <p class="prime100">точек</p>
-            </span-->
+            <span class="vstack w100 aic gap-s">
+                <p class="stat-number">0</p>
+                <p class="prime100">точек</p>
+            </span>
+            -->
         </div>
     </div>
 
@@ -72,23 +78,34 @@
 
     <!-- Действия -->
     <div class="profile-actions">
+        <!-- Быстрый доступ к велодорожкам -->
+        <!--a href="{{ url_for('auth.my_bikelanes') }}" class="cell">
+            <img src="{{ url_for('static', filename='img/icon/bike.svg') }}" alt="Велодорожки" class="icon-small">
+            Мои велодорожки
+            {% if user_stats.bikelanes_pending > 0 %}
+                <span class="notification-badge">{{ user_stats.bikelanes_pending }}</span>
+            {% endif %}
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
+        </a-->
+
         {% if user.is_admin %}
         <a href="{{ url_for('admin.dashboard') }}" class="cell">
-            <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="admin" class="icon-small">
+            <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Админ" class="icon-small">
             Админ-панель
-            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
         </a>
         {% endif %}
+        
         <a href="{{ url_for('auth.edit_profile') }}" class="cell">
-            <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="help" class="icon-small">
+            <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Настройки" class="icon-small">
             Редактировать профиль
-            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
         </a>
 
         <a href="{{ url_for('auth.logout') }}" class="cell">
-            <img src="{{ url_for('static', filename='img/icon/help.svg') }}" alt="help" class="icon-small">
+            <img src="{{ url_for('static', filename='img/icon/help.svg') }}" alt="Помощь" class="icon-small">
             Помощь
-            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
         </a>
         
         <span class="divider"></span>
@@ -96,8 +113,33 @@
         <a href="{{ url_for('auth.logout') }}" class="cell">
             <img src="{{ url_for('static', filename='img/icon/door.svg') }}" alt="Выйти" class="icon-small">
             Выйти
-            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Внешняя ссылка" class="icon-small chevron_right">
+            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
         </a>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Добавляем интерактивность для клика по велодорожкам
+document.addEventListener('DOMContentLoaded', function() {
+    const bikelanesLink = document.querySelector('.bikelanes-link');
+    
+    if (bikelanesLink) {
+        // Добавляем эффект при наведении
+        bikelanesLink.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = 'var(--accent80)';
+            this.style.borderRadius = 'var(--spacer-s)';
+            this.style.transition = 'all 0.2s ease';
+        });
+        
+        bikelanesLink.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = 'transparent';
+        });
+        
+        // Показываем подсказку при наведении
+        bikelanesLink.setAttribute('title', 'Посмотреть все мои велодорожки');
+    }
+});
+</script>
 {% endblock %}

@@ -195,7 +195,7 @@ def add_bikelane():
                 'bikelane_id': bikelane.id,
                 'title': form_data['title'],
                 'city': form_data['city'],
-                'distance': f'{bikelane.distance:.1f} м' if bikelane.distance else None
+                'distance': bikelane.distance_display if bikelane.distance else None
             })
             
         except Exception as e:
