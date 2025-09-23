@@ -4,7 +4,15 @@
 {% block title %}Мои велодорожки - VELOJOL{% endblock %}
 
 {% block content %}
-<div class="profile-container">
+<div class="page-header" style="justify-content: center !important;">
+    <a href="profile" class="button_square_icon page_header_left">
+        <img src="{{ url_for('static', filename='img/icon/chevron_left.svg') }}" alt="Назад" class="icon-left">
+    </a>
+    <h1 class="prime100">Мои велодорожки</h1>
+    
+</div>
+
+<div>
     
     <!-- Кнопка добавления -->
     <div class="button_wrapper_fixed">
@@ -13,123 +21,95 @@
         </a>
     </div>
 
-    <!-- Заголовок -->
-    <div class="island">
-        <h1 class="prime100">Мои велодорожки</h1>
-        
-        <!-- Статистика -->
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number">{{ user_stats.total }}</div>
-                <div class="stat-label">Всего</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ user_stats.approved }}</div>
-                <div class="stat-label">Одобрено</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ user_stats.pending }}</div>
-                <div class="stat-label">На модерации</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ user_stats.total_score }}</div>
-                <div class="stat-label">Баллов</div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Фильтры -->
-    <div class="island">
-        <div class="filter-tabs">
+
+    <div class="filter-tabs">
             <a href="{{ url_for('auth.my_bikelanes', status='all') }}" 
                class="filter-tab {% if status_filter == 'all' %}active{% endif %}">
-                Все ({{ user_stats.total }})
+                Все <p class="badge_s">{{ user_stats.total or 0 }}</p>
             </a>
             <a href="{{ url_for('auth.my_bikelanes', status='pending') }}" 
                class="filter-tab {% if status_filter == 'pending' %}active{% endif %}">
-                На модерации ({{ user_stats.pending }})
+                На проверке <p class="badge_s">{{ user_stats.pending or 0 }}</p>
             </a>
             <a href="{{ url_for('auth.my_bikelanes', status='approved') }}" 
                class="filter-tab {% if status_filter == 'approved' %}active{% endif %}">
-                Одобрено ({{ user_stats.approved }})
+                Одобрено <p class="badge_s">{{ user_stats.approved or 0 }}</p>
             </a>
             {% if user_stats.rejected > 0 %}
             <a href="{{ url_for('auth.my_bikelanes', status='rejected') }}" 
                class="filter-tab {% if status_filter == 'rejected' %}active{% endif %}">
-                Отклонено ({{ user_stats.rejected }})
+                Отклонено <p class="badge_s">{{ user_stats.rejected or 0 }}</p>
             </a>
             {% endif %}
-        </div>
     </div>
 
-    <!-- Список велодорожек -->
+
+    <div class="cells">
+        <!-- Список велодорожек -->
     {% if bikelanes.items %}
         {% for bikelane in bikelanes.items %}
-        <div class="bikelane-card island">
-            <div class="bikelane-header">
-                <div class="bikelane-info">
-                    <h3 class="bikelane-title prime100">{{ bikelane.title }}</h3>
-                    <p class="bikelane-meta secondary100">
-                        {{ bikelane.city_display }} • {{ bikelane.track_type_display }}
-                    </p>
-                </div>
-                <div class="bikelane-status">
-                    <span class="status-badge status-{{ bikelane.status }}">
-                        {{ bikelane.status_display }}
-                    </span>
-                </div>
-            </div>
+            <a href="{{ url_for('auth.view_bikelane', bikelane_id=bikelane.id) }}" 
+                class="cell_bikelane">
 
-            <div class="bikelane-description">
-                <p class="secondary100">{{ bikelane.description }}</p>
-            </div>
+                <div class="cell_bikelane_left">
+                        {% if bikelane.photos and bikelane.photos|length > 0 %}
+                        <img src="{{ bikelane.photos[0] }}" alt="{{ bikelane.title }}" class="cell_bikelane_img">
+                        {% else %}
+                        <div class="bikelane-photo placeholder"></div>
+                        {% endif %}
 
-            <div class="bikelane-details">
-                <div class="detail-item">
-                    <span class="secondary100">⭐ {{ bikelane.quality_display }}</span>
-                </div>
-                
-                {% if bikelane.photos_count > 0 %}
-                <div class="detail-item">
-                    <span class="secondary100">📸 {{ bikelane.photos_count }} фото</span>
-                </div>
-                {% endif %}
-                
-                {% if bikelane.status == 'approved' %}
-                <div class="detail-item">
-                    <span class="secondary100">🏆 +{{ bikelane.score }} баллов</span>
-                </div>
-                {% endif %}
-                
-                <div class="detail-item">
-                    <span class="secondary100">📅 {{ bikelane.created_at.strftime('%d.%m.%Y') }}</span>
-                </div>
-            </div>
+                    <div class="bikelane-info">
+                            <span class="bikelane_info_header"><h5 class="prime100">{{ bikelane.title }}</h5><span class="status-badge status-{{ bikelane.status }}">
+                                {{ bikelane.status_display }}
+                            </span></span>
+                            <p class="bikelane-meta secondary100">
+                                {{ bikelane.city_display }} • {{ bikelane.track_type_display }} 
+                            </p>
 
-            <!-- Комментарий админа -->
-            {% if bikelane.admin_comment %}
-            <div class="admin-comment">
-                <div class="admin-comment-header">
-                    <span class="secondary100">💬 Комментарий модератора:</span>
-                </div>
-                <p class="prime100">{{ bikelane.admin_comment }}</p>
-            </div>
-            {% endif %}
+                    </div>
 
-            <div class="bikelane-actions">
-                <a href="{{ url_for('auth.view_bikelane', bikelane_id=bikelane.id) }}" 
-                   class="action-link cell">
-                    <span>👁️ Подробнее</span>
-                </a>
-                
-                {% if bikelane.status == 'pending' %}
-                <button onclick="deleteBikelane({{ bikelane.id }}, '{{ bikelane.title }}')" 
-                        class="action-link cell delete-action">
-                    <span>🗑️ Удалить</span>
-                </button>
-                {% endif %}
-            </div>
-        </div>
+                    <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="chevron-right">
+                    
+                </div>
+
+
+                    
+
+                   
+
+                    <div class="bikelane-details">
+                    <div class="detail-item">
+                        <span class="secondary100">⭐ {{ bikelane.quality_display }}</span>
+                    </div>
+                    {% if bikelane.photos_count > 0 %}
+                    <div class="detail-item">
+                        <span class="secondary100">📸 {{ bikelane.photos_count }} фото</span>
+                    </div>
+                    {% endif %}
+                    {% if bikelane.status == 'approved' %}
+                    <div class="detail-item">
+                        <span class="secondary100">🏆 +{{ bikelane.score }} баллов</span>
+                    </div>
+                    {% endif %}
+                    <div class="detail-item">
+                        <span class="secondary100">📅 {{ bikelane.created_at.strftime('%d.%m.%Y') }}</span>
+                    </div>
+                    </div>
+
+                    {% if bikelane.admin_comment %}
+                    <div class="admin-comment">
+                    <div class="admin-comment-header">
+                        <span class="secondary100">💬 Комментарий модератора:</span>
+                    </div>
+                    <p class="prime100">{{ bikelane.admin_comment }}</p>
+                    </div>
+                    {% endif %}
+
+            </a>
+
         {% endfor %}
 
         <!-- Пагинация -->
@@ -179,6 +159,7 @@
             </p>
         </div>
     {% endif %}
+    </div>
 </div>
 
 <!-- Модальное окно подтверждения удаления -->

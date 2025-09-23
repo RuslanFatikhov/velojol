@@ -1,0 +1,39 @@
+
+.status-badge {
+    padding: 2px 4px;
+    border-radius: 16px;
+    font-size: 12px;
+    line-height: 15px;
+    font-weight: 500;
+    letter-spacing: -0.15px;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge_s{
+    display: flex;
+    min-width: 19px;
+    height: 19px;
+    padding: 2px 4px;
+    align-items: center;
+    border-radius: 1000px;
+    text-align: center;
+    justify-content: center;
+    background-color: var(--secondary30);
+    font-size: 12px !important;
+    line-height: 15px !important;
+
+}

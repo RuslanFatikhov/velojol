@@ -15,6 +15,12 @@ h3{
     letter-spacing: -0.25px;
 }
 
+h5{
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.25px;
+}
+
 p, input, button, .cell, textarea{
     font-size: var(--spacer-m);
     line-height: 120%;

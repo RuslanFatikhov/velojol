@@ -242,33 +242,7 @@ input:focus-visible{
     margin-top: var(--spacer-xs);
 }
 
-/* Фильтры */
-.filter-tabs {
-    display: flex;
-    gap: var(--spacer-xs);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
 
-.filter-tab {
-    padding: var(--spacer-s) var(--spacer-m);
-    background: var(--bg3);
-    color: var(--secondary100);
-    text-decoration: none;
-    border-radius: var(--spacer-s);
-    font-size: 14px;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-}
-
-.filter-tab:hover {
-    background: var(--bg4);
-}
-
-.filter-tab.active {
-    background: var(--accent100);
-    color: var(--prime_invert100);
-}
 
 /* Карточки велодорожек */
 .bikelane-card {
@@ -301,29 +275,6 @@ input:focus-visible{
     margin-left: var(--spacer-s);
 }
 
-.status-badge {
-    padding: var(--spacer-xs) var(--spacer-s);
-    border-radius: var(--spacer-s);
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-approved {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-rejected {
-    background: #f8d7da;
-    color: #721c24;
-}
 
 .bikelane-description {
     margin-bottom: var(--spacer-m);
@@ -334,14 +285,7 @@ input:focus-visible{
     line-height: 1.4;
 }
 
-.bikelane-details {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacer-m);
-    margin-bottom: var(--spacer-m);
-    padding-bottom: var(--spacer-s);
-    border-bottom: 1px solid var(--bg3);
-}
+
 
 .detail-item {
     display: flex;
@@ -708,47 +652,7 @@ input:focus-visible{
     color: var(--prime_invert100);
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--spacer-s);
-    }
-    
-    .bikelane-header {
-        flex-direction: column;
-        gap: var(--spacer-s);
-    }
-    
-    .bikelane-status {
-        margin-left: 0;
-        align-self: flex-start;
-    }
-    
-    .bikelane-details {
-        flex-direction: column;
-        gap: var(--spacer-s);
-    }
-    
-    .char-item {
-        flex-direction: column;
-        gap: var(--spacer-xs);
-        align-items: flex-start;
-    }
-    
-    .char-value {
-        text-align: left;
-    }
-    
-    .pagination-container {
-        flex-direction: column;
-        gap: var(--spacer-s);
-    }
-    
-    .photos-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
+
 
 
 

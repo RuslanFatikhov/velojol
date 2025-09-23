@@ -4,11 +4,15 @@
 {% block title %}Редактировать профиль - VELOJOL{% endblock %}
 
 {% block content %}
+<div class="page-header" style="justify-content: center !important;">
+    <a href="profile" class="button_square_icon page_header_left">
+        <img src="{{ url_for('static', filename='img/icon/chevron_left.svg') }}" alt="Назад" class="icon-left">
+    </a>
+    <h1 class="prime100">Редактировать профиль</h1>
+    
+</div>
 <div class="auth-container">
-    <div class="auth-header gap-s">
-        <h1 class="prime100">Редактировать профиль</h1>
-        <p class="prime100 tac">Обновите информацию о себе</p>
-    </div>
+
 
     <form method="POST" enctype="multipart/form-data" id="editProfileForm" style="margin-top: var(--spacer-m);">
 
