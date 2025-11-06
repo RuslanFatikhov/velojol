@@ -63,9 +63,23 @@
     <!-- Карта -->
     <div class="island">
         <h3 class="prime100 island_heading">Карта</h3>
-        <div id="map"></div>
+        <div id="map-container" style="position: relative;">
+            <div id="map"></div>
+            <div id="map-controls" class="map-controls" style="display: none;">
+                <button type="button" id="finish-line-btn" class="map-control-btn btn-finish">
+                    <span>✓</span> Готово
+                </button>
+                <button type="button" id="reset-line-btn" class="map-control-btn btn-reset">
+                    <span>↻</span> Сброс
+                </button>
+            </div>
+        </div>
         <div id="geometry-status" class="geometry-status"></div>
         <input type="hidden" id="geometry" name="geometry" value="{{ form_data.geometry if form_data else '' }}">
+        <input type="hidden" id="has_parking_hidden" name="has_parking" value="false">
+        <input type="hidden" id="has_markings_hidden" name="has_markings" value="false">
+        <input type="hidden" id="has_signs_hidden" name="has_signs" value="false">
+        <input type="hidden" id="overall_quality" name="overall_quality" value="">
     </div>
 
     <!-- Тип велодорожки -->
@@ -170,6 +184,63 @@
                     <span class="rating-text prime100">Отлично</span>
                 </label>
             </div>
+        </div>
+    </div>
+
+    <!-- Парковка автомобилей -->
+    <div class="island">
+        <h3 class="prime100 island_heading">Парковка автомобилей</h3>
+        
+        <div class="toggle-container">
+            <label class="toggle-label" for="has_parking">
+                <span class="toggle-text">На велодорожке паркуются авто?</span>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="has_parking" name="has_parking" value="true">
+                    <span class="toggle-slider"></span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- Наличие разметки -->
+    <div class="island">
+        <h3 class="prime100 island_heading">Наличие разметки</h3>
+        
+        <div class="toggle-container">
+            <label class="toggle-label" for="has_markings">
+                <span class="toggle-text">Есть разметка на велодорожке?</span>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="has_markings" name="has_markings" value="true">
+                    <span class="toggle-slider"></span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- Наличие знаков -->
+    <div class="island">
+        <h3 class="prime100 island_heading">Наличие знаков</h3>
+        
+        <div class="toggle-container">
+            <label class="toggle-label" for="has_signs">
+                <span class="toggle-text">Есть дорожные знаки?</span>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="has_signs" name="has_signs" value="true">
+                    <span class="toggle-slider"></span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- Качество велодорожки (автоматический расчет) -->
+    <div class="island" id="quality-display-section" style="display: none;">
+        <h3 class="prime100 island_heading">Качество велодорожки</h3>
+        
+        <div class="quality-result">
+            <div class="quality-stars" id="quality-stars">
+                <!-- Звезды будут добавлены через JavaScript -->
+            </div>
+            <p class="quality-description" id="quality-description"></p>
         </div>
     </div>
 

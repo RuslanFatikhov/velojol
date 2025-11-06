@@ -1,0 +1,361 @@
+/* Стили для страницы города */
+
+.city-container {
+    padding-left: var(--spacer-sm);
+    padding-right: var(--spacer-sm);
+
+    margin-top: 100px;
+}
+
+/* Заголовок города */
+.city-header {
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    width: 100%;
+    padding: var(--spacer-m);    
+    background-color: var(--bg1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacer-sm);
+    padding-top: var(--spacer-xl);
+    border-radius: 0px 0px var(--spacer-m) var(--spacer-m);
+    z-index: 1;
+}
+
+.city-header-coat {
+    width: 40px;
+    height: 40px;
+}
+
+.city-header h1 {
+    font-size: 28px;
+    line-height: 36px;
+}
+
+.city-stats-row {
+    margin-top: var(--spacer-m);
+    padding-top: var(--spacer-m);
+    border-top: 1px solid var(--bg3);
+}
+
+/* Форма фильтров */
+.filters-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
+}
+
+@media (min-width: 768px) {
+    .filters-form {
+        flex-direction: row;
+    }
+    
+    .filters-form input[type="text"] {
+        flex: 2;
+    }
+    
+    .filters-form select {
+        flex: 1;
+    }
+    
+    .filters-form button {
+        width: auto;
+        padding-left: var(--spacer-l);
+        padding-right: var(--spacer-l);
+    }
+}
+
+/* Карта */
+.city-map {
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    z-index: 0;
+    left: 0px;
+    top: 220px;
+
+}
+
+.mapboxgl-ctrl-top-right{
+    display: none;
+}
+
+.mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right{
+    margin-bottom: 20px;
+}
+
+
+.bikelane-list-block{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 600px;
+    left: 0px;
+    z-index: 1;
+    width: 100%;
+}
+
+
+
+/* Список велодорожек */
+.bikelanes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bikelane-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    background-color: var(--bg1);
+    border: 1px solid var(--secondary30);
+    border-radius: var(--spacer-m);
+    filter: drop-shadow(0px 4px 16px rgba(54, 55, 98, 0.1));
+    width: 100%;
+    height: 74px;
+    padding: 12px;
+
+}
+
+.bikelane-item:last-child {
+    
+}
+
+.bikelane-item:hover {
+    background-color: var(--bg3);
+}
+
+.quality-indicator {
+    width: 4px;
+    height: 48px;
+    border-radius: 2px;
+}
+
+.bikelane-title {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+}
+
+.bikelane-meta {
+    font-size: 14px;
+    line-height: 18px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Галерея фото */
+.modal-photos {
+    margin-bottom: var(--spacer-m);
+}
+
+.modal-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacer-s);
+    margin-top: var(--spacer-s);
+}
+
+.modal-photo {
+    aspect-ratio: 1;
+    border-radius: var(--spacer-s);
+    overflow: hidden;
+}
+
+.modal-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (min-width: 768px) {
+    .modal-photos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Видео */
+.modal-videos {
+    margin-bottom: var(--spacer-m);
+}
+
+.modal-video {
+    margin-top: var(--spacer-s);
+    border-radius: var(--spacer-s);
+    overflow: hidden;
+}
+
+.modal-video iframe {
+    width: 100%;
+    height: 300px;
+    border: none;
+}
+
+/* Автор */
+.modal-author {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    padding: var(--spacer-m);
+    background: var(--bg3);
+    border-radius: var(--spacer-s);
+    margin-bottom: var(--spacer-m);
+}
+
+.author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-info {
+    flex: 1;
+}
+
+.author-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--prime100);
+}
+
+.author-date {
+    font-size: 14px;
+    color: var(--secondary100);
+}
+
+
+
+/* Действия в модалке */
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
+    margin-top: var(--spacer-m);
+}
+
+/* Загрузка */
+.loading {
+    text-align: center;
+    padding: var(--spacer-xl);
+    color: var(--secondary100);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+
+.modal-content {
+    animation: slideUp 0.3s ease;
+}
+/* Строка поиска и фильтров */
+.search-filter-row {
+    display: flex;
+    gap: var(--spacer-s);
+    align-items: center;
+}
+
+.search-filter-row .search-input {
+    flex: 1;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-xs);
+    white-space: nowrap;
+    width: auto !important;
+    padding-left: var(--spacer-m);
+    padding-right: var(--spacer-m);
+}
+
+.filter-badge {
+    background: var(--accent100);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Модалка фильтров */
+.filters-modal .modal-content {
+    max-width: 400px;
+}
+
+.modal-filters-content {
+    padding: 0;
+}
+
+.modal-header {
+    padding: var(--spacer-m);
+    border-bottom: 1px solid var(--bg3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.filter-group {
+    margin-bottom: var(--spacer-m);
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: var(--spacer-s);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.modal-footer {
+    padding: var(--spacer-m);
+    border-top: 1px solid var(--bg3);
+    display: flex;
+    gap: var(--spacer-s);
+}
+
+.modal-footer .button_square_label {
+    flex: 1;
+}

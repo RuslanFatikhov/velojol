@@ -1,10 +1,12 @@
 # app/routes/auth.py
-
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, jsonify, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models.user import User
 from app.models.bikelane import BikeLane
+from app.models.verification import VerificationCode
+from app.utils.email_sender import send_verification_code
+from datetime import datetime, timezone
 import re
 import os
 
@@ -18,277 +20,444 @@ def validate_email(email):
 
 def validate_nickname(nickname):
     """Валидация никнейма"""
-    # Только буквы, цифры, дефисы и подчеркивания, длина от 3 до 30 символов
     pattern = r'^[a-zA-Z0-9_-]{3,30}$'
     return re.match(pattern, nickname) is not None
 
 def validate_url(url):
-    """Базовая валидация URL"""
+    """Валидация URL"""
     if not url:
-        return True  # Пустые URL валидны (необязательные поля)
-    pattern = r'^https?://'
+        return True
+    pattern = r'^https?://.+\..+'
     return re.match(pattern, url) is not None
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    """Регистрация нового пользователя"""
+    """Страница регистрации с отправкой кода на email"""
     
-    # Если пользователь уже авторизован, редирект в профиль
     if current_user.is_authenticated:
-        return redirect(url_for('auth.profile'))
+        return redirect(url_for('main.index'))
     
-    if request.method == 'GET':
-        return render_template('auth/register.html')
+    if request.method == 'POST':
+        # Получаем данные из формы
+        email = request.form.get('email', '').strip().lower()
+        nickname = request.form.get('nickname', '').strip()
+        password = request.form.get('password', '')
+        
+        # Социальные сети (опционально)
+        strava_url = request.form.get('strava_url', '').strip()
+        komoot_url = request.form.get('komoot_url', '').strip()
+        telegram_url = request.form.get('telegram_url', '').strip()
+        instagram_url = request.form.get('instagram_url', '').strip()
+        
+        # Валидация обязательных полей
+        errors = []
+        
+        if not email:
+            errors.append('Email обязателен')
+        elif not validate_email(email):
+            errors.append('Некорректный формат email')
+        
+        if not nickname:
+            errors.append('Никнейм обязателен')
+        elif not validate_nickname(nickname):
+            errors.append('Никнейм должен содержать только буквы, цифры, дефисы и подчеркивания (3-30 символов)')
+        
+        if not password:
+            errors.append('Пароль обязателен')
+        elif len(password) < 6:
+            errors.append('Пароль должен быть не менее 6 символов')
+        
+        # Проверка существующих пользователей
+        if User.query.filter_by(email=email).first():
+            errors.append('Пользователь с таким email уже существует')
+        
+        if User.query.filter_by(nickname=nickname).first():
+            errors.append('Никнейм уже занят')
+        
+        # Валидация URL
+        if strava_url and not validate_url(strava_url):
+            errors.append('Некорректная ссылка Strava')
+        if komoot_url and not validate_url(komoot_url):
+            errors.append('Некорректная ссылка Komoot')
+        if telegram_url and not validate_url(telegram_url):
+            errors.append('Некорректная ссылка Telegram')
+        if instagram_url and not validate_url(instagram_url):
+            errors.append('Некорректная ссылка Instagram')
+        
+        if errors:
+            for error in errors:
+                flash(error, 'error')
+            return render_template('auth/register.html', form_data=request.form)
+        
+        # Проверяем существующий активный код
+        existing_code = VerificationCode.get_active_code(email, 'registration')
+        
+        if existing_code:
+            # Проверяем блокировку запросов
+            if existing_code.is_request_locked():
+                flash('Вы превысили лимит запросов кодов. Попробуйте через 1 час.', 'error')
+                return render_template('auth/register.html', form_data=request.form)
+            
+            # Если код не истек, используем существующий
+            if not existing_code.is_expired():
+                # Обновляем данные регистрации
+                existing_code.registration_data = {
+                    'email': email,
+                    'nickname': nickname,
+                    'password': password,
+                    'strava_url': strava_url,
+                    'komoot_url': komoot_url,
+                    'telegram_url': telegram_url,
+                    'instagram_url': instagram_url
+                }
+                existing_code.increment_request_count()
+                
+                # Отправляем код повторно
+                send_verification_code(email, existing_code.code, 'registration')
+                
+                # Сохраняем email в сессии
+                session['pending_registration_email'] = email
+                
+                flash('Код подтверждения отправлен повторно на вашу почту', 'success')
+                return render_template('auth/verify_email.html', email=email, code_type='registration')
+        
+        # Создаем новый код
+        registration_data = {
+            'email': email,
+            'nickname': nickname,
+            'password': password,
+            'strava_url': strava_url,
+            'komoot_url': komoot_url,
+            'telegram_url': telegram_url,
+            'instagram_url': instagram_url
+        }
+        
+        verification = VerificationCode.create_code(email, 'registration', registration_data)
+        
+        # Отправляем код на email
+        send_verification_code(email, verification.code, 'registration')
+        
+        # Сохраняем email в сессии
+        session['pending_registration_email'] = email
+        
+        flash('Код подтверждения отправлен на вашу почту', 'success')
+        return render_template('auth/verify_email.html', email=email, code_type='registration')
     
-    # Обработка POST запроса
-    email = request.form.get('email', '').strip().lower()
-    password = request.form.get('password', '')
-    nickname = request.form.get('nickname', '').strip()
-    avatar_url = request.form.get('avatar_url', '').strip()
-    strava_url = request.form.get('strava_url', '').strip()
-    komoot_url = request.form.get('komoot_url', '').strip()
-    telegram_url = request.form.get('telegram_url', '').strip()
-    instagram_url = request.form.get('instagram_url', '').strip()
+    return render_template('auth/register.html')
+
+@bp.route('/verify-registration', methods=['POST'])
+def verify_registration():
+    """Проверка кода регистрации и создание пользователя"""
     
-    # Сохраняем данные формы для повторного отображения при ошибках
-    form_data = {
-        'email': email,
-        'nickname': nickname,
-        'avatar_url': avatar_url,
-        'strava_url': strava_url,
-        'komoot_url': komoot_url,
-        'telegram_url': telegram_url,
-        'instagram_url': instagram_url,
-    }
-    
-    # Валидация
-    errors = []
-    
+    email = session.get('pending_registration_email')
     if not email:
-        errors.append('Email обязателен')
-    elif not validate_email(email):
-        errors.append('Некорректный формат email')
-    elif User.query.filter_by(email=email).first():
-        errors.append('Пользователь с таким email уже существует')
+        return jsonify({'success': False, 'message': 'Сессия истекла'}), 400
     
-    if not password:
-        errors.append('Пароль обязателен')
-    elif len(password) < 6:
-        errors.append('Пароль должен содержать минимум 6 символов')
+    code = request.json.get('code', '').strip()
     
-    if not nickname:
-        errors.append('Никнейм обязателен')
-    elif not validate_nickname(nickname):
-        errors.append('Никнейм может содержать только буквы, цифры, дефисы и подчеркивания (3-30 символов)')
-    elif User.query.filter_by(nickname=nickname).first():
-        errors.append('Пользователь с таким никнеймом уже существует')
+    if not code:
+        return jsonify({'success': False, 'message': 'Введите код'}), 400
     
-    # Валидация URL'ов
-    urls_to_validate = [
-        ('avatar_url', avatar_url, 'Аватар'),
-        ('strava_url', strava_url, 'Strava'),
-        ('komoot_url', komoot_url, 'Komoot'),
-        ('telegram_url', telegram_url, 'Telegram'),
-        ('instagram_url', instagram_url, 'Instagram'),
-    ]
+    # Получаем активный код
+    verification = VerificationCode.get_active_code(email, 'registration')
     
-    for field_name, url_value, field_label in urls_to_validate:
-        if url_value and not validate_url(url_value):
-            errors.append(f'Некорректная ссылка в поле {field_label}')
+    if not verification:
+        return jsonify({'success': False, 'message': 'Код не найден'}), 404
     
-    # Если есть ошибки, возвращаем форму
-    if errors:
-        for error in errors:
-            flash(error, 'error')
-        return render_template('auth/register.html', form_data=form_data)
+    # Проверяем блокировку попыток
+    if verification.is_attempt_locked():
+        return jsonify({'success': False, 'message': 'Превышен лимит попыток. Попробуйте через 24 часа.'}), 429
     
-    try:
-        # Создаем нового пользователя
-        user = User(
-            email=email,
-            nickname=nickname,
-            avatar_url=avatar_url if avatar_url else None,
-            strava_url=strava_url if strava_url else None,
-            komoot_url=komoot_url if komoot_url else None,
-            telegram_url=telegram_url if telegram_url else None,
-            instagram_url=instagram_url if instagram_url else None
-        )
-        user.set_password(password)
-        
-        # Сохраняем в базу данных
-        db.session.add(user)
-        db.session.commit()
-        
-        # Автоматически входим в систему
-        login_user(user)
-        
-        flash(f'Добро пожаловать, {user.nickname}! Регистрация прошла успешно.', 'success')
-        return redirect(url_for('auth.profile'))
-        
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f'Ошибка при регистрации: {e}')
-        flash('Произошла ошибка при регистрации. Попробуйте еще раз.', 'error')
-        return render_template('auth/register.html', form_data=form_data)
+    # Проверяем срок действия
+    if verification.is_expired():
+        return jsonify({'success': False, 'message': 'Код истек. Запросите новый код.'}), 400
+    
+    # Проверяем код
+    if verification.code != code:
+        verification.increment_attempts()
+        remaining = 5 - verification.attempts
+        if remaining > 0:
+            return jsonify({'success': False, 'message': f'Неверный код. Осталось попыток: {remaining}'}), 400
+        else:
+            return jsonify({'success': False, 'message': 'Превышен лимит попыток. Попробуйте через 24 часа.'}), 429
+    
+    # Код верный - создаем пользователя
+    data = verification.registration_data
+    
+    user = User(
+        email=data['email'],
+        nickname=data['nickname'],
+        strava_url=data.get('strava_url'),
+        komoot_url=data.get('komoot_url'),
+        telegram_url=data.get('telegram_url'),
+        instagram_url=data.get('instagram_url')
+    )
+    user.set_password(data['password'])
+    
+    db.session.add(user)
+    verification.verify()
+    db.session.commit()
+    
+    # Автоматический вход
+    login_user(user, remember=True)
+    
+    # Очищаем сессию
+    session.pop('pending_registration_email', None)
+    
+    return jsonify({'success': True, 'message': 'Регистрация успешна!', 'redirect': url_for('main.index')})
+
+@bp.route('/resend-code', methods=['POST'])
+def resend_code():
+    """Повторная отправка кода"""
+    
+    email = request.json.get('email')
+    code_type = request.json.get('code_type')  # 'registration' или 'password_reset'
+    
+    if not email or not code_type:
+        return jsonify({'success': False, 'message': 'Недостаточно данных'}), 400
+    
+    # Получаем активный код
+    verification = VerificationCode.get_active_code(email, code_type)
+    
+    if not verification:
+        return jsonify({'success': False, 'message': 'Код не найден'}), 404
+    
+    # Проверяем блокировку запросов
+    if verification.is_request_locked():
+        return jsonify({'success': False, 'message': 'Превышен лимит запросов. Попробуйте через 1 час.'}), 429
+    
+    # Увеличиваем счетчик запросов
+    verification.increment_request_count()
+    
+    # Если превысили лимит после инкремента
+    if verification.is_request_locked():
+        return jsonify({'success': False, 'message': 'Превышен лимит запросов. Попробуйте через 1 час.'}), 429
+    
+    # Отправляем код
+    send_verification_code(email, verification.code, code_type)
+    
+    return jsonify({'success': True, 'message': 'Код отправлен повторно'})
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """Вход пользователя в систему"""
+    """Страница входа"""
     
-    # Если пользователь уже авторизован, редирект в профиль
     if current_user.is_authenticated:
-        return redirect(url_for('auth.profile'))
+        return redirect(url_for('main.index'))
     
-    if request.method == 'GET':
-        return render_template('auth/login.html')
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        remember = request.form.get('remember_me') == 'on'
+        
+        if not email or not password:
+            flash('Заполните все поля', 'error')
+            return render_template('auth/login.html', form_data=request.form)
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if not user or not user.check_password(password):
+            flash('Неверный email или пароль', 'error')
+            return render_template('auth/login.html', form_data=request.form)
+        
+        if user.is_banned:
+            flash(f'Ваш аккаунт заблокирован. Причина: {user.ban_reason}', 'error')
+            return render_template('auth/login.html', form_data=request.form)
+        
+        login_user(user, remember=remember)
+        
+        next_page = request.args.get('next')
+        if next_page:
+            return redirect(next_page)
+        
+        return redirect(url_for('main.index'))
     
-    # Обработка POST запроса
-    email = request.form.get('email', '').strip().lower()
-    password = request.form.get('password', '')
-    remember_me = request.form.get('remember_me', False)
+    return render_template('auth/login.html')
+
+@bp.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    """Запрос на восстановление пароля"""
     
-    # Сохраняем email для повторного отображения при ошибке
-    form_data = {'email': email}
+    email = request.json.get('email', '').strip().lower()
     
-    # Валидация
-    if not email:
-        flash('Email обязателен', 'error')
-        return render_template('auth/login.html', form_data=form_data)
+    if not email or not validate_email(email):
+        return jsonify({'success': False, 'message': 'Введите корректный email'}), 400
     
-    if not password:
-        flash('Пароль обязателен', 'error')
-        return render_template('auth/login.html', form_data=form_data)
-    
-    # Ищем пользователя в базе данных
+    # Проверяем существование пользователя
     user = User.query.filter_by(email=email).first()
     
-    if not user or not user.check_password(password):
-        flash('Неверный email или пароль', 'error')
-        return render_template('auth/login.html', form_data=form_data)
+    if not user:
+        # В целях безопасности не сообщаем что пользователь не найден
+        return jsonify({'success': True, 'message': 'Если этот email зарегистрирован, код будет отправлен'})
     
-    try:
-        # Входим в систему
-        login_user(user, remember=bool(remember_me))
+    # Проверяем существующий активный код
+    existing_code = VerificationCode.get_active_code(email, 'password_reset')
+    
+    if existing_code:
+        # Проверяем блокировку запросов
+        if existing_code.is_request_locked():
+            return jsonify({'success': False, 'message': 'Превышен лимит запросов. Попробуйте через 1 час.'}), 429
         
-        flash(f'Добро пожаловать, {user.nickname}!', 'success')
+        # Если код не истек, используем существующий
+        if not existing_code.is_expired():
+            existing_code.increment_request_count()
+            send_verification_code(email, existing_code.code, 'password_reset')
+            session['password_reset_email'] = email
+            return jsonify({'success': True, 'message': 'Код отправлен на вашу почту'})
+    
+    # Создаем новый код
+    verification = VerificationCode.create_code(email, 'password_reset')
+    
+    # Отправляем код на email
+    send_verification_code(email, verification.code, 'password_reset')
+    
+    # Сохраняем email в сессии
+    session['password_reset_email'] = email
+    
+    return jsonify({'success': True, 'message': 'Код отправлен на вашу почту'})
+
+@bp.route('/verify-reset-code', methods=['POST'])
+def verify_reset_code():
+    """Проверка кода восстановления пароля"""
+    
+    email = session.get('password_reset_email')
+    if not email:
+        return jsonify({'success': False, 'message': 'Сессия истекла'}), 400
+    
+    code = request.json.get('code', '').strip()
+    
+    if not code:
+        return jsonify({'success': False, 'message': 'Введите код'}), 400
+    
+    # Получаем активный код
+    verification = VerificationCode.get_active_code(email, 'password_reset')
+    
+    if not verification:
+        return jsonify({'success': False, 'message': 'Код не найден'}), 404
+    
+    # Проверяем блокировку попыток
+    if verification.is_attempt_locked():
+        return jsonify({'success': False, 'message': 'Превышен лимит попыток. Попробуйте через 24 часа.'}), 429
+    
+    # Проверяем срок действия
+    if verification.is_expired():
+        return jsonify({'success': False, 'message': 'Код истек. Запросите новый код.'}), 400
+    
+    # Проверяем код
+    if verification.code != code:
+        verification.increment_attempts()
+        remaining = 5 - verification.attempts
+        if remaining > 0:
+            return jsonify({'success': False, 'message': f'Неверный код. Осталось попыток: {remaining}'}), 400
+        else:
+            return jsonify({'success': False, 'message': 'Превышен лимит попыток. Попробуйте через 24 часа.'}), 429
+    
+    # Код верный - помечаем как проверенный
+    verification.verify()
+    db.session.commit()
+    
+    # Сохраняем в сессии что код проверен
+    session['password_reset_verified'] = True
+    
+    return jsonify({'success': True, 'message': 'Код подтвержден', 'redirect': url_for('auth.reset_password')})
+
+@bp.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
+    """Страница смены пароля"""
+    
+    email = session.get('password_reset_email')
+    verified = session.get('password_reset_verified')
+    
+    if not email or not verified:
+        flash('Неверная ссылка для восстановления пароля', 'error')
+        return redirect(url_for('auth.login'))
+    
+    if request.method == 'POST':
+        new_password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
         
-        # Редирект на запрашиваемую страницу или в профиль
-        next_page = request.args.get('next')
-        if not next_page or not next_page.startswith('/'):
-            next_page = url_for('auth.profile')
+        if not new_password or len(new_password) < 6:
+            flash('Пароль должен быть не менее 6 символов', 'error')
+            return render_template('auth/reset_password.html')
         
-        return redirect(next_page)
+        if new_password != confirm_password:
+            flash('Пароли не совпадают', 'error')
+            return render_template('auth/reset_password.html')
         
-    except Exception as e:
-        current_app.logger.error(f'Ошибка при входе: {e}')
-        flash('Произошла ошибка при входе. Попробуйте еще раз.', 'error')
-        return render_template('auth/login.html', form_data=form_data)
+        # Находим пользователя и меняем пароль
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            flash('Пользователь не найден', 'error')
+            return redirect(url_for('auth.login'))
+        
+        user.set_password(new_password)
+        db.session.commit()
+        
+        # Очищаем сессию
+        session.pop('password_reset_email', None)
+        session.pop('password_reset_verified', None)
+        
+        flash('Пароль успешно изменен! Войдите с новым паролем.', 'success')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('auth/reset_password.html')
 
 @bp.route('/logout')
 @login_required
 def logout():
-    """Выход пользователя из системы"""
-    nickname = current_user.nickname
+    """Выход из системы"""
     logout_user()
-    flash(f'До свидания, {nickname}!', 'info')
+    flash('Вы вышли из системы', 'success')
     return redirect(url_for('auth.login'))
 
 @bp.route('/profile')
 @login_required
 def profile():
-    """Профиль пользователя"""
-    # Получаем статистику пользователя
-    user_stats = {
-        'bikelanes_total': current_user.get_bikelanes_count(),
-        'bikelanes_pending': current_user.get_pending_bikelanes_count(),
-        'bikelanes_approved': current_user.get_approved_bikelanes_count(),
-        'total_score': current_user.get_total_score()
-    }
-    
-    return render_template('auth/profile.html', user=current_user, user_stats=user_stats)
+    """Профиль пользователя - редирект на красивый URL"""
+    return redirect(url_for('main.user_profile', nickname=current_user.nickname))
 
-@bp.route('/my-bikelanes')
-@login_required
-def my_bikelanes():
-    """Список велодорожек пользователя"""
-    page = request.args.get('page', 1, type=int)
-    status_filter = request.args.get('status', 'all')
-    per_page = 10
-    
-    # Базовый запрос велодорожек текущего пользователя
-    query = BikeLane.query.filter_by(user_id=current_user.id)
-    
-    # Фильтр по статусу
-    if status_filter != 'all':
-        query = query.filter_by(status=status_filter)
-    
-    # Сортировка по дате создания (новые первыми)
-    query = query.order_by(BikeLane.created_at.desc())
-    
-    # Пагинация
-    bikelanes = query.paginate(
-        page=page,
-        per_page=per_page,
-        error_out=False
-    )
-    
-    # Статистика для пользователя
-    user_stats = {
-        'total': current_user.bikelanes.count(),
-        'pending': current_user.bikelanes.filter_by(status='pending').count(),
-        'approved': current_user.bikelanes.filter_by(status='approved').count(),
-        'rejected': current_user.bikelanes.filter_by(status='rejected').count(),
-        'total_score': current_user.get_total_score()
-    }
-    
-    return render_template('auth/my_bikelanes.html', 
-                         bikelanes=bikelanes,
-                         user_stats=user_stats,
-                         status_filter=status_filter)
+
 
 @bp.route('/bikelane/<int:bikelane_id>')
 @login_required
 def view_bikelane(bikelane_id):
-    """Просмотр конкретной велодорожки пользователя"""
-    bikelane = BikeLane.query.filter_by(
-        id=bikelane_id, 
-        user_id=current_user.id
-    ).first_or_404()
+    """Просмотр велодорожки пользователя"""
+    from app.models.bikelane import BikeLane
+    
+    bikelane = BikeLane.query.get_or_404(bikelane_id)
+    
+    # Проверяем что это велодорожка текущего пользователя
+    if bikelane.user_id != current_user.id:
+        flash('У вас нет доступа к этой велодорожке', 'error')
+        return redirect(url_for('auth.my_bikelanes'))
     
     return render_template('auth/view_bikelane.html', bikelane=bikelane)
 
 @bp.route('/bikelane/<int:bikelane_id>/delete', methods=['POST'])
 @login_required
 def delete_bikelane(bikelane_id):
-    """Удаление велодорожки пользователем (только если статус pending)"""
-    bikelane = BikeLane.query.filter_by(
-        id=bikelane_id, 
-        user_id=current_user.id
-    ).first_or_404()
+    """Удаление велодорожки пользователя"""
+    from app.models.bikelane import BikeLane
     
-    # Можно удалять только велодорожки на модерации
-    if bikelane.status != 'pending':
-        flash('Можно удалять только велодорожки на модерации', 'error')
+    bikelane = BikeLane.query.get_or_404(bikelane_id)
+    
+    # Проверяем что это велодорожка текущего пользователя
+    if bikelane.user_id != current_user.id:
+        flash('У вас нет доступа к этой велодорожке', 'error')
         return redirect(url_for('auth.my_bikelanes'))
     
+    # Проверяем что велодорожка не одобрена (одобренные удалить нельзя)
+    if bikelane.status == 'approved':
+        flash('Нельзя удалить одобренную велодорожку', 'error')
+        return redirect(url_for('auth.view_bikelane', bikelane_id=bikelane_id))
+    
+    title = bikelane.title
+    
     try:
-        title = bikelane.title
-        
-        # Удаляем связанные фотографии
-        photos = bikelane.get_photos_list()
-        for photo_path in photos:
-            try:
-                full_path = os.path.join(current_app.static_folder, photo_path)
-                if os.path.exists(full_path):
-                    os.remove(full_path)
-            except Exception as e:
-                current_app.logger.error(f'Ошибка при удалении фото {photo_path}: {e}')
-        
         db.session.delete(bikelane)
         db.session.commit()
-        
-        flash(f'Велодорожка "{title}" удалена', 'success')
-        
+        flash(f'Велодорожка "{title}" успешно удалена', 'success')
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f'Ошибка при удалении велодорожки: {e}')
@@ -296,190 +465,111 @@ def delete_bikelane(bikelane_id):
     
     return redirect(url_for('auth.my_bikelanes'))
 
+
+@bp.route('/my-bikelanes')
+@login_required
+def my_bikelanes():
+    """Страница со списком велодорожек пользователя"""
+    from app.models.bikelane import BikeLane
+    
+    # Получаем фильтр статуса из параметров
+    status_filter = request.args.get('status', 'all')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    
+    # Получаем статистику пользователя
+    user_stats = {
+        'total': current_user.get_bikelanes_count(),
+        'pending': current_user.get_pending_bikelanes_count(),
+        'approved': current_user.get_approved_bikelanes_count(),
+        'rejected': current_user.bikelanes.filter_by(status='rejected').count()
+    }
+    
+    # Фильтруем велодорожки по статусу
+    query = current_user.bikelanes.order_by(BikeLane.created_at.desc())
+    
+    if status_filter != 'all':
+        query = query.filter_by(status=status_filter)
+    
+    # Пагинация
+    bikelanes = query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    return render_template('auth/my_bikelanes.html',
+                         user_stats=user_stats,
+                         bikelanes=bikelanes,
+                         status_filter=status_filter)
 @bp.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    """Редактирование профиля пользователя"""
+    """Редактирование профиля"""
+    from app.utils.file_handler import FileHandler
     
-    if request.method == 'GET':
-        # Заполняем форму текущими данными пользователя
-        form_data = {
-            'nickname': current_user.nickname,
-            'email': current_user.email,
-            'strava_url': current_user.strava_url or '',
-            'komoot_url': current_user.komoot_url or '',
-            'telegram_url': current_user.telegram_url or '',
-            'instagram_url': current_user.instagram_url or ''
-        }
-        return render_template('auth/edit_profile.html', form_data=form_data)
-    
-    # Обработка POST запроса
-    nickname = request.form.get('nickname', '').strip()
-    email = request.form.get('email', '').strip().lower()
-    current_password = request.form.get('current_password', '')
-    new_password = request.form.get('new_password', '')
-    confirm_password = request.form.get('confirm_password', '')
-    
-    strava_url = request.form.get('strava_url', '').strip()
-    komoot_url = request.form.get('komoot_url', '').strip()
-    telegram_url = request.form.get('telegram_url', '').strip()
-    instagram_url = request.form.get('instagram_url', '').strip()
-    
-    # Обработка загрузки аватара
-    avatar_file = request.files.get('avatar')
-    avatar_relative_path = None
-    
-    print(f"DEBUG: Avatar file received: {avatar_file}")
-    if avatar_file:
-        print(f"DEBUG: Avatar filename: {avatar_file.filename}")
-    
-    # Сохраняем данные формы для повторного отображения при ошибках
-    form_data = {
-        'nickname': nickname,
-        'email': email,
-        'strava_url': strava_url,
-        'komoot_url': komoot_url,
-        'telegram_url': telegram_url,
-        'instagram_url': instagram_url,
-    }
-    
-    # Валидация
-    errors = []
-    
-    # Проверка никнейма
-    if not nickname:
-        errors.append('Никнейм обязателен')
-    elif not validate_nickname(nickname):
-        errors.append('Никнейм может содержать только буквы, цифры, дефисы и подчеркивания (3-30 символов)')
-    elif nickname != current_user.nickname and User.query.filter_by(nickname=nickname).first():
-        errors.append('Пользователь с таким никнеймом уже существует')
-    
-    # Проверка email
-    if not email:
-        errors.append('Email обязателен')
-    elif not validate_email(email):
-        errors.append('Некорректный формат email')
-    elif email != current_user.email and User.query.filter_by(email=email).first():
-        errors.append('Пользователь с таким email уже существует')
-    
-    # Проверка смены пароля
-    password_change_requested = bool(current_password or new_password or confirm_password)
-    
-    if password_change_requested:
-        if not current_password:
-            errors.append('Введите текущий пароль для смены')
-        elif not current_user.check_password(current_password):
-            errors.append('Неверный текущий пароль')
+    if request.method == 'POST':
+        nickname = request.form.get('nickname', '').strip()
         
-        if not new_password:
-            errors.append('Введите новый пароль')
-        elif len(new_password) < 6:
-            errors.append('Новый пароль должен содержать минимум 6 символов')
+        # Социальные сети
+        strava_url = request.form.get('strava_url', '').strip()
+        komoot_url = request.form.get('komoot_url', '').strip()
+        telegram_url = request.form.get('telegram_url', '').strip()
+        instagram_url = request.form.get('instagram_url', '').strip()
         
-        if new_password != confirm_password:
-            errors.append('Пароли не совпадают')
-    
-    # Обработка загрузки аватара
-    if avatar_file and avatar_file.filename:
-        print("DEBUG: Processing avatar upload...")
+        errors = []
         
-        # Проверка типа файла
-        allowed_extensions = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
-        file_ext = avatar_file.filename.rsplit('.', 1)[1].lower() if '.' in avatar_file.filename else ''
+        # Валидация никнейма
+        if nickname != current_user.nickname:
+            if not validate_nickname(nickname):
+                errors.append('Некорректный никнейм')
+            elif User.query.filter_by(nickname=nickname).first():
+                errors.append('Никнейм уже занят')
         
-        if file_ext not in allowed_extensions:
-            errors.append('Недопустимый формат файла аватара. Разрешены: JPG, PNG, GIF, WebP')
-        else:
-            # Проверка размера файла (максимум 5MB)
-            avatar_file.seek(0, 2)  # Переходим в конец файла
-            file_size = avatar_file.tell()  # Получаем размер
-            avatar_file.seek(0)  # Возвращаемся в начало
-            
-            if file_size > 5 * 1024 * 1024:  # 5MB
-                errors.append('Размер файла аватара не должен превышать 5MB')
-            else:
-                try:
-                    from datetime import datetime
-                    # Создаем папку для аватаров пользователя в static
-                    static_folder = current_app.static_folder
-                    user_avatar_dir = os.path.join(static_folder, 'uploads', 'avatars', str(current_user.id))
+        # Валидация URL
+        if strava_url and not validate_url(strava_url):
+            errors.append('Некорректная ссылка Strava')
+        if komoot_url and not validate_url(komoot_url):
+            errors.append('Некорректная ссылка Komoot')
+        if telegram_url and not validate_url(telegram_url):
+            errors.append('Некорректная ссылка Telegram')
+        if instagram_url and not validate_url(instagram_url):
+            errors.append('Некорректная ссылка Instagram')
+        
+        if errors:
+            for error in errors:
+                flash(error, 'error')
+            return render_template('auth/edit_profile.html')
+        
+        # Обработка аватара
+        if 'avatar' in request.files:
+            avatar_file = request.files['avatar']
+            if avatar_file and avatar_file.filename:
+                # Удаляем старый аватар если есть
+                if current_user.avatar_url and current_user.avatar_url.startswith('uploads/'):
+                    old_path = os.path.join(current_app.config['UPLOAD_FOLDER'], current_user.avatar_url.replace('uploads/', ''))
+                    FileHandler.delete_file(old_path)
+                
+                # Сохраняем новый
+                allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+                file_ext = avatar_file.filename.rsplit('.', 1)[1].lower() if '.' in avatar_file.filename else ''
+                
+                if file_ext in allowed_extensions:
+                    user_avatar_dir = os.path.join(current_app.static_folder, 'uploads', 'avatars', str(current_user.id))
                     os.makedirs(user_avatar_dir, exist_ok=True)
                     
-                    # Генерируем уникальное имя файла
-                    timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+                    timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
                     filename = f"avatar_{timestamp}.{file_ext}"
                     avatar_path = os.path.join(user_avatar_dir, filename)
                     
-                    # Сохраняем файл
                     avatar_file.save(avatar_path)
-                    
-                    # Сохраняем относительный путь для базы данных (от папки static)
-                    avatar_relative_path = f"uploads/avatars/{current_user.id}/{filename}"
-                    
-                    print(f"DEBUG: Avatar saved to: {avatar_path}")
-                    print(f"DEBUG: Avatar relative path: {avatar_relative_path}")
-                    print(f"DEBUG: File exists after save: {os.path.exists(avatar_path)}")
-                    
-                except Exception as e:
-                    current_app.logger.error(f'Ошибка при сохранении аватара: {e}')
-                    errors.append('Ошибка при загрузке аватара. Попробуйте еще раз.')
-    
-    # Валидация URL'ов
-    urls_to_validate = [
-        ('strava_url', strava_url, 'Strava'),
-        ('komoot_url', komoot_url, 'Komoot'),
-        ('telegram_url', telegram_url, 'Telegram'),
-        ('instagram_url', instagram_url, 'Instagram'),
-    ]
-    
-    for field_name, url_value, field_label in urls_to_validate:
-        if url_value and not validate_url(url_value):
-            errors.append(f'Некорректная ссылка в поле {field_label}')
-    
-    # Если есть ошибки, возвращаем форму
-    if errors:
-        for error in errors:
-            flash(error, 'error')
-        return render_template('auth/edit_profile.html', form_data=form_data)
-    
-    try:
-        # Обновляем данные пользователя
+                    current_user.avatar_url = f"uploads/avatars/{current_user.id}/{filename}"
+        # Обновляем данные
         current_user.nickname = nickname
-        current_user.email = email
         current_user.strava_url = strava_url if strava_url else None
         current_user.komoot_url = komoot_url if komoot_url else None
         current_user.telegram_url = telegram_url if telegram_url else None
         current_user.instagram_url = instagram_url if instagram_url else None
         
-        # Обновляем аватар если загружен новый файл
-        if avatar_relative_path:
-            print(f"DEBUG: Updating avatar_url in database to: {avatar_relative_path}")
-            
-            # Удаляем старый аватар если он существует и это загруженный файл
-            if current_user.avatar_url and current_user.avatar_url.startswith('uploads/avatars/'):
-                old_avatar_path = os.path.join(current_app.static_folder, current_user.avatar_url)
-                if os.path.exists(old_avatar_path):
-                    try:
-                        os.remove(old_avatar_path)
-                        print(f"DEBUG: Old avatar deleted: {old_avatar_path}")
-                    except Exception as e:
-                        print(f"DEBUG: Failed to delete old avatar: {e}")
-            
-            current_user.avatar_url = avatar_relative_path
-            print(f"DEBUG: User avatar_url updated to: {current_user.avatar_url}")
-        
-        # Обновляем пароль если запрошено
-        if password_change_requested and new_password:
-            current_user.set_password(new_password)
-        
-        # Сохраняем в базу данных
         db.session.commit()
         
-        flash('Профиль успешно обновлен!', 'success')
+        flash('Профиль обновлен', 'success')
         return redirect(url_for('auth.profile'))
-        
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f'Ошибка при обновлении профиля: {e}')
-        flash('Произошла ошибка при сохранении данных. Попробуйте еще раз.', 'error')
-        return render_template('auth/edit_profile.html', form_data=form_data)
+    
+    return render_template('auth/edit_profile.html')

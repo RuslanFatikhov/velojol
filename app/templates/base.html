@@ -6,7 +6,8 @@
     <title>{% block title %}Velojol 4.0{% endblock %}</title>
     
     <!-- Leaflet CSS для карт -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/typo.css') }}">
@@ -15,7 +16,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/badges.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/images.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
 
     {% block head %}{% endblock %}
 </head>
@@ -62,8 +65,7 @@
 
     {% include 'components/footer.html' %}
 
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
     
     
     <!-- Основные скрипты приложения -->

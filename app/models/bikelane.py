@@ -2,6 +2,7 @@
 from app import db
 from datetime import datetime
 import json
+import math
 
 class BikeLane(db.Model):
     """Модель велодорожки"""
@@ -14,7 +15,7 @@ class BikeLane(db.Model):
     
     # Местоположение (связь с городами)
     city_id = db.Column(db.Integer, db.ForeignKey('cities.id'), nullable=True)
-    city = db.Column(db.String(100), nullable=False)  # Временно оставляем для совместимости
+    city = db.Column(db.String(100), nullable=False)
     
     # Геометрия (GeoJSON как текст)
     geometry = db.Column(db.Text, nullable=False)
@@ -23,21 +24,33 @@ class BikeLane(db.Model):
     track_type = db.Column(db.String(50), nullable=False)
     
     # Качество покрытия (оценка от 1 до 5)
-    quality = db.Column(db.Integer, nullable=False)  # 1-5 звездочек
+    quality = db.Column(db.Integer, nullable=False)
+    
+    # Парковка автомобилей на велодорожке
+    has_parking = db.Column(db.Boolean, default=False, nullable=False)
+    
+    # Наличие разметки на велодорожке
+    has_markings = db.Column(db.Boolean, default=False, nullable=False)
+    
+    # Наличие дорожных знаков
+    has_signs = db.Column(db.Boolean, default=False, nullable=False)
+    
+    # Общее качество велодорожки (рассчитывается автоматически от 1 до 5)
+    overall_quality = db.Column(db.Integer, nullable=True)
     
     # Медиафайлы (JSON массивы путей)
-    photos = db.Column(db.Text, default='[]')  # JSON массив путей к фото
-    videos = db.Column(db.Text, default='[]')  # JSON массив ссылок на видео
+    photos = db.Column(db.Text, default='[]')
+    videos = db.Column(db.Text, default='[]')
     
     # Статус и баллы
     status = db.Column(db.Enum('pending', 'approved', 'rejected', name='bikelane_status'),
                       default='pending', nullable=False)
     score = db.Column(db.Integer, default=0)
     
-    # Комментарий админа (при отклонении или замечании)
+    # Комментарий админа
     admin_comment = db.Column(db.Text, nullable=True)
-    moderated_at = db.Column(db.DateTime, nullable=True)  # Когда была модерация
-    moderated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Кто модерировал
+    moderated_at = db.Column(db.DateTime, nullable=True)
+    moderated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Временные метки
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -51,6 +64,82 @@ class BikeLane(db.Model):
 
     def __repr__(self):
         return f'<BikeLane {self.title}>'
+    
+    def calculate_length(self):
+        """Рассчитать длину велодорожки в километрах из геометрии"""
+        try:
+            geometry = json.loads(self.geometry)
+            coordinates = geometry.get('coordinates', [])
+            
+            if len(coordinates) < 2:
+                return 0
+            
+            total_distance = 0
+            for i in range(len(coordinates) - 1):
+                lon1, lat1 = coordinates[i]
+                lon2, lat2 = coordinates[i + 1]
+                
+                # Используем формулу гаверсинуса для расчёта расстояния
+                distance = self._haversine_distance(lat1, lon1, lat2, lon2)
+                total_distance += distance
+            
+            return round(total_distance, 2)
+            
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return 0
+
+    def calculate_overall_quality(self):
+        """Рассчитать общее качество велодорожки (от 1 до 5)"""
+        # Базовое значение в зависимости от типа велодорожки
+        base_quality = {
+            'separated': 5,  # Обособленная - отлично
+            'bollards': 4,   # Полоса с боллардами - хорошо
+            'lane': 3,       # Полоса - средне
+            'shared': 3      # Велопешеходная - средне
+        }
+        
+        quality = base_quality.get(self.track_type, 3)
+        
+        # Минус балл если паркуются автомобили
+        if self.has_parking:
+            quality -= 1
+        
+        # Плюс балл если есть разметка
+        if self.has_markings:
+            quality += 0.5
+        
+        # Плюс балл если есть знаки
+        if self.has_signs:
+            quality += 0.5
+        
+        # Влияние качества покрытия
+        surface_quality = self.quality if self.quality else 3
+        
+        if surface_quality <= 2:
+            quality -= 1  # Плохое покрытие - минус балл
+        elif surface_quality >= 4:
+            quality += 1  # Хорошее покрытие - плюс балл
+        
+        # Ограничиваем значение от 1 до 5
+        return max(1, min(5, int(round(quality))))
+    
+    @staticmethod
+    def _haversine_distance(lat1, lon1, lat2, lon2):
+        """Расчёт расстояния между двумя точками по формуле гаверсинуса (в км)"""
+        R = 6371  # Радиус Земли в километрах
+        
+        lat1_rad = math.radians(lat1)
+        lat2_rad = math.radians(lat2)
+        delta_lat = math.radians(lat2 - lat1)
+        delta_lon = math.radians(lon2 - lon1)
+        
+        a = (math.sin(delta_lat / 2) ** 2 +
+             math.cos(lat1_rad) * math.cos(lat2_rad) *
+             math.sin(delta_lon / 2) ** 2)
+        
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        
+        return R * c
     
     def get_photos_list(self):
         """Получить список фото как Python list"""
@@ -91,7 +180,6 @@ class BikeLane(db.Model):
         self.moderated_at = datetime.utcnow()
         self.moderated_by = admin_user.id
         self.admin_comment = comment
-        # Начисляем баллы за одобренную велодорожку
         if self.score == 0:
             self.score = self.calculate_score()
     
@@ -105,17 +193,36 @@ class BikeLane(db.Model):
     
     def calculate_score(self):
         """Рассчитать баллы за велодорожку"""
-        base_score = 5  # Базовые 5 баллов за отправленную велодорожку
-        
-        # +1 балл за каждое фото
+        base_score = 5
         photos_count = len(self.get_photos_list())
         score = base_score + photos_count
-        
-        # +5 баллов за каждое видео
         videos_count = len(self.get_videos_list())
         score += videos_count * 5
-        
         return score
+    
+    def to_dict(self):
+        """Конвертация в словарь для JSON API"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'city': self.city,
+            'city_display': self.city_display,
+            'geometry': self.get_geometry_dict(),
+            'track_type': self.track_type,
+            'track_type_display': self.track_type_display,
+            'quality': self.quality,
+            'quality_display': self.quality_display,
+            'photos': self.get_photos_list(),
+            'videos': self.get_videos_list(),
+            'length': self.calculate_length(),
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'author': {
+                'id': self.author.id if self.author else None,
+                'nickname': self.author.nickname if self.author else 'Аноним',
+                'avatar': self.author.display_avatar if self.author else None
+            } if self.author else {'nickname': 'Аноним'}
+        }
     
     @property
     def photos_count(self):
@@ -133,21 +240,18 @@ class BikeLane(db.Model):
         if hasattr(self, 'city_obj') and self.city_obj:
             return self.city_obj.name
         
-        # Fallback к старому методу
         import json
         import os
         from flask import current_app
         
         try:
             cities_path = os.path.join(current_app.static_folder, 'data', 'cities.json')
-            
             with open(cities_path, 'r', encoding='utf-8') as f:
                 cities_data = json.load(f)
             
             for city in cities_data.get('cities', []):
                 if city.get('id') == self.city:
                     return city.get('name', self.city)
-                    
         except (FileNotFoundError, json.JSONDecodeError, Exception):
             pass
         
@@ -185,3 +289,15 @@ class BikeLane(db.Model):
             'rejected': 'Отклонено'
         }
         return status_names.get(self.status, self.status)
+    
+    @property
+    def quality_color(self):
+        """Цвет для отображения на карте в зависимости от качества"""
+        colors = {
+            1: '#e74c3c',  # Красный
+            2: '#e67e22',  # Оранжевый
+            3: '#f39c12',  # Жёлтый
+            4: '#2ecc71',  # Зелёный
+            5: '#27ae60'   # Тёмно-зелёный
+        }
+        return colors.get(self.quality, '#3498db')

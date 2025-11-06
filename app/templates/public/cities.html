@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Города | VELOJOL{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cities.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Cities_header -->
+<div class="cities-header">
+        <h3 class="prime100">Велодорожки в городах</h3>
+        
+        <!-- Search -->
+        <input type="text" id="citySearch"
+                
+                class="form-input search-input"
+                placeholder="Поиск по городу">
+        </input>
+</div>
+
+
+<div class="cities-container">
+    
+    
+
+    
+
+    <!-- Список городов по странам -->
+    {% if cities_by_country %}
+        {% for country, cities in cities_by_country %}
+        <div class="country-section">
+            <h3 class="prime100 country-name">{{ country }}</h3>
+            
+            <div class="cities-grid">
+                {% for city in cities %}
+                <a href="{{ url_for('public.city', city_id=city.city_id) }}" class="city-card">
+                    
+                    <!-- Герб города -->
+                    {% if city.coat_of_arms %}
+                        <img src="{{ url_for('static', filename=city.coat_of_arms) }}" 
+                             alt="Герб {{ city.name }}" 
+                             class="city-coat">
+                    {% endif %}
+
+                    <!-- Фон города -->
+                    {% if city.background_image %}
+                    <div class="city-background" style="background-image: url('{{ url_for('static', filename=city.background_image) }}');"></div>
+                    {% else %}
+                    <div class="city-background city-background-default"></div>
+                    {% endif %}
+                    
+                    <div class="city-content">
+                        
+                        
+                        <!-- Название -->
+                        <h3 class="city-name prime100">{{ city.name }}</h3>
+                        
+                        <!-- Статистика -->
+                        <div class="city-stats">
+
+                            
+                            <span>
+                                <p class="secondary100 fw600">{{ city.get_total_distance() }}</p>
+                                <p class="secondary100 fw600">км</p>
+                            </span>
+ 
+                            <span class="badge_s" style="height: 24px;">
+                                <img src="{{ url_for('static', filename='img/icon/star.svg') }}" alt="Star" class="icon-small">
+                                <p class="fw700 prime100">{{ city.get_average_rating() }}</p>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Empty State -->
+    <div id="emptyState" class="island" style="display: none;">
+        <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3 class="prime100">Городов не найдено</h3>
+            <p class="secondary100">Попробуйте изменить запрос</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/cities.js') }}"></script>
+{% endblock %}

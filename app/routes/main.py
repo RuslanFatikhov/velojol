@@ -33,7 +33,7 @@ def add_bikelane():
                 'title': request.form.get('title', '').strip(),
                 'description': request.form.get('description', '').strip(),
                 'track_type': request.form.get('track_type', ''),
-                'quality': request.form.get('quality', ''),
+                'quality': request.form.get('quality', ''),                'has_parking': request.form.get('has_parking', 'false').lower() == 'true',                'has_markings': request.form.get('has_markings', 'false').lower() == 'true',                'has_signs': request.form.get('has_signs', 'false').lower() == 'true',                'overall_quality': request.form.get('overall_quality', ''),
                 'geometry': request.form.get('geometry', ''),
                 'distance': request.form.get('distance', ''),  # Новое поле дистанции
                 'video_url': request.form.get('video_url', '').strip(),
@@ -94,61 +94,17 @@ def add_bikelane():
                     'error': 'Ошибки валидации: ' + '; '.join(errors)
                 })
             
-            # Получаем загруженные файлы
-            uploaded_files = request.files.getlist('photos')
-            photo_paths = []
-            
-            # Обрабатываем фотографии (максимум 10)
-            if uploaded_files and uploaded_files[0].filename:
-                max_photos = getattr(current_app.config, 'MAX_PHOTOS_PER_BIKELANE', 10)
-                
-                if len(uploaded_files) > max_photos:
-                    return jsonify({
-                        'success': False,
-                        'error': f'Максимум {max_photos} фотографий'
-                    })
-                
-                # Сохраняем файлы через FileHandler или напрямую
-                try:
-                    # Если есть FileHandler, используем его
-                    if hasattr(FileHandler, 'save_uploaded_files'):
-                        photo_paths = FileHandler.save_uploaded_files(
-                            uploaded_files, 
-                            None,  # user_id пока None 
-                            None   # bikelane_id установим после создания
-                        )
-                    else:
-                        # Простое сохранение файлов
-                        import os
-                        from werkzeug.utils import secure_filename
-                        import time
-                        
-                        upload_folder = os.path.join(current_app.static_folder, 'uploads', 'bikelanes')
-                        os.makedirs(upload_folder, exist_ok=True)
-                        
-                        for i, photo in enumerate(uploaded_files[:max_photos]):
-                            if photo and photo.filename:
-                                # Генерируем безопасное имя файла
-                                timestamp = int(time.time())
-                                filename = secure_filename(f"{timestamp}_{i}_{photo.filename}")
-                                filepath = os.path.join(upload_folder, filename)
-                                photo.save(filepath)
-                                photo_paths.append(f'uploads/bikelanes/{filename}')
-                                
-                except Exception as e:
-                    current_app.logger.error(f"Ошибка при сохранении фотографий: {e}")
-                    return jsonify({
-                        'success': False,
-                        'error': 'Ошибка при сохранении фотографий'
-                    })
-            
-            # Создаем объект велодорожки
+
+            # Создаем объект велодорожки БЕЗ фотографий
             bikelane = BikeLane(
                 title=form_data['title'],
                 description=form_data['description'],
                 city=form_data['city'],
                 track_type=form_data['track_type'],
                 quality=int(form_data['quality']),
+                has_parking=form_data['has_parking'],
+                has_markings=form_data['has_markings'],
+                has_signs=form_data['has_signs'],
                 geometry=form_data['geometry'],
                 status='pending',
                 user_id=current_user.id if current_user.is_authenticated else None
@@ -158,9 +114,46 @@ def add_bikelane():
             if distance_value is not None:
                 bikelane.distance = distance_value
             else:
-                # Рассчитываем дистанцию автоматически
-                bikelane.distance = bikelane.calculate_distance()
-                current_app.logger.info(f"Дистанция рассчитана автоматически: {bikelane.distance} м")            
+                bikelane.distance = bikelane.calculate_length() * 1000
+                current_app.logger.info(f"Дистанция рассчитана автоматически: {bikelane.distance} м")
+            
+            # Рассчитываем общее качество велодорожки
+            if form_data['overall_quality']:
+                try:
+                    bikelane.overall_quality = int(form_data['overall_quality'])
+                except (ValueError, TypeError):
+                    bikelane.overall_quality = bikelane.calculate_overall_quality()
+            else:
+                bikelane.overall_quality = bikelane.calculate_overall_quality()
+            
+            current_app.logger.info(f"Качество велодорожки: {bikelane.overall_quality}/5")
+            
+            # Сохраняем в базу данных СНАЧАЛА
+            db.session.add(bikelane)
+            db.session.flush()  # Получаем ID без коммита
+            
+            current_app.logger.info(f"Велодорожка создана с ID: {bikelane.id}")
+            
+            # Получаем загруженные файлы
+            uploaded_files = request.files.getlist('photos')
+            # ТЕПЕРЬ сохраняем фотографии с правильным bikelane_id
+            photo_paths = []
+            if uploaded_files and uploaded_files[0].filename:
+                try:
+                    photo_paths = FileHandler.save_uploaded_files(
+                        uploaded_files,
+                        current_user.id if current_user.is_authenticated else None,
+                        bikelane.id  # Теперь у нас есть ID!
+                    )
+                    current_app.logger.info(f"Сохранено {len(photo_paths)} фотографий")
+                except Exception as e:
+                    current_app.logger.error(f"Ошибка при сохранении фотографий: {e}")
+                    db.session.rollback()
+                    return jsonify({
+                        'success': False,
+                        'error': f'Ошибка при сохранении фотографий: {str(e)}'
+                    })
+
             # Устанавливаем фотографии и видео
             if photo_paths:
                 if hasattr(bikelane, 'set_photos_list'):
@@ -181,8 +174,7 @@ def add_bikelane():
                     # Если метода нет, сохраняем как JSON
                     bikelane.videos = json.dumps(videos)
             
-            # Сохраняем в базу данных
-            db.session.add(bikelane)
+            # Коммитим все изменения (bikelane уже добавлен выше)
             db.session.commit()
             
             # Логируем успешное сохранение
@@ -267,3 +259,38 @@ def validate_geometry():
             'valid': False,
             'errors': ['Ошибка при валидации геометрии']
         }), 400
+
+@bp.route('/@<nickname>')
+def user_profile(nickname):
+    """Профиль пользователя по никнейму"""
+    from app.models.user import User
+    from app.models.bikelane import BikeLane
+    from flask_login import current_user
+    
+    user = User.query.filter_by(nickname=nickname).first_or_404()
+    
+    # Получаем велодорожки пользователя
+    bikelanes = BikeLane.query.filter_by(user_id=user.id).order_by(BikeLane.created_at.desc()).all()
+    
+    # Статистика
+    total_bikelanes = len(bikelanes)
+    pending_count = sum(1 for bl in bikelanes if bl.status == 'pending')
+    approved_count = sum(1 for bl in bikelanes if bl.status == 'approved')
+    rejected_count = sum(1 for bl in bikelanes if bl.status == 'rejected')
+    
+    stats = {
+        'total': total_bikelanes,
+        'pending': pending_count,
+        'approved': approved_count,
+        'rejected': rejected_count,
+        'score': user.get_total_score()
+    }
+    
+    # Проверяем, это свой профиль или чужой
+    is_own_profile = current_user.is_authenticated and current_user.id == user.id
+    
+    return render_template('auth/profile.html', 
+                         user=user,
+                         bikelanes=bikelanes,
+                         stats=stats,
+                         is_own_profile=is_own_profile)

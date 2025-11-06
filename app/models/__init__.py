@@ -1,4 +1,7 @@
-from .bikelane import BikeLane
-from .user import User
-from .city import City
-from .notification import Notification
+from app.models.user import User
+from app.models.bikelane import BikeLane
+from app.models.notification import Notification
+from app.models.city import City
+from app.models.verification import VerificationCode
+
+__all__ = ['User', 'BikeLane', 'Notification', 'City', 'VerificationCode']

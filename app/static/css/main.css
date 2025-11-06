@@ -36,9 +36,16 @@ header, .page-header{
 }
 
 .page-header{
-    z-index: 101;
+    position: fixed;
+    z-index: 1000001;
     background-color: var(--bg1);
     border-radius: var(--spacer-m);
+}
+
+#bikelane-form{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
 }
 
 footer{
@@ -61,8 +68,6 @@ main{
     height: 0.5px;
     background-color: var(--secondary100);
     border-radius: 100%;
-    margin-top: var(--spacer-s);
-    margin-bottom: var(--spacer-s);
 }
 
 .icon-small{
@@ -84,6 +89,12 @@ main{
     flex-direction: row;
 }
 
+.line-grid{
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
 .vstack{
     display: flex;
     flex-direction: column;
@@ -93,12 +104,26 @@ main{
     align-items: center;
 }
 
+.jsc{
+    justify-content: center;
+}
+
+.gap-xs{
+    gap: var(--spacer-xs);
+}
+
 .gap-s{
     gap: var(--spacer-s);
 }
 
 .gap-m{
     gap: var(--spacer-m);
+}
+
+.island{
+    background-color: var(--bg1);
+    border-radius: var(--spacer-m);
+    padding: var(--spacer-m);
 }
 
 .auth-container{
@@ -126,15 +151,7 @@ main{
     width: 100%;
 }
 
-.island{
-    background-color: var(--bg1);
-    border-radius: var(--spacer-m);
-    padding-top: var(--spacer-s);
-    padding-left: var(--spacer-sm);
-    padding-right: var(--spacer-sm);
-    padding-bottom: var(--spacer-sm);
-    margin-bottom: var(--spacer-sm);
-}
+
 
 .island_heading {
     padding-top: var(--spacer-m);
@@ -147,8 +164,7 @@ main{
     gap: 0px;
     border-radius: var(--spacer-m);
     border: 0.5px solid var(--secondary100);
-    overflow: hidden;
-    
+    overflow: hidden; 
 }
 
 
@@ -385,28 +401,37 @@ input:focus-visible{
     text-align: center;
 }
 
+
+
 /* Модальные окна */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10000;
+    z-index:999;
 }
 
 .modal {
-    background: white;
+    background: var(--bg1);
     border-radius: var(--spacer-m);
     padding: var(--spacer-l);
     max-width: 400px;
-    width: 90%;
-    margin: var(--spacer-m);
+    width: 100%;
+    align-items: flex-start;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease;
 }
+
+
+
 
 .modal-header {
     margin-bottom: var(--spacer-m);
@@ -417,14 +442,6 @@ input:focus-visible{
     font-size: 18px;
 }
 
-.modal-body {
-    margin-bottom: var(--spacer-l);
-}
-
-.modal-body p {
-    margin: 0;
-    line-height: 1.5;
-}
 
 .modal-actions {
     display: flex;
@@ -434,6 +451,10 @@ input:focus-visible{
 .modal-actions .button_square_label {
     flex: 1;
 }
+
+
+
+
 
 /* Модальное окно фотографий */
 .photo-modal-overlay {

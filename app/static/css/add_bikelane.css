@@ -303,3 +303,128 @@ body {
     font-weight: 700;
     font-size: 16px;
 }
+
+
+
+
+
+
+
+
+.map-control-btn:active {
+    transform: translateY(0);
+}
+
+/* Тоггл для парковки */
+.toggle-container {
+    padding: 12px 0;
+}
+
+.toggle-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-text {
+    font-size: 16px;
+    color: var(--prime100);
+    font-weight: 500;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+}
+
+.toggle-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 28px;
+    transition: 0.3s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #3498db;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* Отображение качества велодорожки */
+.quality-result {
+    text-align: center;
+    padding: 20px;
+}
+
+.quality-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 32px;
+}
+
+.quality-star {
+    color: #f39c12;
+}
+
+.quality-star.empty {
+    color: #ddd;
+}
+
+.quality-description {
+    font-size: 16px;
+    color: var(--secondary100);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.quality-breakdown {
+    margin-top: 16px;
+    text-align: left;
+    background: var(--bg3);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.quality-breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    color: var(--secondary80);
+}
+
+.quality-breakdown-value {
+    font-weight: 600;
+    color: var(--prime100);
+}

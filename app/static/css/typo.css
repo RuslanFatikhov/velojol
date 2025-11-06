@@ -9,6 +9,16 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
 }
 
+
+.fw600{
+    font-weight: 600;
+}
+
+.fw700{
+    font-weight: 700;
+}
+
+
 h3{
     font-size: 20px;
     line-height: 24px;
@@ -19,6 +29,13 @@ h5{
     font-size: 16px;
     line-height: 24px;
     letter-spacing: -0.25px;
+}
+
+h6{
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.15px;
+    font-weight: 500;
 }
 
 p, input, button, .cell, textarea{

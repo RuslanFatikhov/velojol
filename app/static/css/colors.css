@@ -25,3 +25,19 @@
 .secondary100{
     color: var(--secondary100);
 }
+
+.bgsecondary20{
+    background-color: var(--secondary20);
+}
+
+.bgsecondary30{
+    background-color: var(--secondary30);
+}
+
+.bgsecondary40{
+    background-color: var(--secondary40);
+}
+
+.bgprime100{
+    background-color: var(--prime100);
+}

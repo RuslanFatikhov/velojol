@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Подтверждение email{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header gap-s">
+        <h1 class="prime100">Подтверждение email</h1>
+        <p class="prime100 tac">Мы отправили 6-значный код на <strong>{{ email }}</strong></p>
+    </div>
+
+    <!-- Flash сообщения -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="verification-form" style="margin-top: var(--spacer-m);">
+        <div class="form-group">
+            <input type="text" 
+                   id="verification-code" 
+                   placeholder="Введите 6-значный код"
+                   maxlength="6"
+                   pattern="[0-9]{6}"
+                   autocomplete="off"
+                   autofocus
+                   style="text-align: center; font-size: 24px; letter-spacing: 10px;">
+            <div class="validation-message" id="code-validation"></div>
+        </div>
+
+        <div class="submit-section">
+            <button type="button" class="button_square_label btn_accent" id="verifyBtn">
+                Подтвердить
+            </button>
+        </div>
+
+        <div class="resend-section" style="margin-top: var(--spacer-l); text-align: center;">
+            <p class="prime100">Не получили код?</p>
+            <button type="button" class="button_square_label btn_gray" id="resendBtn" style="margin-top: var(--spacer-s);">
+                Отправить повторно
+            </button>
+            <p id="resend-timer" class="prime100" style="margin-top: var(--spacer-s); color: var(--gray-500); display: none;"></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.getElementById('verification-code');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const resendBtn = document.getElementById('resendBtn');
+    const resendTimer = document.getElementById('resend-timer');
+    const codeValidation = document.getElementById('code-validation');
+    
+    const email = "{{ email }}";
+    const codeType = "{{ code_type }}";
+    
+    let resendTimeout = null;
+    let resendCooldown = 60; // секунд
+    
+    // Автофокус на поле ввода
+    codeInput.focus();
+    
+    // Валидация ввода - только цифры
+    codeInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        
+        if (e.target.value.length === 6) {
+            codeValidation.textContent = '✓ Код введен';
+            codeValidation.classList.add('show', 'success');
+            codeValidation.classList.remove('error');
+        } else {
+            codeValidation.classList.remove('show');
+        }
+    });
+    
+    // Отправка кода по Enter
+    codeInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && codeInput.value.length === 6) {
+            verifyCode();
+        }
+    });
+    
+    // Верификация кода
+    verifyBtn.addEventListener('click', verifyCode);
+    
+    function verifyCode() {
+        const code = codeInput.value.trim();
+        
+        if (code.length !== 6) {
+            showError('Введите 6-значный код');
+            return;
+        }
+        
+        // Показываем индикатор загрузки
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = '🔄 Проверка...';
+        
+        // Отправляем запрос
+        const endpoint = codeType === 'registration' ? '/auth/verify-registration' : '/auth/verify-reset-code';
+        
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code: code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess(data.message);
+                
+                // Перенаправляем после успеха
+                setTimeout(function() {
+                    window.location.href = data.redirect;
+                }, 1000);
+            } else {
+                showError(data.message);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Подтвердить';
+                codeInput.value = '';
+                codeInput.focus();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Произошла ошибка. Попробуйте еще раз.');
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = 'Подтвердить';
+        });
+    }
+    
+    // Повторная отправка кода
+    resendBtn.addEventListener('click', function() {
+        if (resendBtn.disabled) return;
+        
+        resendBtn.disabled = true;
+        resendBtn.textContent = '🔄 Отправка...';
+        
+        fetch('/auth/resend-code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                email: email,
+                code_type: codeType
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess(data.message);
+                startResendCooldown();
+            } else {
+                showError(data.message);
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Отправить повторно';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Произошла ошибка при отправке кода');
+            resendBtn.disabled = false;
+            resendBtn.textContent = 'Отправить повторно';
+        });
+    });
+    
+    // Таймер повторной отправки
+    function startResendCooldown() {
+        let timeLeft = resendCooldown;
+        resendTimer.style.display = 'block';
+        resendBtn.style.display = 'none';
+        
+        resendTimeout = setInterval(function() {
+            timeLeft--;
+            resendTimer.textContent = `Повторная отправка доступна через ${timeLeft} сек`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(resendTimeout);
+                resendTimer.style.display = 'none';
+                resendBtn.style.display = 'inline-block';
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Отправить повторно';
+            }
+        }, 1000);
+    }
+    
+    function showError(message) {
+        codeValidation.textContent = message;
+        codeValidation.classList.add('show', 'error');
+        codeValidation.classList.remove('success');
+    }
+    
+    function showSuccess(message) {
+        codeValidation.textContent = '✓ ' + message;
+        codeValidation.classList.add('show', 'success');
+        codeValidation.classList.remove('error');
+    }
+    
+    // Автоматическое скрытие flash-сообщений через 5 секунд
+    setTimeout(function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(function(message) {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(-10px)';
+            message.style.transition = 'opacity 0.5s, transform 0.5s';
+            
+            setTimeout(function() {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 500);
+        });
+    }, 5000);
+});
+</script>
+{% endblock %}

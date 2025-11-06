@@ -2,61 +2,53 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-import os
+from flask_mail import Mail
+from config import Config
 
 # Инициализация расширений
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+mail = Mail()
 
-def create_app(config_name=None):
-    """Фабрика приложений Flask"""
-    
+def create_app(config_class=Config):
+    """Фабрика приложения Flask"""
     app = Flask(__name__)
+    app.config.from_object(config_class)
     
-    # Загрузка конфигурации
-    if config_name is None:
-        config_name = os.environ.get('FLASK_ENV', 'development')
-    
-    from config import config
-    app.config.from_object(config[config_name])
-    
-    # Инициализация расширений
+    # Инициализация расширений с приложением
     db.init_app(app)
     migrate.init_app(app, db)
+    login_manager.init_app(app)
+    mail.init_app(app)
     
     # Настройка Flask-Login
-    login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
-    login_manager.login_message = 'Пожалуйста, войдите в систему для доступа к этой странице.'
+    login_manager.login_message = 'Пожалуйста, войдите для доступа к этой странице'
     login_manager.login_message_category = 'info'
     
+    # Импорт моделей
+    from app.models import User, BikeLane, Notification, City, VerificationCode
+    
+    # Загрузка пользователя для Flask-Login
     @login_manager.user_loader
     def load_user(user_id):
-        """Загрузчик пользователя для Flask-Login"""
-        from app.models.user import User
         return User.query.get(int(user_id))
     
-    # Создание папки для загрузок если её нет
-    uploads_dir = os.path.join(app.instance_path, '..', app.config['UPLOAD_FOLDER'])
-    os.makedirs(uploads_dir, exist_ok=True)
+    # Регистрация blueprints
+    from app.routes.auth import bp as auth_bp
+    from app.routes.main import bp as main_bp
+    from app.routes.public import bp as public_bp
     
-    # Регистрация Blueprint'ов
-    from app.routes import main
-    from app.routes import auth
-    from app.routes.admin import bp as admin_bp
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(public_bp)
     
-    app.register_blueprint(main.bp)
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(admin_bp)
-    
-    # Импорт моделей (для корректной работы миграций)
-    from app.models import bikelane, user, city, notification
-    
-    # Контекстный процессор для шаблонов (добавляем current_user глобально)
-    @app.context_processor
-    def inject_user():
-        from flask_login import current_user
-        return dict(current_user=current_user)
+    # Регистрация admin blueprint если существует
+    try:
+        from app.routes.admin import bp as admin_bp
+        app.register_blueprint(admin_bp)
+    except ImportError:
+        pass
     
     return app

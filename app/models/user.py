@@ -68,7 +68,7 @@ class User(UserMixin, db.Model):
                 return url_for('static', filename=self.avatar_url)
         
         # Дефолтный аватар
-        default_url = url_for('static', filename='img/default-avatar.svg')
+        default_url = url_for('static', filename='img/avatar-placeholder.jpg')
         print(f"DEBUG: Using default avatar: {default_url}")
         return default_url
     

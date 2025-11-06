@@ -25,15 +25,20 @@
 
 .badge_s{
     display: flex;
+    flex-direction: row;
+    gap: var(--spacer-xs);
     min-width: 19px;
     height: 19px;
-    padding: 2px 4px;
+    padding: 2px 6px;
     align-items: center;
     border-radius: 1000px;
     text-align: center;
     justify-content: center;
-    background-color: var(--secondary30);
     font-size: 12px !important;
     line-height: 15px !important;
+}
 
+.badge_s img{
+    width: 16px;
+    height: 16px;
 }

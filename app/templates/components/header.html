@@ -3,12 +3,12 @@
         <img src="{{ url_for('static', filename='img/icon/velojol_logo.svg') }}" alt="Velojol">
     </a>
 
-    <span class="hstack gap-s">
+    <span class="hstack gap-s" id="profile">
         {% if current_user.is_authenticated %}
             <!-- Залогиненный пользователь -->
             <a href="{{ url_for('auth.profile') }}" class="button_square_label hstack gap-s aic">
                 <img src="{{ current_user.display_avatar }}" alt="Аватар {{ current_user.nickname }}" 
-                     style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                     style="width: 40px; height: 40px; border-radius: 16px; object-fit: cover;">
                 <p>Профиль</p>
             </a>
         {% else %}

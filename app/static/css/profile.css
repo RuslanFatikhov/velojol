@@ -3,6 +3,16 @@
     padding-right: var(--spacer-sm);
 }
 
+.profile_header{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    padding-top: var(--spacer-m);
+}
+
 .profile-header {
     display: flex;
     flex-direction: column;
@@ -18,4 +28,9 @@
     height: 80px;
     border-radius: 100%;
     object-fit: cover;
+}
+
+
+#profile p{
+    display: none;
 }

@@ -1,0 +1,14 @@
+.size_s{
+    width: var(--spacer-s);
+    height: var(--spacer-s);
+}
+
+.size_sm{
+    width: var(--spacer-sm);
+    height: var(--spacer-sm);
+}
+
+.size_m{
+    width: var(--spacer-m);
+    height: var(--spacer-m);
+}

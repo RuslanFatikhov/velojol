@@ -6,11 +6,19 @@
 {% block content %}
 <div class="profile-container">
 
+    <div class="profile_header">
+        <a href="/">
+            <img src="{{ url_for('static', filename='img/icon/velojol_logo.svg') }}" alt="VELOJOL" class="logo-text">
+        </a>
+    </div>
+
+    {% if is_own_profile %}
     <div class="button_wrapper_fixed">
         <a href="{{ url_for('main.add_bikelane') }}" class="button_square_label btn_black">
             Добавить велодорожку
         </a>
     </div>
+    {% endif %}
 
     <!-- Заголовок профиля -->
     <div class="profile-header">
@@ -22,30 +30,17 @@
 
                 <span class="badge_gs">
                     <img src="{{ url_for('static', filename='img/icon/ball_icon.svg') }}" alt="Очки" class="icon-small">
-                    <p class="stat-number">{{ user_stats.total_score or 0 }}</p>
+                    <p class="stat-number">{{ stats.score }}</p>
                 </span>
             </span>
         </div>
 
         <div class="hstack w100">
             <!-- Кликабельная ссылка на велодорожки -->
-            <a href="{{ url_for('auth.my_bikelanes') }}" class="vstack graph w100 aic gap-s bikelanes-link">
-                <p class="prime100">{{ user_stats.bikelanes_approved or 0 }}</p>
+            <a href="{{ url_for('auth.my_bikelanes') if is_own_profile else '#' }}" class="vstack graph w100 aic gap-s {% if is_own_profile %}bikelanes-link{% endif %}">
+                <p class="prime100">{{ stats.approved }}</p>
                 <p class="prime100">велодорожек</p>
             </a>
-
-            <!-- Будущие секции для маршрутов и точек -->
-            <!--
-            <span class="vstack graph w100 aic gap-s">
-                <p class="stat-number">0</p>
-                <p class="prime100">маршрутов</p>
-            </span>
-
-            <span class="vstack w100 aic gap-s">
-                <p class="stat-number">0</p>
-                <p class="prime100">точек</p>
-            </span>
-            -->
         </div>
     </div>
 
@@ -76,18 +71,9 @@
 
     <span class="divider"></span>
 
-    <!-- Действия -->
+    <!-- Действия (только для своего профиля) -->
+    {% if is_own_profile %}
     <div class="profile-actions">
-        <!-- Быстрый доступ к велодорожкам -->
-        <!--a href="{{ url_for('auth.my_bikelanes') }}" class="cell">
-            <img src="{{ url_for('static', filename='img/icon/bike.svg') }}" alt="Велодорожки" class="icon-small">
-            Мои велодорожки
-            {% if user_stats.bikelanes_pending > 0 %}
-                <span class="notification-badge">{{ user_stats.bikelanes_pending }}</span>
-            {% endif %}
-            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
-        </a-->
-
         {% if user.is_admin %}
         <a href="{{ url_for('admin.dashboard') }}" class="cell">
             <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Админ" class="icon-small">
@@ -116,6 +102,7 @@
             <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
         </a>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 
