@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% set hide_header = true %}
+
+{% block title %}Главная - Velojol 4.0{% endblock %}
+
+{% block content %}
+
+<header class="vstack bgaccent100">
+
+    <!--Top-->
+    <span class="hstack w100 sb">
+        <span class="hstack gap-s" id="profile">
+            <a href="{{ url_for('auth.login') }}" class="button_square_label">Войти</a>
+        </span>
+
+        <a href="{{ url_for('main.index') }}">
+            <img src="{{ url_for('static', filename='img/icon/velojol_logo_white.svg') }}" alt="Velojol">
+        </a>
+
+        <span class="hstack gap-s" id="profile">
+            {% if current_user.is_authenticated %}
+                <!-- Залогиненный пользователь -->
+                <a href="{{ url_for('auth.profile') }}" class="button_square_label hstack gap-s aic">
+                    <img src="{{ current_user.display_avatar }}" alt="Аватар {{ current_user.nickname }}" 
+                        style="width: 40px; height: 40px; border-radius: 16px; object-fit: cover;">
+                    <p>Профиль</p>
+                </a>
+            {% else %}
+                <!-- Незалогиненный пользователь -->
+                <a href="{{ url_for('auth.login') }}" class="button_square_label"><p style="display: block !important;" class="prime-invert100">Войти</p></a>
+            {% endif %}
+        </span>
+    </span>
+
+    <span class="spacer-l"></span>
+
+
+    <!--Bottom-->
+    <span class="vstack gap-s w100">
+        <h3 class="prime-invert100">Веломир под рукой</h3>
+        <p class="prime-invert100">Дорожки, рейтинги, фотографии — <br>всё в одном месте</p>
+    </span>
+
+    <span class="spacer-m"></span>
+
+
+    <!-- Search -->
+    <input type="text" id="citySearch"
+                
+            class="form-input search-input"
+            placeholder="Город">
+    </input>
+
+</header>
+
+<div class="cities-container">
+    
+    
+
+    
+
+    <!-- Список городов по странам -->
+    {% if cities_by_country %}
+        {% for country, cities in cities_by_country %}
+        <div class="country-section">
+            <h3 class="prime100 country-name">{{ country }}</h3>
+            
+            <div class="cities-grid">
+                {% for city in cities %}
+                <a href="{{ url_for('public.city', city_id=city.city_id) }}" class="city-card">
+                    
+                    <!-- Герб города -->
+                    {% if city.coat_of_arms %}
+                        <img src="{{ url_for('static', filename=city.coat_of_arms) }}" 
+                             alt="Герб {{ city.name }}" 
+                             class="city-coat">
+                    {% endif %}
+
+                    <!-- Фон города -->
+                    {% if city.background_image %}
+                    <div class="city-background" style="background-image: url('{{ url_for('static', filename=city.background_image) }}');"></div>
+                    {% else %}
+                    <div class="city-background city-background-default"></div>
+                    {% endif %}
+                    
+                    <div class="city-content">
+                        
+                        
+                        <!-- Название -->
+                        <h3 class="city-name prime100">{{ city.name }}</h3>
+                        
+                        <!-- Статистика -->
+                        <div class="city-stats">
+
+                            
+                            <span>
+                                <p class="secondary100 fw600">{{ city.get_total_distance() }}</p>
+                                <p class="secondary100 fw600">км</p>
+                            </span>
+ 
+                            <span class="badge_s" style="height: 24px;">
+                                <img src="{{ url_for('static', filename='img/icon/star.svg') }}" alt="Star" class="icon-small">
+                                <p class="fw700 prime100">{{ city.get_average_rating() }}</p>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Empty State -->
+    <div id="emptyState" class="island" style="display: none;">
+        <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3 class="prime100">Городов не найдено</h3>
+            <p class="secondary100">Попробуйте изменить запрос</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/cities.js') }}"></script>
+{% endblock %}

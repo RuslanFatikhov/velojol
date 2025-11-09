@@ -15,6 +15,14 @@
     --spacer-100: 100px
 }
 
+.spacer-m{
+    height: var(--spacer-m);
+}
+
+.spacer-l{
+    height: var(--spacer-l);
+}
+
 body{
     background-color: var(--bg3);
 }
@@ -24,7 +32,7 @@ header, .page-header{
     left: 0px;
     top: 0px;
     width: 100vw;
-    height: 80px;
+    min-height: 80px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -87,6 +95,10 @@ main{
 .hstack{
     display: flex;
     flex-direction: row;
+}
+
+.sb{
+    justify-content: space-between;
 }
 
 .line-grid{

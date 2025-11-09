@@ -22,7 +22,7 @@ a{
 }
 
 .button_square_label:hover{
-    background-color: var(--bg4);
+    background-color: var(--secondary20);
 }
 
 .btn_accent{

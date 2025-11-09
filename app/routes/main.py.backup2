@@ -257,6 +257,14 @@ def validate_geometry():
                         if len(coordinates) >= 2:
                             try:
                                 # Создаем временный объект для расчета дистанции
+            # Находим город по city_id
+            from app.models.city import City
+            city_obj = City.query.filter_by(city_id=form_data["city"]).first()
+            if not city_obj:
+                return jsonify({
+                    "success": False,
+                    "error": f"Город {form_data["city"]} не найден в базе данных"
+                })
 
                                 temp_bikelane = BikeLane()
                                 temp_bikelane.geometry = geometry

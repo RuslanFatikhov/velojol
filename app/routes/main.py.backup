@@ -122,8 +122,7 @@ def add_bikelane():
             bikelane = BikeLane(
                 title=form_data['title'],
                 description=form_data['description'],
-                city=form_data["city"],
-                city_id=city_obj.id,
+                city=form_data['city'],
                 track_type=form_data['track_type'],
                 quality=int(form_data['quality']),
                 has_parking=form_data['has_parking'],
@@ -257,6 +256,14 @@ def validate_geometry():
                         if len(coordinates) >= 2:
                             try:
                                 # Создаем временный объект для расчета дистанции
+            # Находим город по city_id
+            from app.models.city import City
+            city_obj = City.query.filter_by(city_id=form_data["city"]).first()
+            if not city_obj:
+                return jsonify({
+                    "success": False,
+                    "error": f"Город {form_data["city"]} не найден в базе данных"
+                })
 
                                 temp_bikelane = BikeLane()
                                 temp_bikelane.geometry = geometry
