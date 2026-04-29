@@ -39,7 +39,9 @@
         <div class="form-group">
             <select id="city" name="city" class="form-input" data-selected-city="{{ selected_city_value }}">
                 <option value="">Выберите город</option>
-                <!-- Города загружаются динамически из cities.json через JavaScript -->
+                {% for city in cities_data.cities | default([]) %}
+                <option value="{{ city.id }}" {% if city.id == selected_city_value %}selected{% endif %}>{{ city.name }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>
@@ -350,5 +352,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
 <!-- Подключаем наши скрипты страницы -->
+<script>
+    window.citiesDataFromServer = {{ cities_data | default({'cities': []}) | tojson }};
+</script>
 <script src="{{ url_for('static', filename='js/add_bikelane.js') }}"></script>
 {% endblock %}

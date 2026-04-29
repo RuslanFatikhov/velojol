@@ -60,3 +60,4 @@ class Config:
     BIKELANE_PHOTOS_MAX = 10
     BIKELANE_VIDEOS_MAX = 10
     MIN_BIKELANE_LENGTH = 50  # метров
+    MAPBOX_TOKEN = os.environ.get('MAPBOX_TOKEN', '')

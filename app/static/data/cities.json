@@ -4,14 +4,14 @@
       "id": "almaty",
       "name": "Алматы",
       "country": "🇰🇿 Казахстан",
-      "distance": 9.0,
-      "rating": 3.9,
+      "distance": 8.77,
+      "rating": 3.8,
       "coords": [
         43.2565,
         76.9286
       ],
       "zoom": 8,
-      "bikelanes_count": 7,
+      "bikelanes_count": 6,
       "coat_of_arms": "uploads/cities/almaty_coat.png",
       "background_image": "uploads/cities/almaty_bg.jpg"
     },
@@ -28,7 +28,7 @@
       "zoom": 12,
       "bikelanes_count": 0,
       "coat_of_arms": null,
-      "background_image": null
+      "background_image": "uploads/cities/astana_bg.jpg"
     },
     {
       "id": "bishkek",
@@ -43,7 +43,7 @@
       "zoom": 12,
       "bikelanes_count": 0,
       "coat_of_arms": null,
-      "background_image": null
+      "background_image": "uploads/cities/bishkek_bg.jpg"
     },
     {
       "id": "kazan",
@@ -58,7 +58,7 @@
       "zoom": 12,
       "bikelanes_count": 0,
       "coat_of_arms": null,
-      "background_image": null
+      "background_image": "uploads/cities/kazan_bg.jpg"
     },
     {
       "id": "moscow",
@@ -69,6 +69,21 @@
       "coords": [
         55.75375487725262,
         37.620728816208924
+      ],
+      "zoom": 12,
+      "bikelanes_count": 0,
+      "coat_of_arms": null,
+      "background_image": "uploads/cities/moscow_bg.jpg"
+    },
+    {
+      "id": "ufa",
+      "name": "Уфа",
+      "country": "🇰🇿 Казахстан",
+      "distance": 0,
+      "rating": 0.0,
+      "coords": [
+        43.5666,
+        56.7788
       ],
       "zoom": 12,
       "bikelanes_count": 0,
@@ -88,7 +103,7 @@
       "zoom": 12,
       "bikelanes_count": 0,
       "coat_of_arms": null,
-      "background_image": null
+      "background_image": "uploads/cities/shymkent_bg.jpg"
     }
   ]
 }

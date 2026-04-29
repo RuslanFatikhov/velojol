@@ -3,12 +3,18 @@ from flask_login import current_user, login_required
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from app import db
 from app.models.bikelane import BikeLane
+from app.models.city import City
 from app.utils.validators import BikeLaneValidator
 from app.utils.file_handler import FileHandler
 import json
 
 # Создаем Blueprint
 bp = Blueprint('main', __name__)
+
+
+def _get_active_cities_data():
+    cities = City.query.filter_by(status='active').order_by(City.name).all()
+    return {'cities': [city.to_dict() for city in cities]}
 
 
 def _extract_bikelane_form_data():
@@ -93,8 +99,6 @@ def _build_bikelane_form_context(bikelane):
 
 
 def _apply_bikelane_form_data(bikelane, form_data, distance_value=None, reset_moderation=False):
-    from app.models.city import City
-
     city_obj = City.query.filter_by(city_id=form_data['city']).first()
     if not city_obj:
         raise ValueError(f'Город {form_data["city"]} не найден в базе данных')
@@ -155,7 +159,6 @@ def _save_bikelane_uploaded_photos(bikelane):
 @bp.route('/')
 def index():
     """Главная страница"""
-    from app.models.city import City
     from collections import defaultdict
     
     # Получаем все активные города
@@ -185,7 +188,11 @@ def add_bikelane():
     """Страница добавления велодорожки"""
     if request.method == 'GET':
         preselected_city = request.args.get('city', '').strip()
-        return render_template('add_bikelane.html', preselected_city=preselected_city)
+        return render_template(
+            'add_bikelane.html',
+            preselected_city=preselected_city,
+            cities_data=_get_active_cities_data()
+        )
 
     try:
         if not request.form and not request.files:
@@ -265,7 +272,8 @@ def edit_bikelane(bikelane_id):
             'add_bikelane.html',
             form_data=_build_bikelane_form_context(bikelane),
             is_edit_mode=True,
-            form_action=url_for('main.edit_bikelane', bikelane_id=bikelane.id)
+            form_action=url_for('main.edit_bikelane', bikelane_id=bikelane.id),
+            cities_data=_get_active_cities_data()
         )
 
     try:

@@ -59,6 +59,7 @@
 }
 
 .modal-bikelane-title{
+    margin-top: var(--spacer-s);
     margin-bottom: var(--spacer-s);
 }
 
@@ -102,6 +103,7 @@
 
 /* Видео */
 .modal-videos {
+    margin-top: var(--spacer-m);
     margin-bottom: var(--spacer-m);
 }
 
@@ -123,6 +125,7 @@
 
 /* Автор */
 .modal-author {
+    margin-top: var(--spacer-m);
     display: flex;
     align-items: center;
     gap: var(--spacer-s);

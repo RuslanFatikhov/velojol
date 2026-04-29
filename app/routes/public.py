@@ -1,10 +1,9 @@
 # app/routes/public.py
 
-from flask import Blueprint, render_template, request, jsonify, url_for
+from flask import Blueprint, render_template, request, jsonify, url_for, redirect
 from flask_login import current_user
 from app.models.city import City
 from app.models.bikelane import BikeLane
-from sqlalchemy import or_
 
 # Создаем Blueprint для публичных страниц
 bp = Blueprint('public', __name__)
@@ -25,43 +24,10 @@ def _serialize_bikelane_for_viewer(bikelane):
     data['can_edit'] = can_edit
     return data
 
-@bp.route('/')
 @bp.route('/cities')
 def cities():
-    """Страница со списком всех городов"""
-    # Получаем параметр поиска
-    search_query = request.args.get('search', '').strip()
-    
-    # Базовый запрос - только активные города
-    query = City.query.filter_by(status='active')
-    
-    # Применяем поиск если есть
-    if search_query:
-        query = query.filter(
-            or_(
-                City.name.ilike(f'%{search_query}%'),
-                City.country.ilike(f'%{search_query}%')
-            )
-        )
-    
-    # Получаем города, сортируем по названию
-    cities_list = query.order_by(City.name).all()
-    
-    # Группируем города по странам
-    cities_by_country = {}
-    for city in cities_list:
-        country = city.country
-        if country not in cities_by_country:
-            cities_by_country[country] = []
-        cities_by_country[country].append(city)
-    
-    # Сортируем страны
-    countries_sorted = sorted(cities_by_country.items(), key=lambda item: item[0].casefold())
-    
-    return render_template('public/cities.html', 
-                         cities_by_country=countries_sorted,
-                         search_query=search_query,
-                         total_cities=len(cities_list))
+    """Редирект старой страницы городов на главную."""
+    return redirect(url_for('main.index'), code=301)
 
 @bp.route('/city/<city_id>')
 def city(city_id):

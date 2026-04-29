@@ -4,6 +4,8 @@
 let map, drawnItems, drawControl, currentPolyline, citiesData;
 let isMobileMapLayout = false;
 let isSubmittingBikelaneForm = false;
+let selectedPhotoFiles = [];
+let photoPreviewRenderId = 0;
 const DESCRIPTION_MIN_LENGTH = 20;
 
 function updateDescriptionCounter() {
@@ -221,6 +223,13 @@ function initMapDrawer() {
  */
 async function loadCitiesData() {
   try {
+    if (window.citiesDataFromServer?.cities?.length) {
+      citiesData = window.citiesDataFromServer;
+      console.log('Города загружены с сервера:', citiesData.cities.length);
+      populateCitySelect();
+      return;
+    }
+
     console.log('Загрузка данных городов...');
     const response = await fetch('/static/data/cities.json');
 
@@ -257,7 +266,7 @@ async function loadCitiesData() {
 }
 
 /**
- * Заполняет селект городов данными из JSON
+ * Заполняет селект городов
  */
 function populateCitySelect() {
   const citySelect = document.getElementById('city');
@@ -934,10 +943,6 @@ function initPhotoHandlers() {
       const files = Array.from(e.target.files);
 
       if (files.length > 0) {
-        const dt = new DataTransfer();
-        files.forEach((file) => dt.items.add(file));
-        fileInput.files = dt.files;
-
         handleFileSelection(files, fileInput, preview);
       }
 
@@ -997,46 +1002,70 @@ function handleFileSelection(files, fileInput, preview) {
   console.log('=== ОБРАБОТКА ФАЙЛОВ ===');
   console.log('Количество файлов:', files.length);
 
-  preview.innerHTML = '';
-
   if (files.length === 0) {
     console.log('Файлы не выбраны');
     return;
   }
 
-  if (files.length > 10) {
+  const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+  const skippedFiles = files.length - imageFiles.length;
+
+  if (skippedFiles > 0) {
+    console.log('Пропущено не-изображений:', skippedFiles);
+  }
+
+  if (selectedPhotoFiles.length + imageFiles.length > 10) {
     showToast('Максимум 10 фотографий', 'error');
-    fileInput.value = '';
+    syncPhotoInputFiles(fileInput);
     return;
   }
 
-  let processedCount = 0;
+  selectedPhotoFiles = selectedPhotoFiles.concat(imageFiles);
+  syncPhotoInputFiles(fileInput);
+  renderPhotoPreviews(fileInput, preview);
+}
 
-  files.forEach((file, index) => {
+function syncPhotoInputFiles(fileInput) {
+  const dt = new DataTransfer();
+  selectedPhotoFiles.forEach((file) => dt.items.add(file));
+  fileInput.files = dt.files;
+}
+
+function renderPhotoPreviews(fileInput, preview) {
+  photoPreviewRenderId++;
+  const currentRenderId = photoPreviewRenderId;
+  preview.innerHTML = '';
+
+  selectedPhotoFiles.forEach((file, index) => {
     console.log(`Файл ${index + 1}:`, file.name, 'Тип:', file.type, 'Размер:', file.size);
-
-    if (!file.type.startsWith('image/')) {
-      console.log('Пропущен не-изображение:', file.name);
-      return;
-    }
 
     const reader = new FileReader();
 
     reader.onload = function (e) {
+      if (currentRenderId !== photoPreviewRenderId) {
+        return;
+      }
+
       console.log(`Файл ${index + 1} загружен в FileReader`);
 
       const photoDiv = document.createElement('div');
       photoDiv.className = 'photo-preview';
-      photoDiv.innerHTML = `<img src="${e.target.result}" alt="Фото ${index + 1}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">`;
+      photoDiv.innerHTML = `
+        <img src="${e.target.result}" alt="Фото ${index + 1}">
+        <button type="button" class="photo-preview-remove" aria-label="Удалить фото">
+          <img src="/static/img/icon/cross.svg" alt="">
+        </button>
+      `;
+
+      const removeButton = photoDiv.querySelector('.photo-preview-remove');
+      removeButton.addEventListener('click', function () {
+        selectedPhotoFiles.splice(index, 1);
+        syncPhotoInputFiles(fileInput);
+        renderPhotoPreviews(fileInput, preview);
+      });
 
       preview.appendChild(photoDiv);
-      processedCount++;
-
-      console.log(`Фото ${index + 1} добавлено в превью (${processedCount}/${files.length})`);
-
-      if (processedCount === files.filter((f) => f.type.startsWith('image/')).length) {
-        console.log('ВСЕ ФОТОГРАФИИ ОБРАБОТАНЫ УСПЕШНО!');
-      }
+      console.log(`Фото ${index + 1} добавлено в превью`);
     };
 
     reader.onerror = function (e) {

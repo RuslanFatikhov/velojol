@@ -17,7 +17,7 @@
         <span class="hstack gap-s w100">
 
             <!--Back-->
-            <a href="{{ url_for('public.cities') }}" class="button_square_icon">
+            <a href="{{ url_for('main.index') }}" class="button_square_icon">
                 <img src="{{ url_for('static', filename='img/icon/chevron_left.svg') }}" 
                  alt="Назад" 
                  class="icon-small arrow_left">
@@ -227,6 +227,7 @@ window.cityData = {
 };
 
 window.bikelanesData = {{ bikelanes_json | safe }};
+window.MAPBOX_TOKEN = {{ config.MAPBOX_TOKEN | tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/city_map_mapbox.js') }}"></script>
 {% endblock %}

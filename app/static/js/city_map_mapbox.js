@@ -354,7 +354,7 @@ async function showBikelaneModal(bikelaneId) {
             </div>
 
             <div class="island">
-                <p class="modal-bikelane-description prime100">
+                <p class="modal-bikelane-title prime100">
                     ${bikelane.description}
                 </p>
 

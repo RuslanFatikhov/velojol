@@ -437,6 +437,11 @@
 }
 
 @media (max-width: 768px) {
+
+    .bikelane-list-block .island {
+        max-width: none;
+    }
+
     .city-add-bikelane-btn span {
         display: none;
     }
