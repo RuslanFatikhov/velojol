@@ -1,16 +1,35 @@
-.modal-bike-lane{
+.modal-bottom{
     position: fixed;
-    left: 0px;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 0px;
-    border-radius: 16px 16px 0px 0px;
+    border-radius: var(--spacer-m) var(--spacer-m) 0px 0px;
     overflow: hidden;
+    width: 100%;
+    padding-bottom: var(--spacer-xl);
+    max-width: 600px;
+    background: var(--bg3);
+    box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.22);
+    animation: modalBikeLaneEnter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: center bottom;
+    will-change: transform, opacity;
+}
+
+#bikelaneModal .modal-bottom {
+    height: calc(100vh - 32px);
+    height: calc(100dvh - 32px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: 0;
 }
 
 /* Карта в модалке */
 .modal-map {
     width: 100%;
     height: 300px;
-    border-radius: 0px 0px 16px 16px;
+    border-radius: 0px 0px var(--spacer-m) var(--spacer-m);
     position: absolute;
     top: 0px;
     left: 0px;
@@ -21,12 +40,175 @@
     flex-direction: column;
     gap: var(--spacer-xs);
     width: 100%;
+    flex: 1;
+    min-height: 0;
+    max-height: 100%;
     position: relative;
-    overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding-top: 300px;
+    padding-bottom: var(--spacer-xl);
+    box-sizing: border-box;
     background-color: var(--bg3);
+}
+
+#modalContent > * {
+    flex-shrink: 0;
 }
 
 .modal-bikelane-title{
     margin-bottom: var(--spacer-s);
+}
+
+/* Галерея фото */
+.modal-photos {
+    margin-bottom: var(--spacer-m);
+}
+
+.modal-photos-grid {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacer-s);
+    gap: var(--spacer-s);
+    margin-top: var(--spacer-s);
+    padding-left: var(--spacer-m);
+    padding-right: var(--spacer-m);
+    overflow-y: scroll;
+}
+
+.modal-photo {
+    aspect-ratio: 1;
+    border-radius: var(--spacer-s);
+    overflow: hidden;
+    min-width: 120px;
+}
+
+.modal-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.modal-photo:hover img {
+    transform: scale(1.04);
+    opacity: 0.92;
+}
+
+
+/* Видео */
+.modal-videos {
+    margin-bottom: var(--spacer-m);
+}
+
+.modal-video h3{
+    margin-top: var(--spacer-m);
+}
+
+.modal-video {
+    margin-top: var(--spacer-s);
+    border-radius: var(--spacer-s);
+    overflow: hidden;
+}
+
+.modal-video iframe {
+    width: 100%;
+    height: 200px;
+    border: none;
+}
+
+/* Автор */
+.modal-author {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    padding: var(--spacer-m);
+    background: var(--bg3);
+    border-radius: var(--spacer-s);
+    margin-bottom: var(--spacer-m);
+}
+
+
+/* Модальные окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index:999;
+    animation: modalOverlayFadeIn 0.24s ease;
+}
+
+.modal {
+    position: fixed;
+    background: var(--bg1);
+    border-radius: var(--spacer-m);
+    padding: var(--spacer-l);
+    max-width: 400px;
+    width: 100%;
+    align-items: flex-start;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease;
+}
+
+
+
+
+.modal-header {
+    margin-bottom: var(--spacer-m);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+
+.modal-actions {
+    display: flex;
+    gap: var(--spacer-s);
+}
+
+.modal-actions .button_square_label {
+    flex: 1;
+}
+
+@keyframes modalBikeLaneEnter {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(56px) scale(0.98);
+        filter: blur(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes modalOverlayFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-overlay,
+    .modal-bottom {
+        animation: none;
+    }
 }

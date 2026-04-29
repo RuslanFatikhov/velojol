@@ -1,7 +1,13 @@
 {% set hide_header = true %}
+{% set hide_footer = true %}
 {% extends "base.html" %}
 
-{% block title %}Добавление велодорожки - Velojol 4.0{% endblock %}
+{% set is_edit_mode = is_edit_mode | default(false) %}
+{% set page_title = 'Редактирование велодорожки' if is_edit_mode else 'Добавление велодорожки' %}
+{% set submit_label = 'Отправить на модерацию' if is_edit_mode else 'Отправить' %}
+{% set form_action = form_action if form_action is defined else url_for('main.add_bikelane') %}
+{% set selected_city_value = form_data.city if form_data else (preselected_city | default('')) %}
+{% block title %}{{ page_title }} - OPEN-VELOJOL BETA 0.3.2{% endblock %}
 
 {% block head %}
 <!-- Подключаем стили страницы -->
@@ -18,18 +24,20 @@
 
 {% block content %}
 <div class="page-header">
-    <h1 class="prime100">Добавление велодорожки</h1>
+    <h1 class="prime100">{{ page_title }}</h1>
     <a href="javascript:history.back()" class="button_square_icon">
         <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="Назад" class="icon-left">
     </a>
 </div>
 
-<form method="POST" enctype="multipart/form-data" id="bikelane-form">
+<div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<form method="POST" enctype="multipart/form-data" id="bikelane-form" action="{{ form_action }}">
     
     <!-- Выбор города -->
     <div class="island">
         <div class="form-group">
-            <select id="city" name="city" class="form-input">
+            <select id="city" name="city" class="form-input" data-selected-city="{{ selected_city_value }}">
                 <option value="">Выберите город</option>
                 <!-- Города загружаются динамически из cities.json через JavaScript -->
             </select>
@@ -46,7 +54,7 @@
                     id="title" 
                     name="title" 
                     value="{{ form_data.title if form_data else '' }}"
-                    placeholder="Название"
+                    placeholder="Название или адрес"
                     class="form-input">
             </div>
             
@@ -55,31 +63,46 @@
                         name="description" 
                         rows="4" 
                         placeholder="Описание"
-                        class="form-textarea">{{ form_data.description if form_data else '' }}</textarea>
+                        class="form-textarea"
+                        required
+                        minlength="20"
+                        aria-describedby="description-counter description-required">{{ form_data.description if form_data else '' }}</textarea>
+                <div class="description-meta">
+                    <span id="description-counter" class="description-counter">0</span>
+                    <span id="description-required" class="description-required">/</span>
+                    <span id="description-required" class="description-required">20</span>
+                </div>
             </div>
         </span>
     </div>
 
     <!-- Карта -->
-    <div class="island">
+    <div class="island{% if not selected_city_value %} hidden{% endif %}" id="map-section">
         <h3 class="prime100 island_heading">Карта</h3>
-        <div id="map-container" style="position: relative;">
-            <div id="map"></div>
-            <div id="map-controls" class="map-controls" style="display: none;">
-                <button type="button" id="finish-line-btn" class="map-control-btn btn-finish">
-                    <span>✓</span> Готово
-                </button>
-                <button type="button" id="reset-line-btn" class="map-control-btn btn-reset">
-                    <span>↻</span> Сброс
-                </button>
+        <button type="button" id="open-map-drawer-btn" class="button__label btn_gray map-drawer-trigger">
+            Открыть карту для рисования
+        </button>
+        <div id="map-inline-anchor">
+            <div id="map-drawer-content" class="map-drawer-content">
+                <div id="map-container" class="map-container">
+                    <div id="map"></div>
+                    <div id="map-controls" class="map-controls" style="display: none;">
+                        <button type="button" id="finish-line-btn" class="map-control-btn btn-finish">
+                            Готово
+                        </button>
+                        <button type="button" id="reset-line-btn" class="map-control-btn btn-reset">
+                            Сброс
+                        </button>
+                    </div>
+                </div>
+                <div id="geometry-status" class="geometry-status"></div>
             </div>
         </div>
-        <div id="geometry-status" class="geometry-status"></div>
         <input type="hidden" id="geometry" name="geometry" value="{{ form_data.geometry if form_data else '' }}">
-        <input type="hidden" id="has_parking_hidden" name="has_parking" value="false">
-        <input type="hidden" id="has_markings_hidden" name="has_markings" value="false">
-        <input type="hidden" id="has_signs_hidden" name="has_signs" value="false">
-        <input type="hidden" id="overall_quality" name="overall_quality" value="">
+        <input type="hidden" id="has_parking_hidden" name="has_parking" value="{{ 'true' if form_data and form_data.has_parking else 'false' }}">
+        <input type="hidden" id="has_markings_hidden" name="has_markings" value="{{ 'true' if form_data and form_data.has_markings else 'false' }}">
+        <input type="hidden" id="has_signs_hidden" name="has_signs" value="{{ 'true' if form_data and form_data.has_signs else 'false' }}">
+        <input type="hidden" id="overall_quality" name="overall_quality" value="{{ form_data.overall_quality if form_data and form_data.overall_quality is not none else '' }}">
     </div>
 
     <!-- Тип велодорожки -->
@@ -91,7 +114,7 @@
                 <input type="radio" id="track_lane" name="track_type" value="lane" 
                        {% if form_data and form_data.track_type == 'lane' %}checked{% endif %}>
                 <label for="track_lane" class="track-type-card">
-                    <img class="track-icon" src="static/img/icon/bikelane/1.png" alt="Полоса">
+                    <img class="track-icon" src="{{ url_for('static', filename='img/icon/bikelane/1.png') }}" alt="Полоса">
                     <p class="track-title">Полоса</p>
                 </label>
             </div>
@@ -100,7 +123,7 @@
                 <input type="radio" id="track_bollards" name="track_type" value="bollards" 
                        {% if form_data and form_data.track_type == 'bollards' %}checked{% endif %}>
                 <label for="track_bollards" class="track-type-card">
-                    <img class="track-icon" src="static/img/icon/bikelane/2.png" alt="Полоса с боллардами">
+                    <img class="track-icon" src="{{ url_for('static', filename='img/icon/bikelane/2.png') }}" alt="Полоса с боллардами">
                     <p class="track-title">Полоса с боллардами</p>
                 </label>
             </div>
@@ -109,7 +132,7 @@
                 <input type="radio" id="track_separated" name="track_type" value="separated" 
                        {% if form_data and form_data.track_type == 'separated' %}checked{% endif %}>
                 <label for="track_separated" class="track-type-card">
-                    <img class="track-icon" src="static/img/icon/bikelane/3.png" alt="Полоса">
+                    <img class="track-icon" src="{{ url_for('static', filename='img/icon/bikelane/3.png') }}" alt="Полоса">
                     <p class="track-title">Обособленная велодорожка</p>
                 </label>
             </div>
@@ -118,7 +141,7 @@
                 <input type="radio" id="track_shared" name="track_type" value="shared" 
                        {% if form_data and form_data.track_type == 'shared' %}checked{% endif %}>
                 <label for="track_shared" class="track-type-card">
-                    <img class="track-icon" src="static/img/icon/bikelane/4.png" alt="Полоса">
+                    <img class="track-icon" src="{{ url_for('static', filename='img/icon/bikelane/4.png') }}" alt="Полоса">
                     <p class="track-title">Вело-пешеходная дорожка</p>
                 </label>
             </div>
@@ -195,7 +218,8 @@
             <label class="toggle-label" for="has_parking">
                 <span class="toggle-text">На велодорожке паркуются авто?</span>
                 <div class="toggle-switch">
-                    <input type="checkbox" id="has_parking" name="has_parking" value="true">
+                    <input type="checkbox" id="has_parking" name="has_parking" value="true"
+                           {% if form_data and form_data.has_parking %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </div>
             </label>
@@ -210,7 +234,8 @@
             <label class="toggle-label" for="has_markings">
                 <span class="toggle-text">Есть разметка на велодорожке?</span>
                 <div class="toggle-switch">
-                    <input type="checkbox" id="has_markings" name="has_markings" value="true">
+                    <input type="checkbox" id="has_markings" name="has_markings" value="true"
+                           {% if form_data and form_data.has_markings %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </div>
             </label>
@@ -225,7 +250,8 @@
             <label class="toggle-label" for="has_signs">
                 <span class="toggle-text">Есть дорожные знаки?</span>
                 <div class="toggle-switch">
-                    <input type="checkbox" id="has_signs" name="has_signs" value="true">
+                    <input type="checkbox" id="has_signs" name="has_signs" value="true"
+                           {% if form_data and form_data.has_signs %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </div>
             </label>
@@ -247,6 +273,19 @@
     <!-- Медиа -->
     <div class="island">
         <h3 class="prime100 island_heading">Медиа</h3>
+
+        {% if form_data and form_data.existing_photos %}
+        <div class="existing-media">
+            <div class="upload-subtext">Текущие фотографии</div>
+            <div class="photos-preview">
+                {% for photo in form_data.existing_photos %}
+                <div class="photo-preview">
+                    <img src="{{ url_for('static', filename=photo) }}" alt="Текущее фото {{ loop.index }}">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
         
         <!-- Фотографии -->
         <div class="media-upload">
@@ -269,15 +308,36 @@
                    class="form-input"
                    value="{{ form_data.video_url if form_data else '' }}">
         </div>
+
+        {% if is_edit_mode %}
+        <p class="upload-subtext">После сохранения изменения снова уйдут на модерацию.</p>
+        {% endif %}
     </div>
 
     <!-- Кнопка отправки -->
     <div class="submit-section">
-        <button type="submit" class="button_square_label btn_black">
-            Отправить
+        <button type="submit" class="button__label btn_black" id="submit-bikelane-btn" data-default-label="{{ submit_label }}" disabled>
+            {{ submit_label }}
         </button>
     </div>
 </form>
+
+<div id="map-drawer" class="map-drawer" aria-hidden="true">
+    <div id="map-drawer-overlay" class="map-drawer-overlay"></div>
+    <div class="map-drawer-sheet" role="dialog" aria-modal="true" aria-labelledby="map-drawer-title">
+        <div class="map-drawer-handle"></div>
+        <div class="map-drawer-header">
+            <div>
+                <h3 id="map-drawer-title" class="prime100">Карта</h3>
+                <p class="map-drawer-subtitle">Нажимайте по карте, чтобы построить линию велодорожки.</p>
+            </div>
+            <button type="button" id="close-map-drawer-btn" class="button_square_icon map-drawer-close" aria-label="Закрыть карту">
+                <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
+            </button>
+        </div>
+        <div id="map-drawer-body" class="map-drawer-body"></div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

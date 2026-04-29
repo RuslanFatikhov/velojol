@@ -3,14 +3,92 @@
     {
       "id": "almaty",
       "name": "Алматы",
-      "country": "Казахстан",
-      "distance": 0,
-      "rating": 0.0,
+      "country": "🇰🇿 Казахстан",
+      "distance": 9.0,
+      "rating": 3.9,
       "coords": [
         43.2565,
         76.9286
       ],
-      "zoom": 12
+      "zoom": 8,
+      "bikelanes_count": 7,
+      "coat_of_arms": "uploads/cities/almaty_coat.png",
+      "background_image": "uploads/cities/almaty_bg.jpg"
+    },
+    {
+      "id": "astana",
+      "name": "Астана",
+      "country": "🇰🇿 Казахстан",
+      "distance": 0,
+      "rating": 0.0,
+      "coords": [
+        51.128236205104685,
+        71.43033971918078
+      ],
+      "zoom": 12,
+      "bikelanes_count": 0,
+      "coat_of_arms": null,
+      "background_image": null
+    },
+    {
+      "id": "bishkek",
+      "name": "Бишкек",
+      "country": "🇰🇬 Кыргызстан",
+      "distance": 0,
+      "rating": 0.0,
+      "coords": [
+        42.87820154382675,
+        74.60672018523721
+      ],
+      "zoom": 12,
+      "bikelanes_count": 0,
+      "coat_of_arms": null,
+      "background_image": null
+    },
+    {
+      "id": "kazan",
+      "name": "Казань",
+      "country": "🇷🇺 Россия",
+      "distance": 0,
+      "rating": 0.0,
+      "coords": [
+        49.10609771304672,
+        55.79916166738181
+      ],
+      "zoom": 12,
+      "bikelanes_count": 0,
+      "coat_of_arms": null,
+      "background_image": null
+    },
+    {
+      "id": "moscow",
+      "name": "Москва",
+      "country": "🇷🇺 Россия",
+      "distance": 0,
+      "rating": 0.0,
+      "coords": [
+        55.75375487725262,
+        37.620728816208924
+      ],
+      "zoom": 12,
+      "bikelanes_count": 0,
+      "coat_of_arms": null,
+      "background_image": null
+    },
+    {
+      "id": "shymkent",
+      "name": "Шымкент",
+      "country": "🇰🇿 Казахстан",
+      "distance": 0,
+      "rating": 0.0,
+      "coords": [
+        42.31447195114231,
+        42.31447195114231
+      ],
+      "zoom": 12,
+      "bikelanes_count": 0,
+      "coat_of_arms": null,
+      "background_image": null
     }
   ]
 }

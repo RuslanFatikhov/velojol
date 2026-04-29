@@ -12,27 +12,27 @@
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr style="background: #f8f9fa;">
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Название</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Страна</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">ID</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Статус</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Велодорожек</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Действия</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Название</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Страна</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">ID</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Статус</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Велодорожек</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Действия</th>
         </tr>
     </thead>
     <tbody>
         {% for city in cities.items %}
         <tr>
-            <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>{{ city.name }}</strong></td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ city.country }}</td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;"><code>{{ city.city_id }}</code></td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;"><strong>{{ city.name }}</strong></td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ city.country }}</td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;"><code>{{ city.city_id }}</code></td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
                 <span style="padding: 4px 8px; border-radius: 4px; background: {% if city.status == 'active' %}#d4edda{% else %}#f8d7da{% endif %};">
                     {{ city.status }}
                 </span>
             </td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ city.bikelanes|length }}</td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ city.bikelanes|length }}</td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
                 <div style="display: flex; gap: 5px;">
                     <a href="{{ url_for('admin.edit_city', city_id=city.id) }}" class="btn-sm btn-warning">Изменить</a>
                     {% if city.bikelanes|length == 0 %}
@@ -52,23 +52,23 @@
 {% if cities.pages > 1 %}
 <div style="text-align: center; margin-top: 20px;">
     {% if cities.has_prev %}
-        <a href="{{ url_for('admin.cities', page=cities.prev_num) }}" style="padding: 8px 12px; margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">← Предыдущая</a>
+        <a href="{{ url_for('admin.cities', page=cities.prev_num) }}" style="padding: 8px var(--spacer-sm); margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">← Предыдущая</a>
     {% endif %}
     
     {% for page_num in cities.iter_pages() %}
         {% if page_num %}
             {% if page_num != cities.page %}
-                <a href="{{ url_for('admin.cities', page=page_num) }}" style="padding: 8px 12px; margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">{{ page_num }}</a>
+                <a href="{{ url_for('admin.cities', page=page_num) }}" style="padding: 8px var(--spacer-sm); margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">{{ page_num }}</a>
             {% else %}
-                <span style="padding: 8px 12px; margin: 0 2px; background: #007bff; color: white; border: 1px solid #007bff;">{{ page_num }}</span>
+                <span style="padding: 8px var(--spacer-sm); margin: 0 2px; background: #007bff; color: white; border: 1px solid #007bff;">{{ page_num }}</span>
             {% endif %}
         {% else %}
-            <span style="padding: 8px 12px; margin: 0 2px;">…</span>
+            <span style="padding: 8px var(--spacer-sm); margin: 0 2px;">…</span>
         {% endif %}
     {% endfor %}
     
     {% if cities.has_next %}
-        <a href="{{ url_for('admin.cities', page=cities.next_num) }}" style="padding: 8px 12px; margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">Следующая →</a>
+        <a href="{{ url_for('admin.cities', page=cities.next_num) }}" style="padding: 8px var(--spacer-sm); margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">Следующая →</a>
     {% endif %}
 </div>
 {% endif %}

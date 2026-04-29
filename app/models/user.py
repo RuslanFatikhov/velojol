@@ -52,14 +52,10 @@ class User(UserMixin, db.Model):
     @property
     def display_avatar(self):
         """Возвращает URL аватара для отображения"""
-        print(f"DEBUG: display_avatar called, avatar_url = {self.avatar_url}")
-        
         if self.avatar_url:
             # Если это загруженный файл (начинается с uploads/)
             if self.avatar_url.startswith('uploads/'):
-                avatar_url = url_for('static', filename=self.avatar_url)
-                print(f"DEBUG: Generated avatar URL: {avatar_url}")
-                return avatar_url
+                return url_for('static', filename=self.avatar_url)
             # Если это внешняя ссылка
             elif self.avatar_url.startswith('http'):
                 return self.avatar_url
@@ -68,9 +64,7 @@ class User(UserMixin, db.Model):
                 return url_for('static', filename=self.avatar_url)
         
         # Дефолтный аватар
-        default_url = url_for('static', filename='img/avatar-placeholder.jpg')
-        print(f"DEBUG: Using default avatar: {default_url}")
-        return default_url
+        return url_for('static', filename='img/avatar-placeholder.jpg')
     
     def get_social_links(self):
         """Возвращает словарь с социальными ссылками"""

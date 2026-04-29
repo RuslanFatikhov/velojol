@@ -1,10 +1,18 @@
 button{
     border: none;
     width: 100%;
+    cursor: pointer;
 }
 
 a{
     text-decoration: none;
+    cursor: pointer;
+}
+
+.close {
+    position: absolute;
+    right: var(--spacer-m);
+    top: var(--spacer-m);
 }
 
 .button_square_label{
@@ -12,13 +20,32 @@ a{
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 16px 14px;
+    padding: var(--spacer-m) 14px;
+    width: 48px !important;
+    max-width: 48px !important;
+    height: 48px !important;
+    color: var(--text-button);
+    text-decoration: none;
+    transition: background-color 0.1s ease;
+    border-radius: var(--spacer-m);
+    cursor: pointer;
+}
+
+.button__label{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacer-m) 14px;
+    min-width: 48px;
     height: 48px;
     color: var(--text-button);
     text-decoration: none;
     transition: background-color 0.1s ease;
     border-radius: var(--spacer-m);
-    width: 100%;
+}
+
+.button__label:hover{
+    background-color: var(--secondary20);
 }
 
 .button_square_label:hover{
@@ -29,6 +56,16 @@ a{
     background-color: var(--accent100);
     color: var(--prime_invert100);
     transition: ease-in-out 0.1s;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacer-s);
+}
+
+.btn_accent img{
+    width: var(--spacer-m);
+    height: var(--spacer-m);
 }
 
 .btn_accent:hover{
@@ -36,9 +73,11 @@ a{
 }
 
 .btn_gray{
-    background-color: var(--bg3);
+    background-color: var(--secondary10);
     color: var(--prime100);
 }
+
+
 
 .btn_black{
     background-color: var(--prime100);
@@ -46,9 +85,7 @@ a{
 }
 
 .btn_black:disabled{
-    background-color: var(--prime50);
-    color: var(--prime_invert50);
-    cursor: not-allowed;
+    opacity: 0.25;
 }
 
 .button_wrapper_fixed{
@@ -58,6 +95,9 @@ a{
     width: 100%;
     padding: var(--spacer-l) var(--spacer-m);
     z-index: 1000;
+    max-width:600px;
+    left:50%;
+    transform: translateX(-50%);
 }
 
 .cells{
@@ -70,28 +110,28 @@ a{
     height: 48px;
     display: flex;
     flex-direction: row;
+    padding-left: var(--spacer-m);
     align-items: center;
     color: var(--prime100);
     gap: var(--spacer-s);
+    position: relative;
+    cursor: pointer;
+    border-radius: var(--spacer-s);
 }
 
-.cell_bikelane{
-    display: flex;
-    flex-direction: row;
-    background-color: var(--bg1);
-    border-radius: var(--spacer-m);
-    border: 1px solid var(--secondary30);
-    filter: drop-shadow(0px 4px 16px rgba(54, 55, 38, 0.1));
-    padding: var(--spacer-s);
+.cell:hover{
+    background-color: var(--secondary10);
 }
 
-.cell_bikelane_left{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--spacer-s);
-    width: 100%;
+.cell:last-child{
+    border-bottom: none;
 }
+
+.cell:hover{
+    background-color: var(--secondary10);
+}
+
+
 
 .bikelane-info{
     display: flex;
@@ -107,12 +147,7 @@ a{
     width: 100%;
 }
 
-.cell_bikelane_img{
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    object-fit: cover;
-}
+
 
 .bikelane-details{
     display: none;
@@ -141,19 +176,22 @@ a{
 }
 
 .button_square_icon img{
-    width: 24px;
-    height: 24px;
+    width: var(--spacer-l);
+    height: var(--spacer-l);
 }
 
 
 /* Фильтры */
 .filter-tabs {
     display: flex;
+    max-width: 600px;
     -webkit-overflow-scrolling: touch;
     overflow-x: scroll;
     padding-bottom: var(--spacer-m);
     padding-left: var(--spacer-s);
     padding-right: var(--spacer-s);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .filter-tab {
@@ -164,7 +202,7 @@ a{
     height: 48px;
     border-radius: var(--spacer-m);
     font-weight: 500;
-    font-size: 16px;
+    font-size: var(--spacer-m);
     line-height: 20px;
     text-wrap: nowrap;
     align-items: center;
@@ -220,4 +258,42 @@ a{
     transform: translateY(-1px);
 
     box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.city-card{
+    border-radius: var(--spacer-m);
+}
+
+.city-card:hover{
+    background-color: var(--secondary10);
+}
+
+.my-bikelane-link{
+    border-bottom: 0.5px solid var(--secondary30);
+}
+
+
+
+
+.btn_blue {
+    background: var(--blue100);
+    color: white;
+}
+
+.btn_blue:hover {
+    background: var(--blue200);;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn_outline {
+    background: transparent;
+    color: var(--secondary100);
+    border: 2px solid #e0e0e0;
+}
+
+.btn_outline:hover {
+    background: var(--prime_invert100);
+    border-color: var(--blue100);
+    color: var(--blue100);
 }

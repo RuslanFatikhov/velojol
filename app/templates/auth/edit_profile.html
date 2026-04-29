@@ -9,161 +9,256 @@
         <img src="{{ url_for('static', filename='img/icon/chevron_left.svg') }}" alt="Назад" class="icon-left">
     </a>
     <h1 class="prime100">Редактировать профиль</h1>
-    
+
 </div>
-<div class="auth-container">
+<div class="island ml-mr-auto">
+    <form method="POST" enctype="multipart/form-data" id="editProfileForm" class="profile-edit-form">
+        <div class="profile-actions">
+            <button type="button" class="cell profile-edit-trigger" data-profile-sheet-target="profile-main-sheet">
+                <!--img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Основное" class="icon-small"-->
+                <span class="profile-edit-trigger-copy">
+                    <span class="profile-edit-trigger-title">Основное</span>
+                    <span class="profile-edit-trigger-subtitle secondary100">Ник и почта</span>
+                </span>
+                <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Открыть" class="icon-small chevron_right">
+            </button>
 
+            <button type="button" class="cell profile-edit-trigger" data-profile-sheet-target="profile-password-sheet">
+                <!--img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Основное" class="icon-small"-->
+                <span class="profile-edit-trigger-copy">
+                    <span class="profile-edit-trigger-title">Пароль</span>
+                    <span class="profile-edit-trigger-subtitle secondary100">Смена пароля</span>
+                </span>
+                <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Открыть" class="icon-small chevron_right">
+            </button>
 
-    <form method="POST" enctype="multipart/form-data" id="editProfileForm" style="margin-top: var(--spacer-m);">
+            <button type="button" class="cell profile-edit-trigger" data-profile-sheet-target="profile-avatar-sheet">
+                <!--img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Основное" class="icon-small"-->
+                <span class="profile-edit-trigger-copy">
+                    <span class="profile-edit-trigger-title">Аватар</span>
+                    <span class="profile-edit-trigger-subtitle secondary100">Текущий и новый аватар</span>
+                </span>
+                <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Открыть" class="icon-small chevron_right">
+            </button>
 
-        <!-- Основная информация -->
-        <div class="form-section">
-            
-            <div class="form-group" id="nickname-group">
-                <input type="text" 
-                       id="nickname" 
-                       name="nickname" 
-                       value="{{ form_data.nickname if form_data else '' }}"
-                       placeholder="Никнейм"
-                       pattern="[a-zA-Z0-9_-]{3,30}"
-                       required>
-                <div class="validation-message" id="nickname-validation"></div>
-            </div>
-
-            <div class="form-group" id="email-group">
-                <input type="email" 
-                       id="email" 
-                       name="email" 
-                       value="{{ form_data.email if form_data else '' }}"
-                       placeholder="E-mail"
-                       required>
-                <div class="validation-message" id="email-validation"></div>
-            </div>
-        </div>
-
-        <h3 class="prime100 header3">Смена пароля</h3>
-        <p class="secondary100" style="margin-bottom: var(--spacer-m);">Оставьте пустым, если не хотите менять пароль</p>
-
-        <div class="form-section">
-            <div class="form-group" id="current-password-group">
-                <input type="password" 
-                       id="current_password" 
-                       name="current_password" 
-                       placeholder="Текущий пароль">
-                <div class="validation-message" id="current-password-validation"></div>
-            </div>
-
-            <div class="form-group" id="new-password-group">
-                <input type="password" 
-                       id="new_password" 
-                       name="new_password" 
-                       placeholder="Новый пароль"
-                       minlength="6">
-                <div class="password-strength" id="password-strength"></div>
-                <div class="validation-message" id="new-password-validation"></div>
-            </div>
-
-            <div class="form-group" id="confirm-password-group">
-                <input type="password" 
-                       id="confirm_password" 
-                       name="confirm_password" 
-                       placeholder="Подтвердите новый пароль">
-                <div class="validation-message" id="confirm-password-validation"></div>
-            </div>
-        </div>
-
-        <h3 class="prime100 header3">Аватар</h3>
-
-        <div class="form-section">
-            <!-- Текущий аватар -->
-            {% if current_user.display_avatar %}
-            <div class="current-avatar">
-                <img src="{{ current_user.display_avatar }}" alt="Текущий аватар" class="avatar-preview">
-                <p class="secondary100">Текущий аватар</p>
-            </div>
-            {% endif %}
-            
-            <!-- Загрузка нового аватара -->
-            <div class="form-group" id="avatar-group">
-                <input type="file" 
-                       id="avatar" 
-                       name="avatar" 
-                       accept="image/*"
-                       class="file-input">
-                <label for="avatar" class="file-input-label">
-                    <span class="file-input-text">Выберите новый аватар</span>
-                    <span class="file-input-button">Обзор</span>
-                </label>
-                <div class="file-info">
-                    <p class="secondary100">JPG, PNG, GIF, WebP • Максимум 5MB</p>
-                </div>
-                <div class="validation-message" id="avatar-validation"></div>
-                
-                <!-- Предпросмотр нового аватара -->
-                <div class="avatar-preview-container" id="avatarPreview" style="display: none;">
-                    <img id="avatarPreviewImg" alt="Предпросмотр аватара" class="avatar-preview">
-                    <button type="button" class="remove-avatar" onclick="clearAvatarPreview()">✕</button>
-                </div>
-            </div>
-        </div>
-
-        <h3 class="prime100 header3">Социальные сети</h3>
-
-        <div class="form-section">
-            <!-- Strava -->
-            <div class="form-group" id="strava-group">
-                <input type="url" 
-                       id="strava_url" 
-                       name="strava_url" 
-                       value="{{ form_data.strava_url if form_data else '' }}"
-                       placeholder="Strava">
-                <div class="validation-message" id="strava-validation"></div>
-            </div>
-
-            <!-- Komoot -->
-            <div class="form-group" id="komoot-group">
-                <input type="url" 
-                       id="komoot_url" 
-                       name="komoot_url" 
-                       value="{{ form_data.komoot_url if form_data else '' }}"
-                       placeholder="Komoot">
-                <div class="validation-message" id="komoot-validation"></div>
-            </div>
-         
-            <!-- Telegram -->
-            <div class="form-group" id="telegram-group">
-                <input type="url" 
-                       id="telegram_url" 
-                       name="telegram_url" 
-                       value="{{ form_data.telegram_url if form_data else '' }}"
-                       placeholder="Telegram">
-                <div class="validation-message" id="telegram-validation"></div>
-            </div>
-
-            <!-- Instagram -->
-            <div class="form-group" id="instagram-group">
-                <input type="url" 
-                       id="instagram_url" 
-                       name="instagram_url" 
-                       value="{{ form_data.instagram_url if form_data else '' }}"
-                       placeholder="Instagram">
-                <div class="validation-message" id="instagram-validation"></div>
-            </div>
-        </div>
-
-        <!-- Кнопки действий -->
-        <div class="submit-section">
-            <button type="submit" class="button_square_label btn_accent" id="submitBtn">
-                Сохранить изменения
+            <button type="button" class="cell profile-edit-trigger" data-profile-sheet-target="profile-social-sheet">
+                <!--img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Основное" class="icon-small"-->
+                <span class="profile-edit-trigger-copy">
+                    <span class="profile-edit-trigger-title">Социальные сети</span>
+                    <span class="profile-edit-trigger-subtitle secondary100">Strava, Komoot, Telegram, Instagram</span>
+                </span>
+                <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Открыть" class="icon-small chevron_right">
             </button>
         </div>
-    </form>
 
-    <div class="auth-links">
-        <a href="{{ url_for('auth.profile') }}" class="button_square_label btn_gray">
-            Отменить
+        <button type="submit" class="button__label btn_accent" id="submitBtn">
+                Сохранить изменения
+        </button>
+
+        <a href="{{ url_for('auth.profile') }}" class="button__label btn_gray">
+                Отменить
         </a>
-    </div>
+
+
+
+
+        <div id="profile-main-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
+            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
+                <div class="profile-edit-sheet-header">
+                    <div>
+                        <h3 class="prime100">Основное</h3>
+                        <p class="secondary100">Ник и почта профиля</p>
+                    </div>
+                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                        <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
+                    </button>
+                </div>
+                <div class="profile-edit-sheet-body">
+                    <div class="form-section">
+                        <div class="form-group" id="nickname-group">
+                            <input type="text"
+                                   id="nickname"
+                                   name="nickname"
+                                   value="{{ form_data.nickname if form_data else '' }}"
+                                   placeholder="Никнейм"
+                                   pattern="[a-zA-Z0-9_-]{3,30}"
+                                   required>
+                            <div class="validation-message" id="nickname-validation"></div>
+                        </div>
+
+                        <div class="form-group" id="email-group">
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   value="{{ form_data.email if form_data else '' }}"
+                                   placeholder="E-mail"
+                                   required>
+                            <div class="validation-message" id="email-validation"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-edit-sheet-footer">
+                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-password-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
+            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
+                <div class="profile-edit-sheet-header">
+                    <div>
+                        <h3 class="prime100">Пароль</h3>
+                        <p class="secondary100">Оставьте пустым, если не хотите менять пароль</p>
+                    </div>
+                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                        <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
+                    </button>
+                </div>
+                <div class="profile-edit-sheet-body">
+                    <div class="form-section">
+                        <div class="form-group" id="current-password-group">
+                            <input type="password"
+                                   id="current_password"
+                                   name="current_password"
+                                   placeholder="Текущий пароль">
+                            <div class="validation-message" id="current-password-validation"></div>
+                        </div>
+
+                        <div class="form-group" id="new-password-group">
+                            <input type="password"
+                                   id="new_password"
+                                   name="new_password"
+                                   placeholder="Новый пароль"
+                                   minlength="6">
+                            <div class="password-strength" id="password-strength"></div>
+                            <div class="validation-message" id="new-password-validation"></div>
+                        </div>
+
+                        <div class="form-group" id="confirm-password-group">
+                            <input type="password"
+                                   id="confirm_password"
+                                   name="confirm_password"
+                                   placeholder="Подтвердите новый пароль">
+                            <div class="validation-message" id="confirm-password-validation"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-edit-sheet-footer">
+                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-avatar-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
+            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
+                <div class="profile-edit-sheet-header">
+                    <div>
+                        <h3 class="prime100">Аватар</h3>
+                        <p class="secondary100">Текущий аватар и загрузка нового файла</p>
+                    </div>
+                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                        <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
+                    </button>
+                </div>
+                <div class="profile-edit-sheet-body">
+                    {% if current_user.display_avatar %}
+                    <div class="current-avatar">
+                        <img src="{{ current_user.display_avatar }}" alt="Текущий аватар" class="avatar-preview">
+                        <p class="secondary100">Текущий аватар</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group" id="avatar-group">
+                        <input type="file"
+                               id="avatar"
+                               name="avatar"
+                               accept="image/*"
+                               class="file-input">
+                        <label for="avatar" class="file-input-label">
+                            <span class="file-input-text">Выберите новый аватар</span>
+                            <span class="file-input-button">Обзор</span>
+                        </label>
+                        <div class="file-info">
+                            <p class="secondary100">JPG, PNG, GIF, WebP • Максимум 5MB</p>
+                        </div>
+                        <div class="validation-message" id="avatar-validation"></div>
+
+                        <div class="avatar-preview-container" id="avatarPreview" style="display: none;">
+                            <img id="avatarPreviewImg" alt="Предпросмотр аватара" class="avatar-preview">
+                            <button type="button" class="remove-avatar" onclick="clearAvatarPreview()">✕</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-edit-sheet-footer">
+                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-social-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
+            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
+                <div class="profile-edit-sheet-header">
+                    <div>
+                        <h3 class="prime100">Социальные сети</h3>
+                        <p class="secondary100">Ссылки на ваши профили</p>
+                    </div>
+                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                        <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
+                    </button>
+                </div>
+                <div class="profile-edit-sheet-body">
+                    <div class="form-section">
+                        <div class="form-group" id="strava-group">
+                            <input type="url"
+                                   id="strava_url"
+                                   name="strava_url"
+                                   value="{{ form_data.strava_url if form_data else '' }}"
+                                   placeholder="Strava">
+                            <div class="validation-message" id="strava-validation"></div>
+                        </div>
+
+                        <div class="form-group" id="komoot-group">
+                            <input type="url"
+                                   id="komoot_url"
+                                   name="komoot_url"
+                                   value="{{ form_data.komoot_url if form_data else '' }}"
+                                   placeholder="Komoot">
+                            <div class="validation-message" id="komoot-validation"></div>
+                        </div>
+
+                        <div class="form-group" id="telegram-group">
+                            <input type="url"
+                                   id="telegram_url"
+                                   name="telegram_url"
+                                   value="{{ form_data.telegram_url if form_data else '' }}"
+                                   placeholder="Telegram">
+                            <div class="validation-message" id="telegram-validation"></div>
+                        </div>
+
+                        <div class="form-group" id="instagram-group">
+                            <input type="url"
+                                   id="instagram_url"
+                                   name="instagram_url"
+                                   value="{{ form_data.instagram_url if form_data else '' }}"
+                                   placeholder="Instagram">
+                            <div class="validation-message" id="instagram-validation"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-edit-sheet-footer">
+                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 {% endblock %}
 
@@ -172,6 +267,9 @@
 // Валидация формы редактирования профиля
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('editProfileForm');
+    const profileSheets = document.querySelectorAll('.profile-edit-modal');
+    const sheetTriggers = document.querySelectorAll('[data-profile-sheet-target]');
+    const sheetCloseButtons = document.querySelectorAll('[data-profile-sheet-close]');
     const inputs = {
         nickname: document.getElementById('nickname'),
         email: document.getElementById('email'),
@@ -184,6 +282,109 @@ document.addEventListener('DOMContentLoaded', function() {
         telegram_url: document.getElementById('telegram_url'),
         instagram_url: document.getElementById('instagram_url')
     };
+
+    function openProfileSheet(sheetId) {
+        profileSheets.forEach(sheet => {
+            const isTarget = sheet.id === sheetId;
+            sheet.style.display = isTarget ? 'flex' : 'none';
+        });
+        document.body.classList.toggle('profile-sheet-open', Boolean(sheetId));
+    }
+
+    function resetSheetFields(sheet) {
+        sheet.querySelectorAll('input, textarea, select').forEach(field => {
+            if (field.type === 'file') {
+                field.value = '';
+                return;
+            }
+
+            if (field.type === 'checkbox' || field.type === 'radio') {
+                field.checked = field.defaultChecked;
+                return;
+            }
+
+            field.value = field.defaultValue;
+        });
+
+        sheet.querySelectorAll('.valid, .invalid').forEach(element => {
+            element.classList.remove('valid', 'invalid');
+        });
+
+        sheet.querySelectorAll('.validation-message').forEach(message => {
+            message.classList.remove('show', 'success', 'error');
+            message.textContent = '';
+        });
+
+        const strengthDiv = sheet.querySelector('.password-strength');
+        if (strengthDiv) {
+            strengthDiv.style.display = 'none';
+            strengthDiv.className = 'password-strength';
+            strengthDiv.textContent = '';
+        }
+
+        const avatarPreview = sheet.querySelector('#avatarPreview');
+        if (avatarPreview) {
+            avatarPreview.style.display = 'none';
+        }
+
+        const avatarPreviewImg = sheet.querySelector('#avatarPreviewImg');
+        if (avatarPreviewImg) {
+            avatarPreviewImg.removeAttribute('src');
+        }
+
+        const fileInputText = sheet.querySelector('.file-input-text');
+        if (fileInputText) {
+            fileInputText.textContent = 'Выберите новый аватар';
+        }
+    }
+
+    function closeProfileSheet(sheet, resetChanges = true) {
+        if (resetChanges) {
+            resetSheetFields(sheet);
+        }
+
+        sheet.style.display = 'none';
+        document.body.classList.toggle(
+            'profile-sheet-open',
+            Array.from(profileSheets).some(profileSheet => profileSheet.style.display !== 'none')
+        );
+    }
+
+    function closeProfileSheets(resetChanges = true) {
+        profileSheets.forEach(sheet => {
+            closeProfileSheet(sheet, resetChanges);
+        });
+        document.body.classList.remove('profile-sheet-open');
+    }
+
+    sheetTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function() {
+            openProfileSheet(this.dataset.profileSheetTarget);
+        });
+    });
+
+    sheetCloseButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const sheet = this.closest('.profile-edit-modal');
+            if (sheet) {
+                closeProfileSheet(sheet);
+            }
+        });
+    });
+
+    profileSheets.forEach(sheet => {
+        sheet.addEventListener('click', function(event) {
+            if (event.target === sheet) {
+                closeProfileSheet(sheet);
+            }
+        });
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeProfileSheets();
+        }
+    });
 
     // Функции валидации (те же что в register.html)
     function validateEmail(email) {
@@ -219,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getPasswordFeedback(strength, minLength) {
         if (!minLength) return { level: 'weak', message: 'Пароль должен содержать минимум 6 символов' };
-        
+
         if (strength <= 2) return { level: 'weak', message: 'Слабый пароль. Добавьте заглавные буквы, цифры' };
         if (strength <= 3) return { level: 'medium', message: 'Средний пароль. Добавьте специальные символы' };
         return { level: 'strong', message: 'Надежный пароль!' };
@@ -238,11 +439,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function showValidationMessage(fieldName, message, isValid) {
         const group = document.getElementById(fieldName + '-group');
         const validation = document.getElementById(fieldName + '-validation');
-        
+
         if (group && validation) {
             group.classList.toggle('valid', isValid);
             group.classList.toggle('invalid', !isValid);
-            
+
             validation.textContent = message;
             validation.classList.add('show');
             validation.classList.toggle('success', isValid);
@@ -270,8 +471,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const value = e.target.value.trim();
         if (value) {
             const isValid = validateEmail(value);
-            showValidationMessage('email', 
-                isValid ? 'Отлично!' : 'Некорректный формат email', 
+            showValidationMessage('email',
+                isValid ? 'Отлично!' : 'Некорректный формат email',
                 isValid
             );
         } else {
@@ -284,14 +485,14 @@ document.addEventListener('DOMContentLoaded', function() {
     inputs.new_password.addEventListener('input', function(e) {
         const value = e.target.value;
         const strengthDiv = document.getElementById('password-strength');
-        
+
         if (value) {
             const result = validatePassword(value);
-            
+
             strengthDiv.style.display = 'block';
             strengthDiv.className = 'password-strength ' + result.feedback.level;
             strengthDiv.textContent = result.feedback.message;
-            
+
             showValidationMessage('new-password',
                 result.isValid ? 'Отличный пароль' : 'Минимум 6 символов',
                 result.isValid
@@ -317,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
     inputs.confirm_password.addEventListener('input', function(e) {
         const value = e.target.value;
         const newPassword = inputs.new_password.value;
-        
+
         if (value) {
             const passwordsMatch = value === newPassword;
             showValidationMessage('confirm-password',
@@ -336,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const previewContainer = document.getElementById('avatarPreview');
         const previewImg = document.getElementById('avatarPreviewImg');
         const label = e.target.nextElementSibling;
-        
+
         if (file) {
             // Проверка типа файла
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
@@ -357,15 +558,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const reader = new FileReader();
             reader.onload = function(e) {
                 previewImg.src = e.target.result;
-                previewContainer.style.display = 'block';
+                previewContainer.style.display = 'flex';
             };
             reader.readAsDataURL(file);
 
             // Обновляем текст лейбла
             label.querySelector('.file-input-text').textContent = file.name;
-            
+
             // Убираем сообщение об ошибке
-            showValidationMessage('avatar', 'Файл выбран', true);
+            showValidationMessage('avatar');
         } else {
             clearAvatarPreview();
         }
@@ -456,9 +657,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Показываем индикатор загрузки
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = '🔄 Сохранение...';
+        const submitButtons = form.querySelectorAll('button[type="submit"]');
+        submitButtons.forEach(button => {
+            button.disabled = true;
+            button.textContent = 'Сохранение...';
+        });
     });
 });
 
@@ -467,11 +670,11 @@ function clearAvatarPreview() {
     const fileInput = document.getElementById('avatar');
     const previewContainer = document.getElementById('avatarPreview');
     const label = fileInput.nextElementSibling;
-    
+
     fileInput.value = '';
     previewContainer.style.display = 'none';
     label.querySelector('.file-input-text').textContent = 'Выберите новый аватар';
-    
+
     // Убираем валидационные сообщения
     const group = document.getElementById('avatar-group');
     const validation = document.getElementById('avatar-validation');

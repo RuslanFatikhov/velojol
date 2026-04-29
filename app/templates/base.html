@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Velojol 4.0{% endblock %}</title>
+    <title>{% block title %}OPEN-VELOJOL BETA 0.3.2{% endblock %}</title>
     
     <!-- Leaflet CSS для карт -->
     <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
@@ -19,10 +19,27 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/images.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cities.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/city.css') }}">
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108766879', 'ym');
+
+        ym(108766879, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <!-- /Yandex.Metrika counter -->
 
     {% block head %}{% endblock %}
 </head>
 <body>
+    <noscript><div><img src="https://mc.yandex.ru/watch/108766879" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
     {% if not hide_header %}
         {% include 'components/header.html' %}
     {% endif %}
@@ -63,7 +80,9 @@
         </main>
     </div>
 
-    {% include 'components/footer.html' %}
+    {% if not hide_footer %}
+        {% include 'components/footer.html' %}
+    {% endif %}
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
     

@@ -1,12 +1,29 @@
 # app/routes/public.py
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, url_for
+from flask_login import current_user
 from app.models.city import City
 from app.models.bikelane import BikeLane
 from sqlalchemy import or_
 
 # Создаем Blueprint для публичных страниц
 bp = Blueprint('public', __name__)
+
+
+def _serialize_bikelane_for_viewer(bikelane):
+    data = bikelane.to_dict()
+    can_edit = current_user.is_authenticated and (
+        bikelane.user_id == current_user.id or getattr(current_user, 'is_admin', False)
+    )
+    if can_edit:
+        data['edit_url'] = url_for('main.edit_bikelane', bikelane_id=bikelane.id)
+    elif not current_user.is_authenticated:
+        data['edit_url'] = url_for('auth.login')
+    else:
+        data['edit_url'] = None
+
+    data['can_edit'] = can_edit
+    return data
 
 @bp.route('/')
 @bp.route('/cities')
@@ -39,7 +56,7 @@ def cities():
         cities_by_country[country].append(city)
     
     # Сортируем страны
-    countries_sorted = sorted(cities_by_country.items())
+    countries_sorted = sorted(cities_by_country.items(), key=lambda item: item[0].casefold())
     
     return render_template('public/cities.html', 
                          cities_by_country=countries_sorted,
@@ -82,7 +99,7 @@ def city(city_id):
     bikelanes = query.order_by(BikeLane.created_at.desc()).all()
     
     # Конвертируем велодорожки в JSON для JavaScript
-    bikelanes_json = json.dumps([bl.to_dict() for bl in bikelanes])
+    bikelanes_json = json.dumps([_serialize_bikelane_for_viewer(bl) for bl in bikelanes])
     
     # Статистика города
     city_stats = {
@@ -132,7 +149,7 @@ def api_city_bikelanes(city_id):
     bikelanes = query.all()
     
     # Конвертируем в JSON
-    bikelanes_data = [bl.to_dict() for bl in bikelanes]
+    bikelanes_data = [_serialize_bikelane_for_viewer(bl) for bl in bikelanes]
     
     return jsonify({
         'success': True,
@@ -149,5 +166,5 @@ def api_bikelane(bikelane_id):
     
     return jsonify({
         'success': True,
-        'bikelane': bikelane.to_dict()
+        'bikelane': _serialize_bikelane_for_viewer(bikelane)
     })

@@ -2,7 +2,7 @@
 
 {% block content %}
 <div style="margin-bottom: 20px;">
-    <a href="{{ url_for('admin.cities') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+    <a href="{{ url_for('admin.cities') }}" style="background: #6c757d; color: white; padding: 8px var(--spacer-m); text-decoration: none; border-radius: 4px;">
         ← Назад к городам
     </a>
 </div>
@@ -55,25 +55,25 @@
     </div>
     
     <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Герб города (PNG):</label>
-        <input type="file" name="coat_of_arms" accept=".png"
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Герб города:</label>
+        <input type="file" name="coat_of_arms" accept=".jpg,.jpeg,.png,.webp"
                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        <small style="color: #666;">Рекомендуемый размер: 256x256px, формат PNG</small>
+        <small style="color: #666;">Рекомендуемый размер: 256x256px. Будет сохранен как JPG до 50KB</small>
     </div>
     
     <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Фон города (JPG):</label>
-        <input type="file" name="background_image" accept=".jpg,.jpeg"
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Фон города:</label>
+        <input type="file" name="background_image" accept=".jpg,.jpeg,.png,.webp"
                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        <small style="color: #666;">Рекомендуемый размер: 1920x1080px, формат JPG</small>
+        <small style="color: #666;">Рекомендуемый размер: 1920x1080px. Будет сохранен как JPG до 50KB</small>
     </div>
     
     <div style="display: flex; gap: 10px;">
-        <button type="submit" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer;">
+        <button type="submit" style="background: #007bff; color: white; border: none; padding: 12px var(--spacer-l); border-radius: 4px; cursor: pointer;">
             Добавить город
         </button>
         <a href="{{ url_for('admin.cities') }}" 
-           style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+           style="background: #6c757d; color: white; padding: 12px var(--spacer-l); text-decoration: none; border-radius: 4px;">
             Отмена
         </a>
     </div>

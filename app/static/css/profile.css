@@ -1,6 +1,10 @@
 .profile-container{
+    display: block;
+    margin-left:auto;
+    margin-right:auto;
     padding-left: var(--spacer-sm);
     padding-right: var(--spacer-sm);
+    max-width: 490px;
 }
 
 .profile_header{
@@ -20,7 +24,7 @@
     background-color: var(--bg1);
     padding: var(--spacer-m);
     border-radius: var(--spacer-m);
-    filter: drop-shadow(0px 4px 16px rgba(54, 55, 98, 0.10));
+    filter: drop-shadow(0px 4px var(--spacer-m) rgba(54, 55, 98, 0.10));
 }
 
 .profile-avatar{
@@ -33,4 +37,202 @@
 
 #profile p{
     display: none;
+}
+
+.profile-edit-container {
+    margin-top: var(--spacer-m);
+}
+
+body.profile-sheet-open {
+    overflow: hidden;
+}
+
+.profile-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
+}
+
+
+
+
+.profile-edit-trigger {
+    height: auto;
+    min-height: 64px;
+    padding-top: var(--spacer-s);
+    padding-bottom: var(--spacer-s);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.profile-edit-trigger-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.profile-edit-trigger-title {
+    color: var(--prime100);
+}
+
+.profile-edit-trigger-subtitle {
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.profile-edit-submit,
+.profile-edit-cancel {
+    padding-top: 0;
+}
+
+.profile-edit-submit .button__label,
+.profile-edit-cancel .button__label {
+    width: 100%;
+}
+
+.profile-edit-modal {
+    z-index: 1002;
+}
+
+.profile-edit-sheet {
+    max-width: 390px;
+    background: var(--bg1);
+}
+
+.profile-edit-sheet-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacer-m);
+    padding: var(--spacer-m);
+    border-bottom: 0.5px solid var(--secondary20);
+    background: var(--bg1);
+}
+
+.profile-edit-sheet-header h3 {
+    margin: 0;
+}
+
+.profile-edit-sheet-header p {
+    margin-top: 4px;
+}
+
+.profile-edit-sheet-close {
+    flex-shrink: 0;
+}
+
+.profile-edit-sheet-body {
+    padding: var(--spacer-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-m);
+    background: var(--bg1);
+}
+
+.profile-edit-sheet-footer {
+    padding: 0 var(--spacer-m) var(--spacer-m);
+    background: var(--bg1);
+}
+
+.profile-edit-sheet-save {
+    width: 100%;
+}
+
+.profile-edit-sheet-body .form-section {
+    border-color: var(--secondary20);
+}
+
+.current-avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacer-s);
+    padding: var(--spacer-m);
+    border-radius: var(--spacer-m);
+    background: var(--bg3);
+}
+
+.avatar-preview {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacer-s);
+    min-height: 52px;
+    padding: 0 var(--spacer-m);
+    border-radius: var(--spacer-m);
+    background: var(--bg3);
+    cursor: pointer;
+}
+
+.file-input-text {
+    color: var(--prime100);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-input-button {
+    color: var(--secondary100);
+}
+
+.file-info {
+    padding-top: var(--spacer-s);
+}
+
+.avatar-preview-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-top: var(--spacer-m);
+}
+
+.remove-avatar {
+    position: absolute;
+    top: var(--spacer-m);
+    right: calc(50% - 56px);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(15, 23, 42, 0.75);
+    color: white;
+    cursor: pointer;
+}
+
+.validation-message.show {
+    display: block;
+    padding: var(--spacer-s) var(--spacer-m) 0;
+    font-size: 13px;
+    line-height: 17px;
+}
+
+.validation-message.success {
+    color: #18805d;
+}
+
+.validation-message.error {
+    color: #cf3341;
+}
+
+.form-group.valid input,
+.form-group.valid .file-input-label {
+    box-shadow: inset 0 0 0 1px rgba(24, 128, 93, 0.35);
+}
+
+.form-group.invalid input,
+.form-group.invalid .file-input-label {
+    box-shadow: inset 0 0 0 1px rgba(207, 51, 65, 0.35);
 }

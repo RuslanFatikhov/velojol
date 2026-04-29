@@ -1,8 +1,10 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
+from werkzeug.exceptions import RequestEntityTooLarge
+import logging
 from config import Config
 
 # Инициализация расширений
@@ -11,10 +13,24 @@ migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
 
+
+def configure_logging(app):
+    """Настройка логирования приложения."""
+    level_name = app.config.get('LOG_LEVEL', 'INFO')
+    level = getattr(logging, level_name, logging.INFO)
+
+    app.logger.setLevel(level)
+    if not logging.getLogger().handlers:
+        logging.basicConfig(
+            level=level,
+            format='%(asctime)s %(levelname)s [%(name)s] %(message)s'
+        )
+
 def create_app(config_class=Config):
     """Фабрика приложения Flask"""
     app = Flask(__name__)
     app.config.from_object(config_class)
+    configure_logging(app)
     
     # Инициализация расширений с приложением
     db.init_app(app)
@@ -26,6 +42,19 @@ def create_app(config_class=Config):
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Пожалуйста, войдите для доступа к этой странице'
     login_manager.login_message_category = 'info'
+
+    @app.errorhandler(RequestEntityTooLarge)
+    def handle_request_too_large(error):
+        max_upload_mb = app.config.get('MAX_UPLOAD_MB', 128)
+        message = f'Размер загружаемых файлов превышает лимит {max_upload_mb} МБ'
+
+        if request.accept_mimetypes.accept_json or request.path.startswith('/add-bikelane'):
+            return jsonify({
+                'success': False,
+                'error': message
+            }), 413
+
+        return message, 413
     
     # Импорт моделей
     from app.models import User, BikeLane, Notification, City, VerificationCode
@@ -49,6 +78,6 @@ def create_app(config_class=Config):
         from app.routes.admin import bp as admin_bp
         app.register_blueprint(admin_bp)
     except ImportError:
-        pass
+        app.logger.exception('Не удалось зарегистрировать admin blueprint')
     
     return app

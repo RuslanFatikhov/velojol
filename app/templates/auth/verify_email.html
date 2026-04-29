@@ -3,7 +3,7 @@
 {% block title %}Подтверждение email{% endblock %}
 
 {% block content %}
-<div class="auth-container">
+<div class="island">
     <div class="auth-header gap-s">
         <h1 class="prime100">Подтверждение email</h1>
         <p class="prime100 tac">Мы отправили 6-значный код на <strong>{{ email }}</strong></p>
@@ -31,19 +31,19 @@
                    pattern="[0-9]{6}"
                    autocomplete="off"
                    autofocus
-                   style="text-align: center; font-size: 24px; letter-spacing: 10px;">
+                   style="text-align: center; font-size: var(--spacer-l); letter-spacing: 10px;">
             <div class="validation-message" id="code-validation"></div>
         </div>
 
         <div class="submit-section">
-            <button type="button" class="button_square_label btn_accent" id="verifyBtn">
+            <button type="button" class="button__label btn_accent" id="verifyBtn">
                 Подтвердить
             </button>
         </div>
 
         <div class="resend-section" style="margin-top: var(--spacer-l); text-align: center;">
             <p class="prime100">Не получили код?</p>
-            <button type="button" class="button_square_label btn_gray" id="resendBtn" style="margin-top: var(--spacer-s);">
+            <button type="button" class="button__label btn_gray" id="resendBtn" style="margin-top: var(--spacer-s);">
                 Отправить повторно
             </button>
             <p id="resend-timer" class="prime100" style="margin-top: var(--spacer-s); color: var(--gray-500); display: none;"></p>
@@ -113,7 +113,10 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ code: code })
+            body: JSON.stringify({
+                email: email,
+                code: code
+            })
         })
         .then(response => response.json())
         .then(data => {

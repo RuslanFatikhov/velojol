@@ -67,7 +67,7 @@
                                 <p class="secondary100 fw600">км</p>
                             </span>
  
-                            <span class="badge_s" style="height: 24px;">
+                            <span class="badge_s" style="height: var(--spacer-l);">
                                 <img src="{{ url_for('static', filename='img/icon/star.svg') }}" alt="Star" class="icon-small">
                                 <p class="fw700 prime100">{{ city.get_average_rating() }}</p>
                             </span>
@@ -87,6 +87,16 @@
             <h3 class="prime100">Городов не найдено</h3>
             <p class="secondary100">Попробуйте изменить запрос</p>
         </div>
+    </div>
+
+
+    <div class="tac" style="margin-top: var(--spacer-l);">
+        <a href="https://tally.so/r/3lO0pV"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="button__label btn_gray">
+            Хочу свой город
+        </a>
     </div>
 
 </div>

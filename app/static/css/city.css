@@ -1,18 +1,22 @@
 /* Стили для страницы города */
 
 .city-container {
-    padding-left: var(--spacer-sm);
-    padding-right: var(--spacer-sm);
+    display: flex;
+    flex-direction: column;
+}
 
-    margin-top: 100px;
+.city-mobile-tabs {
+    display: none;
 }
 
 /* Заголовок города */
 .city-header {
-    position: absolute;
-    top: 60px;
-    left: 0px;
+    position: fixed;
+    top: var(--spacer-m);
+    left: var(--spacer-m);
     width: 100%;
+    max-width: 390px;
+    padding-top: var(--spacer-m);
     padding: var(--spacer-m);    
     background-color: var(--bg1);
     display: flex;
@@ -20,8 +24,9 @@
     align-items: center;
     gap: var(--spacer-sm);
     padding-top: var(--spacer-xl);
-    border-radius: 0px 0px var(--spacer-m) var(--spacer-m);
-    z-index: 1;
+    border-radius: var(--spacer-m);
+    
+    z-index: 2;
 }
 
 .city-header-coat {
@@ -47,35 +52,23 @@
     gap: var(--spacer-s);
 }
 
-@media (min-width: 768px) {
-    .filters-form {
-        flex-direction: row;
-    }
-    
-    .filters-form input[type="text"] {
-        flex: 2;
-    }
-    
-    .filters-form select {
-        flex: 1;
-    }
-    
-    .filters-form button {
-        width: auto;
-        padding-left: var(--spacer-l);
-        padding-right: var(--spacer-l);
-    }
+.city-add-bikelane-btn {
+    position: fixed;
+    right: var(--spacer-m);
+    bottom: 90px;
+}
+
+.city-add-bikelane-btn span {
+    display: block;
 }
 
 /* Карта */
 .city-map {
-    position: absolute;
+    position: fixed;
+    top: 0px;
     width: 100%;
-    height: 400px;
-    z-index: 0;
-    left: 0px;
-    top: 220px;
-
+    height: 100vh;
+    border-radius: var(--spacer-m);
 }
 
 .mapboxgl-ctrl-top-right{
@@ -91,59 +84,120 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 600px;
-    left: 0px;
+    top: 150px;
+    left: var(--spacer-m) !important;
     z-index: 1;
     width: 100%;
+    max-width: 390px;
+    height: 80vh;
+    left: 0;
+    margin-top: 40px;
+    overflow: hidden;
 }
 
+.bikelane-list-block .island {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    position: fixed;
+    height: calc(100vh - 280px);
+    max-width: 390px;
+}
 
+.city-mobile-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--spacer-m);
+    border-radius: var(--spacer-m);
+    background: transparent;
+    color: var(--secondary100);
+    font-size: var(--spacer-m);
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.city-mobile-tab.is-active {
+    background: var(--prime100);
+    color: var(--prime_invert100);
+}
+
+.island > .bikelanes-list {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
 
 /* Список велодорожек */
 .bikelanes-list {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: var(--spacer-m);
+}
+
+.bikelane-date-heading {
+    padding: var(--spacer-m) var(--spacer-m) var(--spacer-s);
 }
 
 .bikelane-item {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-
+    flex-direction: column;
+    align-items: flex-start;
     background-color: var(--bg1);
-    border: 1px solid var(--secondary30);
-    border-radius: var(--spacer-m);
-    filter: drop-shadow(0px 4px 16px rgba(54, 55, 98, 0.1));
+    border-bottom: 1px solid var(--secondary30);
     width: 100%;
-    height: 74px;
-    padding: 12px;
-
-}
-
-.bikelane-item:last-child {
-    
+    min-height: 74px;
+    padding: var(--spacer-m);
+    position: relative;
+    cursor: pointer;
 }
 
 .bikelane-item:hover {
-    background-color: var(--bg3);
+    background-color: var(--secondary10);
+}
+
+.bikelane-item-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacer-s);
+    padding-right: 32px;
+}
+
+.bikelane-item-footer{
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacer-s);
+    margin-top: var(--spacer-s);
+    flex-wrap: wrap;
+}
+
+.bikelane-item:last-child {
+    border-bottom: none;
+}
+
+.bikelane-item:hover {
+    background-color: var(--secondary01)
 }
 
 .quality-indicator {
-    width: 4px;
-    height: 48px;
-    border-radius: 2px;
-}
-
-.bikelane-title {
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 600;
-}
-
-.bikelane-meta {
-    font-size: 14px;
-    line-height: 18px;
+    width: var(--spacer-sm);
+    height: var(--spacer-sm);
+    min-width: var(--spacer-sm);
+    min-height: var(--spacer-sm);
+    flex: 0 0 var(--spacer-sm);
+    border-radius: 100px;
+    margin: 4px;
 }
 
 
@@ -159,63 +213,8 @@
 
 
 
-/* Галерея фото */
-.modal-photos {
-    margin-bottom: var(--spacer-m);
-}
 
-.modal-photos-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacer-s);
-    margin-top: var(--spacer-s);
-}
 
-.modal-photo {
-    aspect-ratio: 1;
-    border-radius: var(--spacer-s);
-    overflow: hidden;
-}
-
-.modal-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-@media (min-width: 768px) {
-    .modal-photos-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Видео */
-.modal-videos {
-    margin-bottom: var(--spacer-m);
-}
-
-.modal-video {
-    margin-top: var(--spacer-s);
-    border-radius: var(--spacer-s);
-    overflow: hidden;
-}
-
-.modal-video iframe {
-    width: 100%;
-    height: 300px;
-    border: none;
-}
-
-/* Автор */
-.modal-author {
-    display: flex;
-    align-items: center;
-    gap: var(--spacer-s);
-    padding: var(--spacer-m);
-    background: var(--bg3);
-    border-radius: var(--spacer-s);
-    margin-bottom: var(--spacer-m);
-}
 
 .author-avatar {
     width: 40px;
@@ -229,7 +228,7 @@
 }
 
 .author-name {
-    font-size: 16px;
+    font-size: var(--spacer-m);
     font-weight: 600;
     color: var(--prime100);
 }
@@ -304,6 +303,7 @@
 }
 
 .filter-badge {
+    display: none !important;
     background: var(--accent100);
     color: white;
     border-radius: 50%;
@@ -312,25 +312,62 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: var(--spacer-sm);
     font-weight: 600;
 }
 
 /* Модалка фильтров */
-.filters-modal .modal-content {
-    max-width: 400px;
+.filters-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
 }
 
-.modal-filters-content {
+.filters-modal-overlay {
+    padding: var(--spacer-m);
+}
+
+.modal-middle {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    padding: 0;
+    background: var(--bg1);
+    border-radius: var(--spacer-m);
+    overflow: hidden;
+}
+
+
+.modal-body{
+    padding-left: var(--spacer-m);
+    padding-right: var(--spacer-m);
+    padding-bottom: var(--spacer-m);
+}
+
+.modal-middle .filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.modal-close {
+    border: 0;
+    background: transparent;
+    color: var(--secondary100);
+    font-size: var(--spacer-l);
+    line-height: 1;
+    cursor: pointer;
     padding: 0;
 }
 
 .modal-header {
     padding: var(--spacer-m);
+    padding-top: var(--spacer-l);
     border-bottom: 1px solid var(--bg3);
     display: flex;
+    min-height: 72px;
     justify-content: space-between;
     align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .modal-header h3 {
@@ -340,6 +377,7 @@
 
 .filter-group {
     margin-bottom: var(--spacer-m);
+    position: relative;
 }
 
 .filter-label {
@@ -347,6 +385,44 @@
     margin-bottom: var(--spacer-s);
     font-weight: 600;
     font-size: 14px;
+}
+
+#trackTypeFilter, #qualityFilter {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 48px 0 var(--spacer-m);
+    border: 1px solid var(--bg3);
+    border-radius: var(--spacer-m);
+    background-color: var(--bg2);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%23606A73' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--spacer-m) center;
+    background-size: 18px;
+    color: var(--prime100);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+#trackTypeFilter:hover , #qualityFilter:hover {
+    background-color: var(--bg1);
+    border-color: var(--secondary30);
+}
+
+#trackTypeFilter:focus , #qualityFilter:focus {
+    outline: none;
+    border-color: var(--accent100);
+    box-shadow: 0 0 0 4px rgba(48, 160, 118, 0.16);
+    background-color: var(--bg1);
+}
+
+#trackTypeFilter option, #qualityFilter option {
+    color: var(--prime100);
+    background-color: var(--bg1);
 }
 
 .modal-footer {
@@ -358,4 +434,121 @@
 
 .modal-footer .button_square_label {
     flex: 1;
+}
+
+@media (max-width: 768px) {
+    .city-add-bikelane-btn span {
+        display: none;
+    }
+
+    .filters-modal-overlay {
+        align-items: flex-end;
+        padding: var(--spacer-s);
+    }
+
+    .modal-middle {
+        width: 100%;
+        max-width: none;
+        border-radius: var(--spacer-m);
+    }
+
+    .bikelanes-list {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .city-mobile-tabs {
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        z-index: 1;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        padding: var(--spacer-m);
+        background-color: var(--bg1);
+        border-radius: var(--spacer-m) var(--spacer-m) 0 0;
+        border-top: 1px solid var(--bg3);
+    }
+
+    .city-container {
+        position: relative;
+    }
+
+    .city-container[data-city-view="map"] .bikelane-list-block {
+        display: none;
+    }
+
+    .city-container[data-city-view="list"] .city-map {
+        display: none;
+    }
+
+    .city-container[data-city-view="list"] .bikelane-list-block {
+        position: relative;
+        top: 0;
+        left: 0 !important;
+        z-index: 0;
+        width: 100%;
+        max-width: none;
+    }
+
+    .city-container[data-city-view="list"] {
+        padding-top: 40px;
+    }
+
+    .city-container[data-city-view="list"] .island {
+        border-radius: var(--spacer-m);
+    }
+
+    .city-container[data-city-view="list"] .bikelane-item {
+        background-color: var(--bg1);
+    }
+
+    .city-container[data-city-view="map"] .city-map {
+        display: block;
+    }
+
+    .city-header{
+        
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        max-width: none;
+        border-radius: 0 0 var(--spacer-m) var(--spacer-m);
+    }
+
+
+
+    .bikelane-list-block{
+        width: 100%;
+        max-width: none;
+    }
+
+    .city-map{
+        top: 100px;
+        height: calc(100vh - 280px);
+    }
+}
+
+
+@media (min-width: 768px) {
+
+
+    .filters-form {
+        flex-direction: row;
+    }
+    
+    .filters-form input[type="text"] {
+        flex: 2;
+    }
+    
+    .filters-form select {
+        flex: 1;
+    }
+    
+    .filters-form button {
+        width: auto;
+        padding-left: var(--spacer-l);
+        padding-right: var(--spacer-l);
+    }
 }

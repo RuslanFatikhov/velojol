@@ -9,8 +9,8 @@ def send_async_email(app, msg):
     with app.app_context():
         try:
             mail.send(msg)
-        except Exception as e:
-            print(f"Ошибка отправки email: {str(e)}")
+        except Exception:
+            app.logger.exception('Ошибка отправки email')
 
 def send_email(subject, recipient, text_body, html_body=None):
     """Отправка email"""
@@ -55,10 +55,10 @@ def send_verification_code(email, code, code_type):
                     </div>
                     <p style="color: #7f8c8d; font-size: 14px;">Код действителен в течение 15 минут.</p>
                     <hr style="border: none; border-top: 1px solid #ecf0f1; margin: 20px 0;">
-                    <p style="color: #95a5a6; font-size: 12px;">
+                    <p style="color: #95a5a6; font-size: var(--spacer-sm);">
                         Если вы не регистрировались на нашем сайте, проигнорируйте это письмо.
                     </p>
-                    <p style="color: #95a5a6; font-size: 12px;">
+                    <p style="color: #95a5a6; font-size: var(--spacer-sm);">
                         С уважением,<br>
                         Команда Velojol
                     </p>
@@ -93,10 +93,10 @@ def send_verification_code(email, code, code_type):
                     </div>
                     <p style="color: #7f8c8d; font-size: 14px;">Код действителен в течение 15 минут.</p>
                     <hr style="border: none; border-top: 1px solid #ecf0f1; margin: 20px 0;">
-                    <p style="color: #95a5a6; font-size: 12px;">
+                    <p style="color: #95a5a6; font-size: var(--spacer-sm);">
                         Если вы не запрашивали восстановление пароля, проигнорируйте это письмо и ваш пароль останется без изменений.
                     </p>
-                    <p style="color: #95a5a6; font-size: 12px;">
+                    <p style="color: #95a5a6; font-size: var(--spacer-sm);">
                         С уважением,<br>
                         Команда Velojol
                     </p>

@@ -7,12 +7,12 @@
 <div style="margin-bottom: 20px;">
     <form method="get" style="display: flex; gap: 10px; align-items: center;">
         <input type="text" name="search" value="{{ search }}" placeholder="Поиск по нику или email"
-               style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 300px;">
-        <button type="submit" style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+               style="padding: 8px var(--spacer-sm); border: 1px solid #ccc; border-radius: 4px; width: 300px;">
+        <button type="submit" style="background: #007bff; color: white; border: none; padding: 8px var(--spacer-m); border-radius: 4px;">
             Найти
         </button>
         {% if search %}
-        <a href="{{ url_for('admin.users') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+        <a href="{{ url_for('admin.users') }}" style="background: #6c757d; color: white; padding: 8px var(--spacer-m); text-decoration: none; border-radius: 4px;">
             Сбросить
         </a>
         {% endif %}
@@ -40,19 +40,19 @@
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr style="background: #f8f9fa;">
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Пользователь</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Email</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Статус</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Велодорожек</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Баллы</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Регистрация</th>
-            <th style="padding: 12px; border: 1px solid #dee2e6;">Действия</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Пользователь</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Email</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Статус</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Велодорожек</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Баллы</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Регистрация</th>
+            <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Действия</th>
         </tr>
     </thead>
     <tbody>
         {% for user in users.items %}
         <tr>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <img src="{{ user.display_avatar }}" alt="Аватар" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                     <div>
@@ -66,18 +66,18 @@
                     </div>
                 </div>
             </td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.email }}</td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ user.email }}</td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
                 {% if user.is_banned %}
                     <span style="color: #dc3545;">Заблокирован</span>
                 {% else %}
                     <span style="color: #28a745;">Активен</span>
                 {% endif %}
             </td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.get_bikelanes_count() }}</td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.get_total_score() }}</td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">{{ user.created_at.strftime('%d.%m.%Y') }}</td>
-            <td style="padding: 12px; border: 1px solid #dee2e6;">
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ user.get_bikelanes_count() }}</td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ user.get_total_score() }}</td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ user.created_at.strftime('%d.%m.%Y') }}</td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
                 <a href="{{ url_for('admin.view_user', user_id=user.id) }}" class="btn-sm btn-primary">Просмотр</a>
             </td>
         </tr>

@@ -1,0 +1,146 @@
+Безопасное обновление Velojol через терминал без перезаписи данных
+===================================================================
+
+Текущая схема на сервере
+------------------------
+
+Код сайта:
+  /opt/open-velojol/current
+
+Рабочая база данных SQLite:
+  /opt/open-velojol/instance/velojol.db
+
+Production .env:
+  /opt/open-velojol/shared/.env
+
+Бэкапы:
+  /opt/open-velojol/backups
+
+Важно: локальную базу, локальный .env, папку instance, бэкапы и пользовательские загрузки
+нельзя копировать поверх серверных данных.
+
+
+1. Перейти в локальную папку проекта
+------------------------------------
+
+cd /Users/rufatikhov/velojol
+
+
+2. Проверить, что вы находитесь в нужном проекте
+------------------------------------------------
+
+pwd
+git status --short
+
+Если в git status есть изменения, это нормально, но убедитесь, что именно их нужно отправить
+на сервер.
+
+
+3. Сделать бэкап базы на сервере перед обновлением
+-------------------------------------------------
+
+ssh root@31.130.152.60
+
+mkdir -p /opt/open-velojol/backups
+cp /opt/open-velojol/instance/velojol.db \
+  /opt/open-velojol/backups/velojol.db.before-deploy.$(date +"%Y-%m-%d_%H-%M-%S").backup
+
+exit
+
+
+4. Загрузить на сервер только код, не данные
+-------------------------------------------
+
+Запускать локально из папки /Users/rufatikhov/velojol:
+
+rsync -avz \
+  --exclude '.git' \
+  --exclude '.DS_Store' \
+  --exclude '__pycache__' \
+  --exclude '*.pyc' \
+  --exclude '.venv' \
+  --exclude 'venv' \
+  --exclude 'open-velojol-env/' \
+  --exclude '.env' \
+  --exclude 'instance/' \
+  --exclude 'backups/' \
+  --exclude 'releases/' \
+  --exclude '*.db' \
+  --exclude '*.sqlite' \
+  --exclude '*.sqlite3' \
+  --exclude 'app/static/uploads/' \
+  ./ root@31.130.152.60:/opt/open-velojol/current/
+
+Не добавляйте --delete к этой команде, если не уверены полностью. --delete удаляет на сервере
+файлы, которых нет локально, и может удалить пользовательские данные при ошибке в исключениях.
+
+
+5. Обновить зависимости и перезапустить сайт
+--------------------------------------------
+
+ssh root@31.130.152.60
+
+cd /opt/open-velojol/current
+/opt/open-velojol/open-velojol-env/bin/pip install -r requirements.txt
+systemctl restart velojol-gunicorn.service
+
+
+6. Проверить, что сайт запустился
+---------------------------------
+
+systemctl is-active velojol-gunicorn.service
+systemctl status velojol-gunicorn.service --no-pager -l
+
+curl -s -o /tmp/velojol_home.html -w 'gunicorn_home=%{http_code}\n' http://127.0.0.1:8020/
+curl -k -s -o /tmp/velojol_public.html -w 'nginx_https_home=%{http_code}\n' \
+  -H 'Host: open.velojol.kz' https://127.0.0.1/
+
+Ожидаемый результат:
+  active
+  gunicorn_home=200
+  nginx_https_home=200
+
+Проверить ошибки за последние минуты:
+
+journalctl -u velojol-gunicorn.service --since '5 minutes ago' --no-pager -p warning..alert
+
+Если ошибок нет, можно выйти:
+
+exit
+
+
+7. Если после обновления сайт не работает
+-----------------------------------------
+
+Посмотреть свежие логи:
+
+ssh root@31.130.152.60
+journalctl -u velojol-gunicorn.service -n 120 --no-pager -l
+
+Проверить, что приложение использует серверную базу:
+
+grep '^DATABASE_URL=' /opt/open-velojol/shared/.env
+ls -lah /opt/open-velojol/instance/velojol.db
+ls -lah /opt/open-velojol/current/instance/velojol.db
+
+Правильный DATABASE_URL:
+  DATABASE_URL=sqlite:////opt/open-velojol/instance/velojol.db
+
+Если current/instance/velojol.db не является ссылкой на настоящую базу, восстановить ссылку:
+
+mkdir -p /opt/open-velojol/current/instance
+mv /opt/open-velojol/current/instance/velojol.db \
+  /opt/open-velojol/current/instance/velojol.db.wrong.$(date +"%Y-%m-%d_%H-%M-%S") 2>/dev/null || true
+ln -sfn /opt/open-velojol/instance/velojol.db /opt/open-velojol/current/instance/velojol.db
+systemctl restart velojol-gunicorn.service
+
+
+Что нельзя делать при обычном обновлении
+----------------------------------------
+
+Нельзя копировать локальную папку instance на сервер.
+Нельзя копировать локальные .db, .sqlite, .sqlite3 файлы на сервер.
+Нельзя копировать локальный .env поверх production .env.
+Нельзя загружать проект в /opt/open-velojol вместо /opt/open-velojol/current.
+Нельзя удалять /opt/open-velojol/instance и /opt/open-velojol/backups.
+Нельзя использовать rsync --delete без отдельной проверки исключений.

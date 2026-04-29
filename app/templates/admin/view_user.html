@@ -2,7 +2,7 @@
 
 {% block content %}
 <div style="margin-bottom: 20px;">
-    <a href="{{ url_for('admin.users') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+    <a href="{{ url_for('admin.users') }}" style="background: #6c757d; color: white; padding: 8px var(--spacer-m); text-decoration: none; border-radius: 4px;">
         ← Назад к пользователям
     </a>
 </div>
@@ -143,10 +143,10 @@
                 <textarea name="ban_reason" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; min-height: 80px;" placeholder="Укажите причину блокировки..."></textarea>
             </div>
             <div style="text-align: right;">
-                <button type="button" onclick="hideBanForm()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-right: 10px;">
+                <button type="button" onclick="hideBanForm()" style="background: #6c757d; color: white; border: none; padding: 8px var(--spacer-m); border-radius: 4px; margin-right: 10px;">
                     Отмена
                 </button>
-                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 8px var(--spacer-m); border-radius: 4px;">
                     Заблокировать
                 </button>
             </div>

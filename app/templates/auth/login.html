@@ -3,7 +3,7 @@
 {% block title %}Вход | Velojol{% endblock %}
 
 {% block content %}
-<div class="auth-container">
+<div class="island">
     
     <!-- Flash сообщения -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -40,13 +40,13 @@
         </div>
 
         <div class="submit-section">
-            <button type="submit" class="button_square_label btn_accent" id="loginBtn">
+            <button type="submit" class="button__label btn_accent" id="loginBtn">
                 Войти
             </button>
         </div>
         
-        <div style="text-align: center; margin-top: var(--spacer-m);">
-            <button type="button" class="button_square_label btn_gray" id="forgotPasswordBtn">
+        <div style="text-align: center; margin-top: var(--spacer-s);">
+            <button type="button" class="button__label btn_gray" id="forgotPasswordBtn">
                 Забыли пароль?
             </button>
         </div>
@@ -58,35 +58,44 @@
             <p>или</p>
             <span class="divider"></span>
         </span>
-        <a style="margin-top: var(--spacer-l);" class="button_square_label btn_gray" href="{{ url_for('auth.register') }}">Создать аккаунт</a>
+        <a style="margin-top: var(--spacer-l);" class="button__label btn_gray" href="{{ url_for('auth.register') }}">Создать аккаунт</a>
     </div>
 </div>
 
 <!-- Модальное окно: Забыли пароль - Ввод Email -->
-<div id="forgotPasswordModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close" id="closeForgotModal">&times;</span>
-        <h2 class="prime100">Восстановление пароля</h2>
-        <p class="prime100" style="margin-top: var(--spacer-s);">Введите ваш email для получения кода восстановления</p>
+<div id="forgotPasswordModal" class="modal-overlay" style="display: none;">
+    <div class="modal-middle">
+
+        <span class="modal-header">
+            <span class="close button_square_label" id="closeForgotModal">
+                <img src="/static/img/icon/cross.svg" alt="Закрыть" class="icon-small arrow_down">
+            </span>
+
+            <h2 class="prime100">Восстановление пароля</h2>
+            <p class="prime100" style="margin-top: var(--spacer-s);">Введите ваш email для получения кода восстановления</p>
+
+        </span>
         
-        <div class="form-group" style="margin-top: var(--spacer-m);">
-            <input type="email" 
-                   id="forgot-email" 
-                   placeholder="Ваш email"
-                   required>
-            <div class="validation-message" id="forgot-email-validation"></div>
-        </div>
+        <div class="modal-body">
+            <div class="form-group" style="margin-top: var(--spacer-m);">
+                <input type="email" 
+                    id="forgot-email" 
+                    placeholder="Ваш email"
+                    required>
+                <div class="validation-message" id="forgot-email-validation"></div>
+            </div>
         
-        <div style="margin-top: var(--spacer-m);">
-            <button type="button" class="button_square_label btn_accent" id="sendResetCodeBtn">
-                Отправить код
-            </button>
+            <div style="margin-top: var(--spacer-m);">
+                <button type="button" class="button__label btn_accent" id="sendResetCodeBtn">
+                    Отправить код
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Модальное окно: Ввод кода восстановления -->
-<div id="verifyResetCodeModal" class="modal" style="display: none;">
+<div id="verifyResetCodeModal" class="modal-middle" style="display: none;">
     <div class="modal-content">
         <span class="close" id="closeVerifyModal">&times;</span>
         <h2 class="prime100">Введите код</h2>
@@ -99,19 +108,19 @@
                    maxlength="6"
                    pattern="[0-9]{6}"
                    autocomplete="off"
-                   style="text-align: center; font-size: 24px; letter-spacing: 10px;">
+                   style="text-align: center; font-size: var(--spacer-l); letter-spacing: 10px;">
             <div class="validation-message" id="reset-code-validation"></div>
         </div>
         
         <div style="margin-top: var(--spacer-m);">
-            <button type="button" class="button_square_label btn_accent" id="verifyResetCodeBtn">
+            <button type="button" class="button__label btn_accent" id="verifyResetCodeBtn">
                 Подтвердить
             </button>
         </div>
         
         <div style="margin-top: var(--spacer-l); text-align: center;">
             <p class="prime100">Не получили код?</p>
-            <button type="button" class="button_square_label btn_gray" id="resendResetCodeBtn" style="margin-top: var(--spacer-s);">
+            <button type="button" class="button__label btn_gray" id="resendResetCodeBtn" style="margin-top: var(--spacer-s);">
                 Отправить повторно
             </button>
             <p id="reset-resend-timer" class="prime100" style="margin-top: var(--spacer-s); color: var(--gray-500); display: none;"></p>
@@ -119,48 +128,7 @@
     </div>
 </div>
 
-<style>
-/* Стили для модальных окон */
-.modal {
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.modal-content {
-    background-color: #fff;
-    padding: var(--spacer-xl);
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    position: relative;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-.close {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #aaa;
-    cursor: pointer;
-    line-height: 1;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-}
-</style>
 {% endblock %}
 
 {% block scripts %}
@@ -297,7 +265,10 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ code: code })
+            body: JSON.stringify({
+                email: resetEmail,
+                code: code
+            })
         })
         .then(response => response.json())
         .then(data => {

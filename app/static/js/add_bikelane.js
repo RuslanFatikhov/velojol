@@ -2,6 +2,219 @@
 
 // Глобальные переменные для карты
 let map, drawnItems, drawControl, currentPolyline, citiesData;
+let isMobileMapLayout = false;
+let isSubmittingBikelaneForm = false;
+const DESCRIPTION_MIN_LENGTH = 20;
+
+function updateDescriptionCounter() {
+  const description = document.getElementById('description');
+  const counter = document.getElementById('description-counter');
+
+  if (!description || !counter) {
+    return;
+  }
+
+  const length = description.value.trim().length;
+  counter.textContent = String(length);
+  counter.classList.toggle('is-short', length > 0 && length < DESCRIPTION_MIN_LENGTH);
+  counter.classList.toggle('is-valid', length >= DESCRIPTION_MIN_LENGTH);
+}
+
+function initDescriptionCounter() {
+  const description = document.getElementById('description');
+
+  if (!description) {
+    return;
+  }
+
+  description.minLength = DESCRIPTION_MIN_LENGTH;
+  description.required = true;
+  description.addEventListener('input', updateDescriptionCounter);
+  description.addEventListener('change', updateDescriptionCounter);
+  updateDescriptionCounter();
+}
+
+function showToast(message, type = 'info', options = {}) {
+  const container = document.getElementById('toast-container');
+  if (!container || !message) {
+    return;
+  }
+
+  const duration = options.duration ?? 4000;
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  toast.innerHTML = `
+    <p class="toast-message"></p>
+    <button type="button" class="toast-close" aria-label="Закрыть уведомление"><img src="/static/img/icon/cross.svg" alt="Закрыть" class="icon-small arrow_down"></button>
+  `;
+
+  const messageElement = toast.querySelector('.toast-message');
+  const closeButton = toast.querySelector('.toast-close');
+  if (messageElement) {
+    messageElement.textContent = message;
+  }
+
+  const removeToast = () => {
+    toast.style.animation = 'toast-out 0.2s ease forwards';
+    window.setTimeout(() => toast.remove(), 180);
+  };
+
+  if (closeButton) {
+    closeButton.addEventListener('click', removeToast);
+  }
+
+  container.appendChild(toast);
+  window.setTimeout(removeToast, duration);
+}
+
+function getFormValidationErrors() {
+  const city = document.getElementById('city')?.value || '';
+  const title = document.getElementById('title')?.value.trim() || '';
+  const description = document.getElementById('description')?.value.trim() || '';
+  const trackType = document.querySelector('input[name="track_type"]:checked');
+  const quality = document.querySelector('input[name="quality"]:checked');
+  const geometry = document.getElementById('geometry')?.value || '';
+  const errors = [];
+
+  if (!city) errors.push('Необходимо выбрать город');
+  if (title.length < 3) errors.push('Название должно содержать минимум 3 символа');
+  if (description.length < DESCRIPTION_MIN_LENGTH) {
+    errors.push(`Описание должно содержать минимум ${DESCRIPTION_MIN_LENGTH} символов`);
+  }
+  if (!trackType) errors.push('Необходимо выбрать тип дорожки');
+  if (!quality) errors.push('Необходимо оценить качество покрытия');
+
+  if (!geometry || geometry.trim() === '') {
+    errors.push('Необходимо нарисовать линию на карте');
+  } else {
+    try {
+      const parsed = JSON.parse(geometry);
+      if (!parsed.coordinates || parsed.coordinates.length < 2) {
+        errors.push('Линия должна содержать минимум 2 точки');
+      } else if (calculateLineDistance(parsed.coordinates) < 10) {
+        errors.push('Велодорожка должна быть длиннее 10 метров');
+      }
+    } catch (error) {
+      errors.push('Ошибка в данных геометрии');
+    }
+  }
+
+  return errors;
+}
+
+function updateSubmitButtonState() {
+  const submitButton = document.getElementById('submit-bikelane-btn');
+  if (!submitButton) {
+    return;
+  }
+
+  if (isSubmittingBikelaneForm) {
+    submitButton.disabled = true;
+    return;
+  }
+
+  submitButton.disabled = getFormValidationErrors().length > 0;
+}
+
+function getSubmitButtonDefaultLabel() {
+  return document.getElementById('submit-bikelane-btn')?.dataset.defaultLabel || 'Отправить';
+}
+
+function isMobileViewport() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function syncMapDrawerLayout() {
+  const inlineAnchor = document.getElementById('map-inline-anchor');
+  const drawerBody = document.getElementById('map-drawer-body');
+  const content = document.getElementById('map-drawer-content');
+
+  if (!inlineAnchor || !drawerBody || !content) {
+    return;
+  }
+
+  const shouldUseDrawer = isMobileViewport();
+  const targetParent = shouldUseDrawer ? drawerBody : inlineAnchor;
+
+  if (content.parentElement !== targetParent) {
+    targetParent.appendChild(content);
+  }
+
+  isMobileMapLayout = shouldUseDrawer;
+}
+
+function openMapDrawer() {
+  if (!isMobileViewport()) {
+    return;
+  }
+
+  const drawer = document.getElementById('map-drawer');
+  if (!drawer) {
+    return;
+  }
+
+  syncMapDrawerLayout();
+  drawer.classList.add('is-open');
+  drawer.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('map-drawer-open');
+
+  setTimeout(() => {
+    if (map) {
+      map.invalidateSize();
+    }
+  }, 260);
+}
+
+function closeMapDrawer() {
+  const drawer = document.getElementById('map-drawer');
+  if (!drawer) {
+    return;
+  }
+
+  drawer.classList.remove('is-open');
+  drawer.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('map-drawer-open');
+}
+
+function initMapDrawer() {
+  const openBtn = document.getElementById('open-map-drawer-btn');
+  const closeBtn = document.getElementById('close-map-drawer-btn');
+  const overlay = document.getElementById('map-drawer-overlay');
+
+  syncMapDrawerLayout();
+
+  if (openBtn) {
+    openBtn.addEventListener('click', openMapDrawer);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeMapDrawer);
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeMapDrawer);
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      closeMapDrawer();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    const wasMobile = isMobileMapLayout;
+    syncMapDrawerLayout();
+
+    if (map) {
+      setTimeout(() => map.invalidateSize(), 50);
+    }
+
+    if (wasMobile && !isMobileViewport()) {
+      closeMapDrawer();
+    }
+  });
+}
 
 /**
  * Загрузка данных о городах и заполнение селекта
@@ -66,7 +279,46 @@ function populateCitySelect() {
     citySelect.appendChild(option);
   });
 
+  const selectedCity = citySelect.dataset.selectedCity;
+  if (selectedCity) {
+    citySelect.value = selectedCity;
+  }
+
   console.log(`Селект заполнен: ${citiesData.cities.length} городов`);
+}
+
+function toggleMapSectionVisibility(selectedCity) {
+  const mapSection = document.getElementById('map-section');
+  if (!mapSection) {
+    return;
+  }
+
+  const hasSelectedCity = Boolean(selectedCity);
+  mapSection.classList.toggle('hidden', !hasSelectedCity);
+
+  if (hasSelectedCity && map) {
+    window.setTimeout(() => map.invalidateSize(), 50);
+  }
+}
+
+function focusMapOnSelectedCity(selectedCity) {
+  if (!selectedCity || !citiesData || !map) {
+    return;
+  }
+
+  const city = citiesData.cities.find((item) => item.id === selectedCity);
+  if (!city) {
+    console.log('Данные города не найдены');
+    return;
+  }
+
+  map.setView(city.coords, city.zoom || 12);
+  console.log('Карта перемещена к городу:', city.name);
+}
+
+function applySelectedCityState(selectedCity) {
+  toggleMapSectionVisibility(selectedCity);
+  focusMapOnSelectedCity(selectedCity);
 }
 
 /**
@@ -375,6 +627,7 @@ function initDrawingHandlers() {
     if (geometryInput) {
       geometryInput.value = '';
       console.log('Поле геометрии очищено');
+      updateSubmitButtonState();
     }
 
     const distanceElement = document.getElementById('distance-display');
@@ -446,6 +699,7 @@ function initDrawingHandlers() {
     }
 
     updateGeometryStatus('Кликните по карте для начала рисования линии', 'info');
+    updateSubmitButtonState();
 
     console.log('=== СБРОС ЗАВЕРШЕН ===');
   }
@@ -489,6 +743,7 @@ function initDrawingHandlers() {
 
     const geometryString = JSON.stringify(geojson);
     geometryInput.value = geometryString;
+    updateSubmitButtonState();
 
     console.log('ГЕОМЕТРИЯ СОХРАНЕНА:', geometryString);
 
@@ -515,6 +770,8 @@ function initDrawingHandlers() {
       )}. Можете перетаскивать точки для корректировки.`,
       'valid'
     );
+
+    closeMapDrawer();
 
     console.log('=== ЗАВЕРШЕНИЕ ОБРАБОТКИ ЛИНИИ ===');
   }
@@ -547,6 +804,7 @@ function loadExistingGeometry() {
         addDistanceField(distance);
 
         updateGeometryStatus('Линия загружена из сохраненных данных', 'valid');
+        updateSubmitButtonState();
       }
     } catch (e) {
       console.error('Ошибка при загрузке геометрии:', e);
@@ -563,6 +821,7 @@ function validateGeometry() {
 
   if (!geometryValue) {
     updateGeometryStatus('✗ Геометрия отсутствует', 'invalid');
+    updateSubmitButtonState();
     return false;
   }
 
@@ -570,13 +829,16 @@ function validateGeometry() {
     const geojson = JSON.parse(geometryValue);
     if (geojson.type === 'LineString' && geojson.coordinates && geojson.coordinates.length >= 2) {
       updateGeometryStatus('✓ Геометрия корректна', 'valid');
+      updateSubmitButtonState();
       return true;
     } else {
       updateGeometryStatus('✗ Некорректная геометрия', 'invalid');
+      updateSubmitButtonState();
       return false;
     }
   } catch (e) {
     updateGeometryStatus('✗ Ошибка в данных геометрии', 'invalid');
+    updateSubmitButtonState();
     return false;
   }
 }
@@ -623,6 +885,7 @@ function updateGeometryFromMap() {
 
       const geometryString = JSON.stringify(geojson);
       geometryInput.value = geometryString;
+      updateSubmitButtonState();
 
       const distance = updateDistanceDisplay(coordinates);
       addDistanceField(distance);
@@ -742,7 +1005,7 @@ function handleFileSelection(files, fileInput, preview) {
   }
 
   if (files.length > 10) {
-    alert('Максимум 10 фотографий');
+    showToast('Максимум 10 фотографий', 'error');
     fileInput.value = '';
     return;
   }
@@ -795,68 +1058,38 @@ function initFormValidation() {
     return;
   }
 
+  const submitBtn = document.getElementById('submit-bikelane-btn');
+  const fieldsToWatch = form.querySelectorAll(
+    '#city, #title, #description, input[name="track_type"], input[name="quality"]'
+  );
+
+  fieldsToWatch.forEach((field) => {
+    const primaryEvent = field.matches('input[type="radio"], select') ? 'change' : 'input';
+    field.addEventListener(primaryEvent, updateSubmitButtonState);
+    if (primaryEvent !== 'change') {
+      field.addEventListener('change', updateSubmitButtonState);
+    }
+  });
+
+  updateSubmitButtonState();
+
   form.addEventListener('submit', function (e) {
     console.log('=== ВАЛИДАЦИЯ ФОРМЫ ===');
-
-    const city = document.getElementById('city').value;
-    const title = document.getElementById('title').value.trim();
-    const description = document.getElementById('description').value.trim();
-    const trackType = document.querySelector('input[name="track_type"]:checked');
-    const quality = document.querySelector('input[name="quality"]:checked');
-    const geometryInput = document.getElementById('geometry');
-    const geometry = geometryInput ? geometryInput.value : '';
-
-    console.log('Проверка полей:');
-    console.log('- Город:', city || 'НЕ ВЫБРАН');
-    console.log('- Название:', title ? `"${title}" (${title.length} символов)` : 'ПУСТОЕ');
-    console.log('- Описание:', description ? `${description.length} символов` : 'ПУСТОЕ');
-    console.log('- Тип дорожки:', trackType ? trackType.value : 'НЕ ВЫБРАН');
-    console.log('- Качество:', quality ? quality.value : 'НЕ ВЫБРАНО');
-    console.log('- Геометрия поле найдено:', geometryInput ? 'ДА' : 'НЕТ');
-    console.log('- Геометрия значение:', geometry ? 'ЕСТЬ' : 'ПУСТОЕ');
-
-    let errors = [];
-
-    if (!city) errors.push('Необходимо выбрать город');
-    if (title.length < 3) errors.push('Название должно содержать минимум 3 символа');
-    if (description.length < 20) errors.push('Описание должно содержать минимум 20 символов');
-    if (!trackType) errors.push('Необходимо выбрать тип дорожки');
-    if (!quality) errors.push('Необходимо оценить качество покрытия');
-
-    if (!geometry || geometry.trim() === '') {
-      errors.push('Необходимо нарисовать линию на карте');
-      console.log('ОШИБКА: Геометрия пустая!');
-    } else {
-      try {
-        const parsed = JSON.parse(geometry);
-        if (!parsed.coordinates || parsed.coordinates.length < 2) {
-          errors.push('Линия должна содержать минимум 2 точки');
-          console.log('ОШИБКА: Недостаточно точек в геометрии');
-        } else {
-          const distance = calculateLineDistance(parsed.coordinates);
-          if (distance < 10) {
-            errors.push('Велодорожка должна быть длиннее 10 метров');
-            console.log('ОШИБКА: Дистанция слишком мала:', distance.toFixed(2), 'м');
-          }
-        }
-      } catch (err) {
-        errors.push('Ошибка в данных геометрии');
-        console.log('ОШИБКА: Некорректный JSON геометрии:', err);
-      }
-    }
+    const errors = getFormValidationErrors();
 
     console.log('Результат валидации:', errors.length === 0 ? 'ВСЕ ОК' : 'ЕСТЬ ОШИБКИ');
     console.log('Ошибки:', errors);
 
     if (errors.length > 0) {
       e.preventDefault();
-      alert('Ошибки в форме:\n' + errors.join('\n'));
+      showToast(errors.join('\n'), 'error', { duration: 5000 });
+      updateSubmitButtonState();
       return false;
     }
 
     // Показываем индикатор загрузки
-    const submitBtn = document.querySelector('.button_square_label.btn_black');
     if (submitBtn) {
+      isSubmittingBikelaneForm = true;
       submitBtn.disabled = true;
       submitBtn.textContent = 'Отправка...';
       console.log('Кнопка заблокирована, форма отправляется');
@@ -916,20 +1149,23 @@ function initFormValidation() {
           if (distanceElement) {
             distanceElement.style.display = 'none';
           }
+
+          updateSubmitButtonState();
         } else {
           console.log('Сервер вернул ошибку:', data.error);
-          alert('Ошибка: ' + (data.error || 'Неизвестная ошибка'));
+          showToast('Ошибка: ' + (data.error || 'Неизвестная ошибка'), 'error');
         }
       })
       .catch((error) => {
         console.error('Ошибка отправки:', error);
-        alert('Ошибка при отправке формы: ' + error.message);
+        showToast('Ошибка при отправке формы: ' + error.message, 'error');
       })
       .finally(() => {
         // Восстанавливаем кнопку
+        isSubmittingBikelaneForm = false;
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Отправить';
+          submitBtn.textContent = getSubmitButtonDefaultLabel();
+          updateSubmitButtonState();
           console.log('Кнопка восстановлена');
         }
       });
@@ -943,19 +1179,12 @@ function initInteractiveElements() {
   // Автоматическое изменение центра карты при выборе города
   const citySelect = document.getElementById('city');
   if (citySelect) {
+    applySelectedCityState(citySelect.value);
+
     citySelect.addEventListener('change', function () {
       const selectedCity = this.value;
       console.log('Выбран город:', selectedCity);
-
-      if (selectedCity && citiesData && map) {
-        const city = citiesData.cities.find((c) => c.id === selectedCity);
-        if (city) {
-          map.setView(city.coords, city.zoom || 12);
-          console.log('Карта перемещена к городу:', city.name);
-        } else {
-          console.log('Данные города не найдены');
-        }
-      }
+      applySelectedCityState(selectedCity);
     });
   }
 }
@@ -1015,6 +1244,32 @@ function initQualityHandlers() {
   console.log('Обработчики качества инициализированы');
 }
 
+function syncExistingToggleState() {
+  const toggleMappings = [
+    ['has_parking', 'has_parking_hidden'],
+    ['has_markings', 'has_markings_hidden'],
+    ['has_signs', 'has_signs_hidden']
+  ];
+
+  toggleMappings.forEach(([checkboxId, hiddenId]) => {
+    const checkbox = document.getElementById(checkboxId);
+    const hidden = document.getElementById(hiddenId);
+    if (checkbox && hidden) {
+      hidden.value = checkbox.checked ? 'true' : 'false';
+    }
+  });
+}
+
+function getCityPageUrl(data = {}) {
+  const cityId = data.city || document.getElementById('city')?.value || '';
+
+  if (!cityId) {
+    return null;
+  }
+
+  return `/city/${encodeURIComponent(cityId)}`;
+}
+
 /**
  * Добавляет тестовую кнопку для отладки геометрии
  */
@@ -1050,13 +1305,18 @@ async function initAddBikeLanePage() {
 
   await loadCitiesData();
 
+  initMapDrawer();
   initMap();
   initPhotoHandlers();
   initFormValidation();
+  initDescriptionCounter();
   initInteractiveElements();
   initQualityHandlers();
+  syncExistingToggleState();
+  updateQualityDisplay();
 
   addDebugButton();
+  updateSubmitButtonState();
 
   console.log('Инициализация страницы завершена');
 }
@@ -1071,28 +1331,39 @@ document.addEventListener('DOMContentLoaded', function () {
  * Показывает модальное окно успешной отправки
  */
 function showSuccessModal(data) {
+  const title = data.modal_title || 'Велодорожка отправлена!';
+  const message =
+    data.modal_message ||
+    'Спасибо за ваш вклад в развитие велоинфраструктуры! Велодорожка будет проверена модераторами в течение 1-2 рабочих дней.';
+  const primaryLabel = data.primary_action_label || 'Добавить еще одну';
+  const closeLabel = data.close_action_label || 'Закрыть';
+  const redirectUrl = data.redirect_url || null;
+  const cityPageUrl = getCityPageUrl(data);
+
   const modal = document.createElement('div');
   modal.className = 'success-modal-overlay';
   modal.innerHTML = `
     <div class="success-modal">
       <div class="success-modal-content">
         <div class="success-icon">
+
+         <!--Todo: заменить  иконку галочки-->
           <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
             <polyline points="22,4 12,14.01 9,11.01"></polyline>
           </svg>
         </div>
 
-        <h2>Велодорожка отправлена!</h2>
+        <h2>${title}</h2>
 
-        <p>Спасибо за ваш вклад в развитие велоинфраструктуры! Велодорожка будет проверена модераторами в течение 1-2 рабочих дней.</p>
+        <p>${message}</p>
 
         <div class="success-actions">
-          <button class="button_square_label btn_blue" id="success-add-more">
-            Добавить еще одну
+          <button class="button__label btn_blue" id="success-add-more">
+            ${primaryLabel}
           </button>
-          <button class="button_square_label btn_outline" id="success-close">
-            Закрыть
+          <button class="button__label btn_outline" id="success-close">
+            ${closeLabel}
           </button>
         </div>
       </div>
@@ -1111,7 +1382,7 @@ function showSuccessModal(data) {
         animation: fadeIn 0.3s ease forwards;
       }
       .success-modal {
-        background: white; border-radius: 16px; padding: 2rem;
+        background: white; border-radius: var(--spacer-m); padding: 2rem;
         max-width: 400px; width: 90%; text-align: center;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         transform: scale(0.8); animation: modalIn 0.3s ease 0.1s forwards;
@@ -1139,8 +1410,29 @@ function showSuccessModal(data) {
   const addMoreBtn = modal.querySelector('#success-add-more');
   const closeBtn = modal.querySelector('#success-close');
 
-  if (addMoreBtn) addMoreBtn.addEventListener('click', () => location.reload());
-  if (closeBtn) closeBtn.addEventListener('click', closeSuccessModal);
+  if (addMoreBtn) {
+    addMoreBtn.addEventListener('click', () => {
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      }
+      location.reload();
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      if (cityPageUrl) {
+        window.location.href = cityPageUrl;
+        return;
+      }
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      }
+      closeSuccessModal();
+    });
+  }
 
   modal.addEventListener('click', function (e) {
     if (e.target === modal) closeSuccessModal();

@@ -1,17 +1,33 @@
 # macOS
 .DS_Store
+._*
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
+.pytest_cache/
 
 # Virtual env
 venv/
+.venv/
 .env
 
 # Flask instance folder
 instance/
+backups/
+app/static/uploads/
+*.db
+*.sqlite
+*.sqlite3
 
 # Migrations cache
 migrations/
+
+# Local logs and deployment artifacts
+logs/
+releases/
+current
+shared/
+*.log
+*.tar.gz

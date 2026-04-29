@@ -1,4 +1,6 @@
+{% set hide_header = true %}
 {% extends "base.html" %}
+{% set hide_footer = true %}
 
 {% block title %}{{ city.name }} - VELOJOL{% endblock %}
 
@@ -60,6 +62,14 @@
                 id="searchInput"
                 placeholder="Поиск по названию"
                 class="form-input search-input">
+
+            <a href="{{ url_for('main.add_bikelane', city=city.city_id) }}"
+               class="button__label btn_accent city-add-bikelane-btn">
+
+               <img src="{{ url_for('static', filename='img/icon/plus_invert.svg') }}" 
+                alt="Добавить велodорожку">
+                <span>Добавить велодорожку</span>
+            </a>
             
             <button type="button" 
                     class="button_square_label btn_gray filter-btn"
@@ -72,12 +82,16 @@
 
 
     <!-- Модальное окно фильтров -->
-    <div id="filtersModal" class="modal filters-modal" style="display: none;">
-        <div class="modal-overlay" onclick="closeFiltersModal()"></div>
-        <div class="modal-content modal-filters-content">
+    <div id="filtersModal" class="modal-middle" style="display: none;">
+        <div class="modal-overlay filters-modal-overlay" onclick="closeFiltersModal()">
+            <div class="modal-middle" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3 class="prime100">Фильтры</h3>
-                <button class="modal-close" onclick="closeFiltersModal()">✕</button>
+                <button type="button" class="close button_square_label" onclick="closeFiltersModal()">
+                    <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" 
+                         alt="Закрыть" 
+                         class="icon-small arrow_down">
+                </button>
             </div>
             
             <div class="modal-body">
@@ -108,25 +122,41 @@
             </div>
             
             <div class="modal-footer">
-                <button class="button_square_label btn_gray" onclick="resetFilters()">
+                <button class="button__label btn_gray" onclick="resetFilters()">
                     Сбросить
                 </button>
-                <button class="button_square_label btn_accent" onclick="applyFilters()">
+                <button class="button__label btn_accent" onclick="applyFilters()">
                     Применить
                 </button>
+            </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="city-mobile-tabs" role="tablist" aria-label="Переключение вида города">
+    <button
+        type="button"
+        class="city-mobile-tab is-active"
+        data-city-view-tab="map"
+        aria-selected="true">
+        Карта
+    </button>
+    <button
+        type="button"
+        class="city-mobile-tab"
+        data-city-view-tab="list"
+        aria-selected="false">
+        Список
+    </button>
+</div>
 
-<div class="city-container">
+<div class="city-container" data-city-view="map">
     
-    <div class="bikelane-list-block">
+    <div class="bikelane-list-block" data-city-view-panel="list">
         <!-- Список велодорожек -->
         {% if bikelanes %}
-        <div class="island">
-            <h3 class="prime100 island_heading">Велодорожки</h3>
+        <div class="island pd-0">
             
             <div class="bikelanes-list">
                 {% for bikelane in bikelanes %}
@@ -159,13 +189,8 @@
 
 
     <!-- Карта -->
-    <div id="cityMap" class="city-map"></div>
+    <div id="cityMap" class="city-map" data-city-view-panel="map"></div>
 
-    <div class="city-map-info">
-        <p class="secondary100" style="margin-top: var(--spacer-s); font-size: 14px;">
-            Кликните на велодорожку для просмотра информации
-        </p>
-    </div>
 
     
 
@@ -173,11 +198,11 @@
 
 <!-- Модальное окно велодорожки -->
 <div id="bikelaneModal" style="display: none;">
-    <div class="modal-overlay" onclick="closeBikelaneModal()">
-    <div class="modal-bike-lane">
+    <div class="modal-overlay" onclick="if (event.target === this) closeBikelaneModal()">
+    <div class="modal-bottom" onclick="event.stopPropagation()">
 
         <!--Modal close-->
-        <button class="button_square_icon" onclick="closeBikelaneModal()" style="position: absolute; top: 16px; right: 16px;">
+        <button class="button_square_icon" onclick="closeBikelaneModal()" style="position: absolute; top: var(--spacer-m); right: var(--spacer-m);">
             <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" 
                  alt="Закрыть" 
                  class="icon-small arrow_down">

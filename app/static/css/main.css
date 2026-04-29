@@ -15,6 +15,10 @@
     --spacer-100: 100px
 }
 
+header{
+    overflow: hidden;
+}
+
 .spacer-m{
     height: var(--spacer-m);
 }
@@ -23,15 +27,23 @@
     height: var(--spacer-l);
 }
 
+.w-spacer-m{
+    width: var(--spacer-m) !important;
+    height: var(--spacer-m) !important;
+}
+
 body{
     background-color: var(--bg3);
 }
 
 header, .page-header{
     position: absolute;
-    left: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
     top: 0px;
     width: 100vw;
+    max-width: 600px;
     min-height: 80px;
     display: flex;
     flex-direction: row;
@@ -40,12 +52,14 @@ header, .page-header{
     border-bottom: 1px solid var(--bg3);
     padding-left: var(--spacer-m);
     padding-right: var(--spacer-m);
-    padding: 12px;
+    border-radius: 0 0 var(--spacer-m) var(--spacer-m);
+    padding: var(--spacer-sm);
+    background: var(--bg1);
 }
 
 .page-header{
     position: fixed;
-    z-index: 1000001;
+    z-index: 10;
     background-color: var(--bg1);
     border-radius: var(--spacer-m);
 }
@@ -54,6 +68,7 @@ header, .page-header{
     display: flex;
     flex-direction: column;
     gap: var(--spacer-s);
+    align-items: center;
 }
 
 footer{
@@ -62,13 +77,14 @@ footer{
 }
 
 main{
+    display: block;
     padding-top: var(--spacer-100);
     padding-bottom: var(--spacer-100);
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.profile-actions{
-    margin-top: var(--spacer-m);
-}
+
 
 .divider{
     display: block;
@@ -82,6 +98,24 @@ main{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.my-bikelane-details{
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacer-s);
+}
+
+.my-bikelane-detail{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 2px;
+}
+
+.coin_icon{
+    width: var(--spacer-m);
+    height: var(--spacer-m);
 }
 
 .w100{
@@ -112,6 +146,14 @@ main{
     flex-direction: column;
 }
 
+.pd-0{
+    padding: 0px !important;
+}
+
+.fs{
+    align-items: flex-start;
+}
+
 .aic{
     align-items: center;
 }
@@ -135,21 +177,21 @@ main{
 .island{
     background-color: var(--bg1);
     border-radius: var(--spacer-m);
-    padding: var(--spacer-m);
+    padding: 0px var(--spacer-m) var(--spacer-m) var(--spacer-m);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
 }
 
-.auth-container{
-    background-color: var(--bg1);
-    padding: var(--spacer-m);
-    border-radius: var(--spacer-m);
-    max-width: 390px;
-
+.ml-mr-auto{
     margin-left: auto;
     margin-right: auto;
 }
 
 .auth-links{
-    padding-top: var(--spacer-l);
+    padding-top: var(--spacer-s);
     padding-bottom: var(--spacer-l);
 }
 
@@ -186,7 +228,7 @@ main{
 }
 
 .form-section input:last-child{
-    border-bottom: 0px;
+    border-bottom: 0px !important;
 }
 
 input{
@@ -196,6 +238,7 @@ input{
     background-color: var(--bg3);
     padding: var(--spacer-m);
     color: var(--secondary100);
+    border: 0.5px solid var(--secondary20);
 }
 
 input:focus-visible{
@@ -230,7 +273,8 @@ input:focus-visible{
 .social-links, .profile-actions{
     display: flex;
     flex-direction: column;
-    gap: var(--spacer-s);
+    margin-top: var(--spacer-m);
+    margin-bottom: var(--spacer-l);
 }
 
 
@@ -240,7 +284,7 @@ input:focus-visible{
     
     header{
         background-color: var(--bg1);
-        border-radius: 0px 0px 16px 16px;
+        border-radius: 0px 0px var(--spacer-m) var(--spacer-m);
     }
 
 }
@@ -265,7 +309,7 @@ input:focus-visible{
 
 
 .stat-label {
-    font-size: 12px;
+    font-size: var(--spacer-sm);
     color: var(--secondary100);
     margin-top: var(--spacer-xs);
 }
@@ -288,11 +332,7 @@ input:focus-visible{
     flex: 1;
 }
 
-.bikelane-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: var(--spacer-xs);
-}
+
 
 .bikelane-meta {
     font-size: 14px;
@@ -415,54 +455,6 @@ input:focus-visible{
 
 
 
-/* Модальные окна */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index:999;
-}
-
-.modal {
-    background: var(--bg1);
-    border-radius: var(--spacer-m);
-    padding: var(--spacer-l);
-    max-width: 400px;
-    width: 100%;
-    align-items: flex-start;
-    z-index: 10000;
-    display: flex;
-    flex-direction: column;
-    animation: fadeIn 0.3s ease;
-}
-
-
-
-
-.modal-header {
-    margin-bottom: var(--spacer-m);
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 18px;
-}
-
-
-.modal-actions {
-    display: flex;
-    gap: var(--spacer-s);
-}
-
-.modal-actions .button_square_label {
-    flex: 1;
-}
 
 
 
@@ -477,28 +469,32 @@ input:focus-visible{
     height: 100%;
     background: rgba(0, 0, 0, 0.9);
     display: flex;
-    align-items: center;
     justify-content: center;
     z-index: 10001;
+    padding: var(--spacer-l);
 }
 
 .photo-modal {
     position: relative;
-    max-width: 90%;
-    max-height: 90%;
+    max-width: min(92vw, 1200px);
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .photo-modal img {
     max-width: 100%;
-    max-height: 100%;
+    max-height: 90vh;
     border-radius: var(--spacer-s);
+    object-fit: contain;
 }
 
 .photo-modal-close {
     position: absolute;
-    top: -40px;
+    top: var(--spacer-m);
     right: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--bg1);
     border: none;
     width: 32px;
     height: 32px;
@@ -513,6 +509,48 @@ input:focus-visible{
 
 .photo-modal-close:hover {
     background: white;
+}
+
+.photo-modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.88);
+    color: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: var(--spacer-l);
+}
+
+.photo-modal-prev {
+    left: var(--spacer-m);
+}
+
+.photo-modal-next {
+    right: var(--spacer-m);
+}
+
+.photo-modal-counter {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px var(--spacer-sm);
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.72);
+    color: white;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.photo-gallery-open {
+    overflow: hidden;
 }
 
 /* Страница просмотра отдельной велодорожки */
@@ -533,18 +571,6 @@ input:focus-visible{
     color: var(--prime100);
 }
 
-.bikelane-title-section h1 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: var(--spacer-xs);
-}
-
-.bikelane-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--spacer-s);
-    font-size: 14px;
-}
 
 .dot {
     color: var(--secondary100);
@@ -685,7 +711,32 @@ input:focus-visible{
     color: var(--prime_invert100);
 }
 
+.spacer100{height: 100px !important; display: block;}
+.spacer150{height: 150px !important; display: block;}
+.spacer200{height: 200px !important; display: block;}
 
 
 
 
+/* header */
+.header-img{
+    width: 100%;
+    max-width: 162px;
+    height: 100px;
+    object-fit: contain;
+
+    position: absolute;
+    right: var(--spacer-m);
+    bottom: 60px;
+}
+
+.header-title{
+    width: calc(100% - 162px);
+}
+
+.avatar_profile{
+    width: 40px;
+    height: 40px;
+    border-radius: var(--spacer-m);
+    object-fit: cover;
+}

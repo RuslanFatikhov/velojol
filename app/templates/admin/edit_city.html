@@ -2,7 +2,7 @@
 
 {% block content %}
 <div style="margin-bottom: 20px;">
-    <a href="{{ url_for('admin.cities') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+    <a href="{{ url_for('admin.cities') }}" style="background: #6c757d; color: white; padding: 8px var(--spacer-m); text-decoration: none; border-radius: 4px;">
         ← Назад к городам
     </a>
 </div>
@@ -54,29 +54,29 @@
     </div>
     
     <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Герб города (PNG):</label>
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Герб города:</label>
         {% if city.coat_of_arms %}
             <div style="margin-bottom: 10px;">
                 <img src="{{ url_for('static', filename=city.coat_of_arms) }}" alt="Текущий герб" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
                 <small style="display: block; color: #666;">Текущий герб</small>
             </div>
         {% endif %}
-        <input type="file" name="coat_of_arms" accept=".png"
+        <input type="file" name="coat_of_arms" accept=".jpg,.jpeg,.png,.webp"
                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        <small style="color: #666;">Оставьте пустым, чтобы не изменять. Формат: PNG, рекомендуемый размер: 256x256px</small>
+        <small style="color: #666;">Оставьте пустым, чтобы не изменять. Будет сохранен как JPG до 50KB</small>
     </div>
     
     <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Фон города (JPG):</label>
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Фон города:</label>
         {% if city.background_image %}
             <div style="margin-bottom: 10px;">
-                <img src="{{ url_for('static', filename=city.background_image) }}" alt="Текущий фон" style="width: 200px; height: 112px; object-fit: cover; border-radius: 4px;">
+                <img src="{{ url_for('static', filename=city.background_image) }}" alt="Текущий фон" style="width: 200px; height: 1var(--spacer-sm); object-fit: cover; border-radius: 4px;">
                 <small style="display: block; color: #666;">Текущий фон</small>
             </div>
         {% endif %}
-        <input type="file" name="background_image" accept=".jpg,.jpeg"
+        <input type="file" name="background_image" accept=".jpg,.jpeg,.png,.webp"
                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        <small style="color: #666;">Оставьте пустым, чтобы не изменять. Формат: JPG, рекомендуемый размер: 1920x1080px</small>
+        <small style="color: #666;">Оставьте пустым, чтобы не изменять. Будет сохранен как JPG до 50KB</small>
     </div>
     
     <div style="margin-bottom: 20px;
@@ -86,11 +86,11 @@
     </div>
     
     <div style="display: flex; gap: 10px;">
-        <button type="submit" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer;">
+        <button type="submit" style="background: #007bff; color: white; border: none; padding: 12px var(--spacer-l); border-radius: 4px; cursor: pointer;">
             Сохранить изменения
         </button>
         <a href="{{ url_for('admin.cities') }}" 
-           style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">
+           style="background: #6c757d; color: white; padding: 12px var(--spacer-l); text-decoration: none; border-radius: 4px;">
             Отмена
         </a>
     </div>

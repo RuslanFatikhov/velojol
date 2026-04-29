@@ -5,19 +5,33 @@
 
     --prime100: #121212;
 
-    --prime-invert:#fefefe;
+    --prime-invert100:#fefefe;
+    --prime-invert200: #f2f2f2;
 
-
+    --secondary10: rgba(106, 106, 106, 0.1);
     --secondary20:rgba(106, 106, 106, 0.2);
     --secondary30:rgba(106, 106, 106, 0.3);
     --secondary40:rgba(106, 106, 106, 0.4);
     --secondary100:#6A6A6A;
+
+    --warning20: rgba(255, 204, 0, 0.2);
+    --warning80: rgba(255, 204, 0, 0.8);
+    --warning100: #FFCC00;
+
+
+    --red20: rgba(231, 76, 60, 0.2);
+    --red80: rgba(231, 76, 60, 0.8);
+    --red100:#c0392b;
+
 
     --accent80: #D6F3DD;
     --accent100:#34C759;
     --accent200:#2AA248;
 
     --prime_invert100:#fefefe;
+
+    --blue100: #3498db;
+    --blue200: #2980b9;
 }
 
 .prime100{

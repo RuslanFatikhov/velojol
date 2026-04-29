@@ -2,7 +2,7 @@
 
 {% block content %}
 <div style="margin-bottom: 20px;">
-    <a href="{{ url_for('admin.bikelanes') }}" style="background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+    <a href="{{ url_for('admin.bikelanes') }}" style="background: #6c757d; color: white; padding: 8px var(--spacer-m); text-decoration: none; border-radius: 4px;">
         ← Назад к списку
     </a>
 </div>
@@ -14,7 +14,7 @@
     <div>
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h3>Статус</h3>
-            <span style="padding: 8px 16px; border-radius: 4px; 
+            <span style="padding: 8px var(--spacer-m); border-radius: 4px; 
                 background: {% if bikelane.status == 'pending' %}#fff3cd{% elif bikelane.status == 'approved' %}#d4edda{% else %}#f8d7da{% endif %};">
                 {{ bikelane.status_display }}
             </span>

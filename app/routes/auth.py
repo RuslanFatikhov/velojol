@@ -6,12 +6,59 @@ from app.models.user import User
 from app.models.bikelane import BikeLane
 from app.models.verification import VerificationCode
 from app.utils.email_sender import send_verification_code
+from app.utils.file_handler import FileHandler
 from datetime import datetime, timezone
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 import re
 import os
 
 # Создаем Blueprint для аутентификации
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+
+def _get_json_payload():
+    """Безопасно возвращает JSON body для XHR-запросов."""
+    return request.get_json(silent=True) or {}
+
+
+def _get_verification_email(session_key):
+    """Берет email из JSON-запроса, либо из сессии как fallback."""
+    payload = _get_json_payload()
+    email = payload.get('email', '')
+
+    if isinstance(email, str):
+        email = email.strip().lower()
+    else:
+        email = ''
+
+    if not email:
+        email = session.get(session_key, '')
+
+    return email
+
+
+def _build_password_reset_token(email):
+    """Создает подписанный токен для перехода к смене пароля."""
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    return serializer.dumps({'email': email}, salt='password-reset')
+
+
+def _load_password_reset_token(token, max_age=1800):
+    """Проверяет токен восстановления и возвращает email."""
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+
+    try:
+        payload = serializer.loads(token, salt='password-reset', max_age=max_age)
+    except SignatureExpired:
+        return None, 'Ссылка для восстановления истекла. Запросите новый код.'
+    except BadSignature:
+        return None, 'Неверная ссылка для восстановления пароля'
+
+    email = payload.get('email')
+    if not isinstance(email, str) or not email.strip():
+        return None, 'Неверная ссылка для восстановления пароля'
+
+    return email.strip().lower(), None
 
 def validate_email(email):
     """Валидация email"""
@@ -148,12 +195,13 @@ def register():
 @bp.route('/verify-registration', methods=['POST'])
 def verify_registration():
     """Проверка кода регистрации и создание пользователя"""
-    
-    email = session.get('pending_registration_email')
+
+    payload = _get_json_payload()
+    email = _get_verification_email('pending_registration_email')
     if not email:
         return jsonify({'success': False, 'message': 'Сессия истекла'}), 400
-    
-    code = request.json.get('code', '').strip()
+
+    code = str(payload.get('code', '')).strip()
     
     if not code:
         return jsonify({'success': False, 'message': 'Введите код'}), 400
@@ -183,6 +231,7 @@ def verify_registration():
     
     # Код верный - создаем пользователя
     data = verification.registration_data
+    session['pending_registration_email'] = email
     
     user = User(
         email=data['email'],
@@ -209,12 +258,15 @@ def verify_registration():
 @bp.route('/resend-code', methods=['POST'])
 def resend_code():
     """Повторная отправка кода"""
-    
-    email = request.json.get('email')
-    code_type = request.json.get('code_type')  # 'registration' или 'password_reset'
-    
+
+    payload = _get_json_payload()
+    email = payload.get('email')
+    code_type = payload.get('code_type')  # 'registration' или 'password_reset'
+
     if not email or not code_type:
         return jsonify({'success': False, 'message': 'Недостаточно данных'}), 400
+
+    email = email.strip().lower()
     
     # Получаем активный код
     verification = VerificationCode.get_active_code(email, code_type)
@@ -235,7 +287,12 @@ def resend_code():
     
     # Отправляем код
     send_verification_code(email, verification.code, code_type)
-    
+
+    if code_type == 'registration':
+        session['pending_registration_email'] = email
+    elif code_type == 'password_reset':
+        session['password_reset_email'] = email
+
     return jsonify({'success': True, 'message': 'Код отправлен повторно'})
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -248,7 +305,7 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
-        remember = request.form.get('remember_me') == 'on'
+        remember = request.form.get('remember_me', 'on') == 'on'
         
         if not email or not password:
             flash('Заполните все поля', 'error')
@@ -263,7 +320,8 @@ def login():
         if user.is_banned:
             flash(f'Ваш аккаунт заблокирован. Причина: {user.ban_reason}', 'error')
             return render_template('auth/login.html', form_data=request.form)
-        
+
+        session.permanent = True
         login_user(user, remember=remember)
         
         next_page = request.args.get('next')
@@ -277,8 +335,9 @@ def login():
 @bp.route('/forgot-password', methods=['POST'])
 def forgot_password():
     """Запрос на восстановление пароля"""
-    
-    email = request.json.get('email', '').strip().lower()
+
+    payload = _get_json_payload()
+    email = str(payload.get('email', '')).strip().lower()
     
     if not email or not validate_email(email):
         return jsonify({'success': False, 'message': 'Введите корректный email'}), 400
@@ -319,12 +378,13 @@ def forgot_password():
 @bp.route('/verify-reset-code', methods=['POST'])
 def verify_reset_code():
     """Проверка кода восстановления пароля"""
-    
-    email = session.get('password_reset_email')
+
+    payload = _get_json_payload()
+    email = _get_verification_email('password_reset_email')
     if not email:
         return jsonify({'success': False, 'message': 'Сессия истекла'}), 400
-    
-    code = request.json.get('code', '').strip()
+
+    code = str(payload.get('code', '')).strip()
     
     if not code:
         return jsonify({'success': False, 'message': 'Введите код'}), 400
@@ -355,20 +415,49 @@ def verify_reset_code():
     # Код верный - помечаем как проверенный
     verification.verify()
     db.session.commit()
-    
+
+    reset_token = _build_password_reset_token(email)
+
     # Сохраняем в сессии что код проверен
+    session['password_reset_email'] = email
     session['password_reset_verified'] = True
     
-    return jsonify({'success': True, 'message': 'Код подтвержден', 'redirect': url_for('auth.reset_password')})
+    return jsonify({
+        'success': True,
+        'message': 'Код подтвержден',
+        'redirect': url_for('auth.reset_password', token=reset_token)
+    })
 
 @bp.route('/reset-password', methods=['GET', 'POST'])
 def reset_password():
     """Страница смены пароля"""
-    
-    email = session.get('password_reset_email')
-    verified = session.get('password_reset_verified')
-    
-    if not email or not verified:
+
+    token = request.args.get('token', '').strip()
+    if request.method == 'POST':
+        token = request.form.get('token', '').strip()
+
+    email = None
+    token_error = None
+
+    if token:
+        email, token_error = _load_password_reset_token(token)
+
+    if not email:
+        email = session.get('password_reset_email')
+        verified = session.get('password_reset_verified')
+        if not email or not verified:
+            flash(token_error or 'Неверная ссылка для восстановления пароля', 'error')
+            return redirect(url_for('auth.login'))
+
+    if token_error:
+        flash(token_error, 'error')
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST' and not token:
+        flash('Неверная ссылка для восстановления пароля', 'error')
+        return redirect(url_for('auth.login'))
+
+    if not email:
         flash('Неверная ссылка для восстановления пароля', 'error')
         return redirect(url_for('auth.login'))
     
@@ -401,7 +490,7 @@ def reset_password():
         flash('Пароль успешно изменен! Войдите с новым паролем.', 'success')
         return redirect(url_for('auth.login'))
     
-    return render_template('auth/reset_password.html')
+    return render_template('auth/reset_password.html', token=token)
 
 @bp.route('/logout')
 @login_required
@@ -503,15 +592,34 @@ def my_bikelanes():
 def edit_profile():
     """Редактирование профиля"""
     from app.utils.file_handler import FileHandler
+
+    form_data = {
+        'nickname': current_user.nickname or '',
+        'email': current_user.email or '',
+        'strava_url': current_user.strava_url or '',
+        'komoot_url': current_user.komoot_url or '',
+        'telegram_url': current_user.telegram_url or '',
+        'instagram_url': current_user.instagram_url or '',
+    }
     
     if request.method == 'POST':
         nickname = request.form.get('nickname', '').strip()
+        email = request.form.get('email', '').strip()
         
         # Социальные сети
         strava_url = request.form.get('strava_url', '').strip()
         komoot_url = request.form.get('komoot_url', '').strip()
         telegram_url = request.form.get('telegram_url', '').strip()
         instagram_url = request.form.get('instagram_url', '').strip()
+
+        form_data.update({
+            'nickname': nickname,
+            'email': email,
+            'strava_url': strava_url,
+            'komoot_url': komoot_url,
+            'telegram_url': telegram_url,
+            'instagram_url': instagram_url,
+        })
         
         errors = []
         
@@ -535,7 +643,7 @@ def edit_profile():
         if errors:
             for error in errors:
                 flash(error, 'error')
-            return render_template('auth/edit_profile.html')
+            return render_template('auth/edit_profile.html', form_data=form_data)
         
         # Обработка аватара
         if 'avatar' in request.files:
@@ -555,11 +663,20 @@ def edit_profile():
                     os.makedirs(user_avatar_dir, exist_ok=True)
                     
                     timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
-                    filename = f"avatar_{timestamp}.{file_ext}"
+                    filename = f"avatar_{timestamp}.jpg"
                     avatar_path = os.path.join(user_avatar_dir, filename)
                     
                     avatar_file.save(avatar_path)
-                    current_user.avatar_url = f"uploads/avatars/{current_user.id}/{filename}"
+                    if not FileHandler.compress_image_to_jpeg(
+                        avatar_path,
+                        max_size_kb=50,
+                        max_width=512,
+                        max_height=512
+                    ):
+                        os.remove(avatar_path)
+                        flash('Не удалось обработать аватар', 'error')
+                    else:
+                        current_user.avatar_url = f"uploads/avatars/{current_user.id}/{filename}"
         # Обновляем данные
         current_user.nickname = nickname
         current_user.strava_url = strava_url if strava_url else None
@@ -572,4 +689,4 @@ def edit_profile():
         flash('Профиль обновлен', 'success')
         return redirect(url_for('auth.profile'))
     
-    return render_template('auth/edit_profile.html')
+    return render_template('auth/edit_profile.html', form_data=form_data)

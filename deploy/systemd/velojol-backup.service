@@ -1,0 +1,14 @@
+[Unit]
+Description=Velojol Data Backup
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/opt/open-velojol/current
+Environment=APP_ROOT=/opt/open-velojol
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/opt/open-velojol/shared/.env
+ExecStart=/opt/open-velojol/open-velojol-env/bin/python /opt/open-velojol/current/scripts/backup_data.py
+

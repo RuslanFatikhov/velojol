@@ -5,7 +5,7 @@
 
 
 {% block content %}
-<div class="auth-container">
+<div class="island">
     <div class="auth-header gap-s">
         <h1 class="prime100">Присоединяйтесь к VELOJOL</h1>
         <p class="prime100 tac">Создайте аккаунт и станьте частью велосообщества</p>
@@ -111,7 +111,7 @@
 
         <!-- Кнопка регистрации -->
         <div class="submit-section">
-            <button type="submit" class="button_square_label btn_accent" id="submitBtn">
+            <button type="submit" class="button__label btn_accent" id="submitBtn">
                 Создать аккаунт
             </button>
         </div>
@@ -119,7 +119,7 @@
 
     <div class="vstack gap-s aic" style="margin-top: var(--spacer-xl);">
         <p class="prime100 tac">Уже есть аккаунт?</p>
-        <a class="button_square_label btn_gray" href="{{ url_for('auth.login') }}">Войти</a>
+        <a class="button__label btn_gray" href="{{ url_for('auth.login') }}">Войти</a>
     </div>
 </div>
 {% endblock %}

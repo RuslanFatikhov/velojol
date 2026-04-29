@@ -4,10 +4,31 @@ from flask import render_template, request, flash, redirect, url_for, jsonify
 from app import db
 from app.models.city import City
 from . import bp, admin_required
+from app.utils.file_handler import FileHandler
 import json
 import os
 from flask import current_app
 from werkzeug.utils import secure_filename
+
+
+def _save_city_image(uploaded_file, filename, max_width, max_height):
+    upload_path = os.path.join(current_app.static_folder, 'uploads', 'cities')
+    os.makedirs(upload_path, exist_ok=True)
+    safe_filename = secure_filename(filename)
+    file_path = os.path.join(upload_path, safe_filename)
+
+    uploaded_file.save(file_path)
+    if not FileHandler.compress_image_to_jpeg(
+        file_path,
+        max_size_kb=50,
+        max_width=max_width,
+        max_height=max_height
+    ):
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        return None
+
+    return f'uploads/cities/{safe_filename}'
 
 @bp.route('/cities')
 @admin_required
@@ -70,28 +91,32 @@ def add_city():
     # Обрабатываем герб
     coat_of_arms_file = request.files.get('coat_of_arms')
     if coat_of_arms_file and coat_of_arms_file.filename:
-        if coat_of_arms_file.filename.lower().endswith('.png'):
-            filename = secure_filename(f"{city_id}_coat.png")
-            upload_path = os.path.join(current_app.static_folder, 'uploads', 'cities')
-            os.makedirs(upload_path, exist_ok=True)
-            file_path = os.path.join(upload_path, filename)
-            coat_of_arms_file.save(file_path)
-            coat_of_arms_path = f'uploads/cities/{filename}'
+        if coat_of_arms_file.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+            coat_of_arms_path = _save_city_image(
+                coat_of_arms_file,
+                f"{city_id}_coat.jpg",
+                max_width=512,
+                max_height=512
+            )
+            if not coat_of_arms_path:
+                errors.append('Не удалось обработать герб города')
         else:
-            errors.append('Герб должен быть в формате PNG')
+            errors.append('Герб должен быть изображением JPG, PNG или WebP')
     
     # Обрабатываем фон
     background_file = request.files.get('background_image')
     if background_file and background_file.filename:
-        if background_file.filename.lower().endswith(('.jpg', '.jpeg')):
-            filename = secure_filename(f"{city_id}_bg.jpg")
-            upload_path = os.path.join(current_app.static_folder, 'uploads', 'cities')
-            os.makedirs(upload_path, exist_ok=True)
-            file_path = os.path.join(upload_path, filename)
-            background_file.save(file_path)
-            background_image_path = f'uploads/cities/{filename}'
+        if background_file.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+            background_image_path = _save_city_image(
+                background_file,
+                f"{city_id}_bg.jpg",
+                max_width=1920,
+                max_height=1080
+            )
+            if not background_image_path:
+                errors.append('Не удалось обработать фон города')
         else:
-            errors.append('Фон должен быть в формате JPG')
+            errors.append('Фон должен быть изображением JPG, PNG или WebP')
     
     if errors:
         for error in errors:
@@ -223,23 +248,35 @@ def edit_city(city_id):
     # Обработка загрузки новых файлов
     coat_of_arms_file = request.files.get('coat_of_arms')
     if coat_of_arms_file and coat_of_arms_file.filename:
-        if coat_of_arms_file.filename.lower().endswith('.png'):
-            filename = secure_filename(f"{city.city_id}_coat.png")
-            upload_path = os.path.join(current_app.static_folder, 'uploads', 'cities')
-            os.makedirs(upload_path, exist_ok=True)
-            file_path = os.path.join(upload_path, filename)
-            coat_of_arms_file.save(file_path)
-            city.coat_of_arms = f'uploads/cities/{filename}'
+        if coat_of_arms_file.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+            coat_path = _save_city_image(
+                coat_of_arms_file,
+                f"{city.city_id}_coat.jpg",
+                max_width=512,
+                max_height=512
+            )
+            if coat_path:
+                city.coat_of_arms = coat_path
+            else:
+                flash('Не удалось обработать герб города', 'error')
+        else:
+            flash('Герб должен быть изображением JPG, PNG или WebP', 'error')
     
     background_file = request.files.get('background_image')
     if background_file and background_file.filename:
-        if background_file.filename.lower().endswith(('.jpg', '.jpeg')):
-            filename = secure_filename(f"{city.city_id}_bg.jpg")
-            upload_path = os.path.join(current_app.static_folder, 'uploads', 'cities')
-            os.makedirs(upload_path, exist_ok=True)
-            file_path = os.path.join(upload_path, filename)
-            background_file.save(file_path)
-            city.background_image = f'uploads/cities/{filename}'
+        if background_file.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+            bg_path = _save_city_image(
+                background_file,
+                f"{city.city_id}_bg.jpg",
+                max_width=1920,
+                max_height=1080
+            )
+            if bg_path:
+                city.background_image = bg_path
+            else:
+                flash('Не удалось обработать фон города', 'error')
+        else:
+            flash('Фон должен быть изображением JPG, PNG или WebP', 'error')
     
     # Обновляем основные данные
     city.name = name

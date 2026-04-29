@@ -3,10 +3,71 @@
  */
 
 // Токен Mapbox
-mapboxgl.accessToken = 'pk.eyJ1IjoiZnV6bGFuIiwiYSI6ImNsc2N3dnhuNTBrZXYya28xeG1mb3k3N3AifQ.bLjMuXA5JfgBW0pwtjQxxA';
+mapboxgl.accessToken = window.MAPBOX_TOKEN || '';
 
 let cityMap;
 let bikelaneSourceAdded = false;
+let photoGalleryState = {
+    photos: [],
+    currentIndex: 0
+};
+const CITY_MOBILE_VIEW_STORAGE_KEY = 'cityMobileView';
+
+function isMobileCityView() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function setCityMobileView(view) {
+    const container = document.querySelector('.city-container');
+    const tabs = document.querySelectorAll('[data-city-view-tab]');
+
+    if (!container) {
+        return;
+    }
+
+    const nextView = view === 'list' ? 'list' : 'map';
+    container.setAttribute('data-city-view', nextView);
+    localStorage.setItem(CITY_MOBILE_VIEW_STORAGE_KEY, nextView);
+
+    tabs.forEach((tab) => {
+        const isActive = tab.dataset.cityViewTab === nextView;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    if (nextView === 'map' && cityMap) {
+        setTimeout(() => cityMap.resize(), 50);
+    }
+}
+
+function initCityMobileTabs() {
+    const tabs = document.querySelectorAll('[data-city-view-tab]');
+
+    if (!tabs.length) {
+        return;
+    }
+
+    tabs.forEach((tab) => {
+        tab.addEventListener('click', function() {
+            setCityMobileView(this.dataset.cityViewTab);
+        });
+    });
+
+    if (isMobileCityView()) {
+        const savedView = localStorage.getItem(CITY_MOBILE_VIEW_STORAGE_KEY);
+        setCityMobileView(savedView || 'map');
+    }
+
+    window.addEventListener('resize', function() {
+        if (!isMobileCityView()) {
+            setCityMobileView('map');
+            return;
+        }
+
+        const savedView = localStorage.getItem(CITY_MOBILE_VIEW_STORAGE_KEY);
+        setCityMobileView(savedView || 'map');
+    });
+}
 
 /**
  * Инициализация карты города
@@ -219,13 +280,31 @@ function initModalMap(bikelane) {
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Инициализация страницы города');
+    initCityMobileTabs();
     initCityMap();
     
     // Закрытие модалки по Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
+            if (document.querySelector('.photo-modal-overlay')) {
+                closePhotoGallery();
+                return;
+            }
+
             closeBikelaneModal();
             closeFiltersModal();
+        }
+
+        if (!document.querySelector('.photo-modal-overlay')) {
+            return;
+        }
+
+        if (e.key === 'ArrowLeft') {
+            changePhotoGalleryImage(-1);
+        }
+
+        if (e.key === 'ArrowRight') {
+            changePhotoGalleryImage(1);
         }
     });
 });
@@ -285,14 +364,17 @@ async function showBikelaneModal(bikelaneId) {
         if (bikelane.photos && bikelane.photos.length > 0) {
             html += `
                 <div class="modal-photos">
-                    <h3 class="prime100">Фотографии</h3>
                     <div class="modal-photos-grid">
             `;
             
-            bikelane.photos.forEach(photo => {
+            bikelane.photos.forEach((photo, index) => {
                 html += `
                     <div class="modal-photo">
-                        <img src="/static/${photo}" alt="Фото велодорожки">
+                        <img
+                            src="/static/${photo}"
+                            alt="Фото велодорожки ${index + 1}"
+                            class="modal-photo-image"
+                            data-photo-index="${index}">
                     </div>
                 `;
             });
@@ -341,9 +423,20 @@ async function showBikelaneModal(bikelaneId) {
                 </div>
 
                 <div class="modal-actions">
-                    <button class="button_square_label btn_gray" onclick="closeBikelaneModal()">
-                        Закрыть
+                    ${
+                      bikelane.edit_url
+                        ? `
+                    <a class="button__label btn_black" href="${bikelane.edit_url}">
+                        Редактировать
+                    </a>
+                    `
+                        : ''
+                    }
+                    <button class="button_square_label close" onclick="closeBikelaneModal()">
+                        <img src="/static/img/icon/cross.svg" alt="Закрыть" class="icon-small arrow_down">
                     </button>
+
+
                 </div>
             </div>
                 
@@ -352,6 +445,7 @@ async function showBikelaneModal(bikelaneId) {
         `;
         
         modalContent.innerHTML = html;
+        initModalPhotoGallery(bikelane.photos || []);
         
         setTimeout(() => {
             initModalMap(bikelane);
@@ -373,6 +467,103 @@ async function showBikelaneModal(bikelaneId) {
 function closeBikelaneModal() {
     const modal = document.getElementById('bikelaneModal');
     modal.style.display = 'none';
+}
+
+function initModalPhotoGallery(photos) {
+    const photoElements = document.querySelectorAll('.modal-photo-image');
+
+    if (!photoElements.length) {
+        return;
+    }
+
+    photoGalleryState.photos = photos.map((photo) => `/static/${photo}`);
+    photoGalleryState.currentIndex = 0;
+
+    photoElements.forEach((photoElement) => {
+        photoElement.addEventListener('click', function() {
+            const index = Number.parseInt(this.dataset.photoIndex || '0', 10);
+            openPhotoGallery(index);
+        });
+    });
+}
+
+function openPhotoGallery(index) {
+    if (!photoGalleryState.photos.length) {
+        return;
+    }
+
+    photoGalleryState.currentIndex = index;
+
+    const existingOverlay = document.querySelector('.photo-modal-overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'photo-modal-overlay';
+    overlay.innerHTML = `
+        <div class="photo-modal" onclick="event.stopPropagation()">
+            <button class="photo-modal-close button_square_label" type="button" aria-label="Закрыть галерею" onclick="closePhotoGallery()">
+                <img src="/static/img/icon/cross.svg" alt="Закрыть">
+            </button>
+
+            <button class="photo-modal-nav photo-modal-prev" type="button" aria-label="Предыдущее фото" onclick="changePhotoGalleryImage(-1)">
+                <img src="/static/img/icon/chevron_left.svg" alt="Предыдущее фото">
+            </button>
+            <img src="" alt="Фото велodorожки" id="photoGalleryImage">
+            <button class="photo-modal-nav photo-modal-next" type="button" aria-label="Следующее фото" onclick="changePhotoGalleryImage(1)">
+                <img src="/static/img/icon/chevron_right.svg" alt="Следующее фото">
+            </button>
+            <div class="photo-modal-counter" id="photoGalleryCounter"></div>
+        </div>
+    `;
+
+    overlay.addEventListener('click', closePhotoGallery);
+    document.body.appendChild(overlay);
+    document.body.classList.add('photo-gallery-open');
+
+    updatePhotoGalleryView();
+}
+
+function updatePhotoGalleryView() {
+    const image = document.getElementById('photoGalleryImage');
+    const counter = document.getElementById('photoGalleryCounter');
+    const prevButton = document.querySelector('.photo-modal-prev');
+    const nextButton = document.querySelector('.photo-modal-next');
+
+    if (!image || !counter || !photoGalleryState.photos.length) {
+        return;
+    }
+
+    image.src = photoGalleryState.photos[photoGalleryState.currentIndex];
+    counter.textContent = `${photoGalleryState.currentIndex + 1} / ${photoGalleryState.photos.length}`;
+
+    const hasMultiplePhotos = photoGalleryState.photos.length > 1;
+    if (prevButton) {
+        prevButton.style.display = hasMultiplePhotos ? 'flex' : 'none';
+    }
+    if (nextButton) {
+        nextButton.style.display = hasMultiplePhotos ? 'flex' : 'none';
+    }
+}
+
+function changePhotoGalleryImage(step) {
+    if (!photoGalleryState.photos.length) {
+        return;
+    }
+
+    const total = photoGalleryState.photos.length;
+    photoGalleryState.currentIndex = (photoGalleryState.currentIndex + step + total) % total;
+    updatePhotoGalleryView();
+}
+
+function closePhotoGallery() {
+    const overlay = document.querySelector('.photo-modal-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+
+    document.body.classList.remove('photo-gallery-open');
 }
 
 function extractYouTubeId(url) {

@@ -3,6 +3,8 @@
 
 {% block title %}Мои велодорожки - VELOJOL{% endblock %}
 
+
+
 {% block content %}
 <div class="page-header" style="justify-content: center !important;">
     <a href="profile" class="button_square_icon page_header_left">
@@ -16,7 +18,7 @@
     
     <!-- Кнопка добавления -->
     <div class="button_wrapper_fixed">
-        <a href="{{ url_for('main.add_bikelane') }}" class="button_square_label btn_black">
+        <a href="{{ url_for('main.add_bikelane') }}" class="button__label btn_black">
             Добавить велодорожку
         </a>
     </div>
@@ -32,7 +34,7 @@
             </a>
             <a href="{{ url_for('auth.my_bikelanes', status='pending') }}" 
                class="filter-tab {% if status_filter == 'pending' %}active{% endif %}">
-                На проверке <p class="badge_s">{{ user_stats.pending or 0 }}</p>
+                На модерации <p class="badge_s">{{ user_stats.pending or 0 }}</p>
             </a>
             <a href="{{ url_for('auth.my_bikelanes', status='approved') }}" 
                class="filter-tab {% if status_filter == 'approved' %}active{% endif %}">
@@ -47,69 +49,81 @@
     </div>
 
 
-    <div class="cells">
+    <div class="bikelanes-list">
         <!-- Список велодорожек -->
     {% if bikelanes.items %}
         {% for bikelane in bikelanes.items %}
-            <a href="{{ url_for('auth.view_bikelane', bikelane_id=bikelane.id) }}" 
-                class="cell_bikelane">
+            {% set bikelane_date = bikelane.created_at.strftime('%d.%m.%Y') %}
+            {% if loop.changed(bikelane_date) %}
+            {% if not loop.first %}
+            </div>
+            {% endif %}
+            <h3 class="bikelane-date-heading prime100">{{ bikelane_date }}</h3>
+            <div class="island pd-0">
+            {% endif %}
 
-                <div class="cell_bikelane_left">
-                        {% if bikelane.photos and bikelane.photos|length > 0 %}
-                        <img src="{{ bikelane.photos[0] }}" alt="{{ bikelane.title }}" class="cell_bikelane_img">
-                        {% else %}
-                        <div class="bikelane-photo placeholder"></div>
+            <a href="{{ url_for('auth.view_bikelane', bikelane_id=bikelane.id) }}" 
+                class="my-bikelane-link">
+
+                <div class="bikelane-item">
+
+                    <!--Line-1-->
+                    <div class="bikelane-item-header" style="width: 100%;">
+                        <div class="quality-indicator" style="background-color: {{ bikelane.quality_color }};"></div>
+
+
+                        <div class="vstack gap-xs w100">
+                            <h4 class="prime100 fw500">{{ bikelane.title }}</h4>
+                            <p class="secondary100 fw500">
+                                {{ bikelane.track_type_display }} • {{ '%.2f'|format(bikelane.calculate_length()) }} км
+                            </p>
+                        </div>
+                        <!--Coins-->
+                        {% if bikelane.status == 'approved' %}
+                        <span class="badge_m secondary100">+{{ bikelane.score }} 
+                            <img src="{{ url_for('static', filename='img/icon/coin.png') }}" alt="Очки" class="coin_icon">
+                        </span>
+                        {% endif %}
+                        <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}"
+                             alt="Открыть" class="icon-small chevron_right">
+                    </div>
+
+                    <div class="my-bikelane-summary">
+
+                    <!--Footer-->
+                    <div class="bikelane-item-footer">
+                        
+                        <span class="badge_m secondary100">{{ bikelane.city_display }}</span>
+                        {% if bikelane.photos_count > 0 %}
+                        <span class="badge_m secondary100">{{ bikelane.photos_count }} фото</span>
                         {% endif %}
 
-                    <div class="bikelane-info">
-                            <span class="bikelane_info_header"><h5 class="prime100">{{ bikelane.title }}</h5><span class="status-badge status-{{ bikelane.status }}">
-                                {{ bikelane.status_display }}
-                            </span></span>
-                            <p class="bikelane-meta secondary100">
-                                {{ bikelane.city_display }} • {{ bikelane.track_type_display }} 
-                            </p>
+                        <!--Status-->
+                        <span class="badge_m status-{{ bikelane.status }} my-bikelane-status">
+                            {{ bikelane.status_display }}
+                        </span>
 
                     </div>
-
-                    <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="chevron-right">
-                    
-                </div>
-
 
                     
 
-                   
-
-                    <div class="bikelane-details">
-                    <div class="detail-item">
-                        <span class="secondary100">⭐ {{ bikelane.quality_display }}</span>
-                    </div>
-                    {% if bikelane.photos_count > 0 %}
-                    <div class="detail-item">
-                        <span class="secondary100">📸 {{ bikelane.photos_count }} фото</span>
-                    </div>
-                    {% endif %}
-                    {% if bikelane.status == 'approved' %}
-                    <div class="detail-item">
-                        <span class="secondary100">🏆 +{{ bikelane.score }} баллов</span>
-                    </div>
-                    {% endif %}
-                    <div class="detail-item">
-                        <span class="secondary100">📅 {{ bikelane.created_at.strftime('%d.%m.%Y') }}</span>
-                    </div>
-                    </div>
 
                     {% if bikelane.admin_comment %}
-                    <div class="admin-comment">
-                    <div class="admin-comment-header">
-                        <span class="secondary100">💬 Комментарий модератора:</span>
-                    </div>
-                    <p class="prime100">{{ bikelane.admin_comment }}</p>
+                    <!--Comment-->
+                    <div class="my-bikelane-comment">
+                        <span class="secondary100">Причина:</span>
+                        <p class="prime100">{{ bikelane.admin_comment }}</p>
                     </div>
                     {% endif %}
 
+                </div>
+                </div>
+                
             </a>
 
+            {% if loop.last %}
+            </div>
+            {% endif %}
         {% endfor %}
 
         <!-- Пагинация -->
@@ -117,18 +131,22 @@
         <div class="pagination-container">
             {% if bikelanes.has_prev %}
             <a href="{{ url_for('auth.my_bikelanes', page=bikelanes.prev_num, status=status_filter) }}" 
-               class="button_square_label btn_gray">← Предыдущая</a>
+               class="button_square_label btn_gray">
+               <img src="{{ url_for('static', filename='img/icon/chevron_left.svg') }}" alt="Назад" class="icon-left">
+            </a>
             {% endif %}
 
             <div class="pagination-info">
                 <span class="secondary100">
-                    Страница {{ bikelanes.page }} из {{ bikelanes.pages }}
+                    {{ bikelanes.page }} / {{ bikelanes.pages }}
                 </span>
             </div>
 
             {% if bikelanes.has_next %}
             <a href="{{ url_for('auth.my_bikelanes', page=bikelanes.next_num, status=status_filter) }}" 
-               class="button_square_label btn_gray">Следующая →</a>
+               class="button_square_label btn_gray">
+                <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Вперед" class="icon-right">
+            </a>
             {% endif %}
         </div>
         {% endif %}

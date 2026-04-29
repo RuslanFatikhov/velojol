@@ -1,7 +1,7 @@
 import os
 import uuid
-from werkzeug.utils import secure_filename
-from PIL import Image
+from io import BytesIO
+from PIL import Image, ImageOps
 from flask import current_app, flash
 
 class FileHandler:
@@ -43,32 +43,70 @@ class FileHandler:
         return upload_path
     
     @staticmethod
-    def resize_image(image_path, max_width=1920, max_height=1080, quality=85):
-        """Изменение размера изображения"""
+    def compress_image_to_jpeg(
+        image_path,
+        max_size_kb,
+        max_width=None,
+        max_height=None,
+        min_quality=35,
+        min_dimension=64
+    ):
+        """Сжимает изображение в JPEG до заданного размера файла."""
         try:
             with Image.open(image_path) as img:
-                # Конвертируем в RGB если необходимо
-                if img.mode in ('RGBA', 'LA', 'P'):
+                img = ImageOps.exif_transpose(img)
+
+                if img.mode in ('RGBA', 'LA'):
+                    background = Image.new('RGB', img.size, (255, 255, 255))
+                    alpha = img.getchannel('A')
+                    background.paste(img, mask=alpha)
+                    img = background
+                elif img.mode != 'RGB':
                     img = img.convert('RGB')
-                
-                # Вычисляем новые размеры с сохранением пропорций
-                width, height = img.size
-                
-                if width > max_width or height > max_height:
-                    ratio = min(max_width/width, max_height/height)
-                    new_width = int(width * ratio)
-                    new_height = int(height * ratio)
-                    
-                    img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-                
-                # Сохраняем с оптимизацией
-                img.save(image_path, 'JPEG', quality=quality, optimize=True)
-                
+
+                if max_width and max_height:
+                    width, height = img.size
+                    if width > max_width or height > max_height:
+                        ratio = min(max_width / width, max_height / height)
+                        new_size = (max(1, int(width * ratio)), max(1, int(height * ratio)))
+                        img = img.resize(new_size, Image.Resampling.LANCZOS)
+
+                max_bytes = max_size_kb * 1024
+                quality = 85
+
+                while True:
+                    candidate = FileHandler._encode_jpeg(img, quality)
+                    if len(candidate) <= max_bytes:
+                        break
+
+                    if quality > min_quality:
+                        quality = max(min_quality, quality - 5)
+                        continue
+
+                    width, height = img.size
+                    if width <= min_dimension or height <= min_dimension:
+                        return False
+
+                    img = img.resize(
+                        (max(1, int(width * 0.9)), max(1, int(height * 0.9))),
+                        Image.Resampling.LANCZOS
+                    )
+                    quality = 80
+
+                with open(image_path, 'wb') as output:
+                    output.write(candidate)
+
             return True
             
         except Exception as e:
-            current_app.logger.error(f"Ошибка при изменении размера изображения: {e}")
+            current_app.logger.error(f"Ошибка при сжатии изображения: {e}")
             return False
+
+    @staticmethod
+    def _encode_jpeg(img, quality):
+        output = BytesIO()
+        img.save(output, 'JPEG', quality=quality, optimize=True, progressive=True)
+        return output.getvalue()
     
     @staticmethod
     def save_uploaded_files(files, user_id, bikelane_id):
@@ -87,14 +125,19 @@ class FileHandler:
             if file and file.filename and FileHandler.allowed_file(file.filename):
                 try:
                     # Генерируем безопасное имя файла
-                    unique_filename = FileHandler.generate_unique_filename(file.filename)
+                    unique_filename = f"{uuid.uuid4().hex}.jpg"
                     file_path = os.path.join(upload_path, unique_filename)
                     
                     # Сохраняем файл
                     file.save(file_path)
                     
-                    # Изменяем размер изображения
-                    if FileHandler.resize_image(file_path):
+                    # Сжимаем изображение
+                    if FileHandler.compress_image_to_jpeg(
+                        file_path,
+                        max_size_kb=120,
+                        max_width=1920,
+                        max_height=1080
+                    ):
                         # Сохраняем относительный путь
                         relative_path = os.path.join(
                             'uploads/bikelanes',

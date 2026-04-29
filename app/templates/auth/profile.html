@@ -8,13 +8,13 @@
 
     <div class="profile_header">
         <a href="/">
-            <img src="{{ url_for('static', filename='img/icon/velojol_logo.svg') }}" alt="VELOJOL" class="logo-text">
+            <img src="{{ url_for('static', filename='img/icon/open_velojol_green.svg') }}" alt="VELOJOL" class="logo-text">
         </a>
     </div>
 
     {% if is_own_profile %}
     <div class="button_wrapper_fixed">
-        <a href="{{ url_for('main.add_bikelane') }}" class="button_square_label btn_black">
+        <a href="{{ url_for('main.add_bikelane') }}" class="button__label btn_black">
             Добавить велодорожку
         </a>
     </div>
@@ -29,7 +29,7 @@
                 <h2 class="prime100 profile-name">{{ user.nickname }}</h2>
 
                 <span class="badge_gs">
-                    <img src="{{ url_for('static', filename='img/icon/ball_icon.svg') }}" alt="Очки" class="icon-small">
+                    <img src="{{ url_for('static', filename='img/icon/coin.png') }}" alt="Очки" class="coin_icon">
                     <p class="stat-number">{{ stats.score }}</p>
                 </span>
             </span>
@@ -69,11 +69,11 @@
         {% endif %}
     </div>
 
-    <span class="divider"></span>
+
 
     <!-- Действия (только для своего профиля) -->
     {% if is_own_profile %}
-    <div class="profile-actions">
+    <div class="island pd-0">
         {% if user.is_admin %}
         <a href="{{ url_for('admin.dashboard') }}" class="cell">
             <img src="{{ url_for('static', filename='img/icon/settings.svg') }}" alt="Админ" class="icon-small">
@@ -88,18 +88,17 @@
             <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
         </a>
 
-        <a href="{{ url_for('auth.logout') }}" class="cell">
+        <a href="https://t.me/openvelojol" target="_blank" class="cell">
             <img src="{{ url_for('static', filename='img/icon/help.svg') }}" alt="Помощь" class="icon-small">
             Помощь
             <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
         </a>
         
-        <span class="divider"></span>
         
         <a href="{{ url_for('auth.logout') }}" class="cell">
             <img src="{{ url_for('static', filename='img/icon/door.svg') }}" alt="Выйти" class="icon-small">
             Выйти
-            <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Перейти" class="icon-small chevron_right">
+          
         </a>
     </div>
     {% endif %}

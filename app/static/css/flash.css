@@ -3,10 +3,12 @@
     .flash-messages {
         position: fixed;
         top: 0px;
-        left: 0px;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100%;
         padding: var(--spacer-m);
         z-index: 2000;
+        max-width: 600px;
     }
     
     .flash-message {
@@ -18,27 +20,27 @@
     }
     
     .flash-error {
-        background-color: #fee;
-        color: #c33;
-        border: 1px solid #fcc;
+        background-color: var(--red20);
+        color: var(--red100);
+        border: 1px solid var(--red100);
     }
     
     .flash-success {
-        background-color: #efe;
-        color: #363;
-        border: 1px solid #cfc;
+        background-color: var(--accent80);
+        color: var(--accent200);
+        border: 1px solid var(--accent80);
     }
     
     .flash-info {
-        background-color: #eef;
-        color: #336;
-        border: 1px solid #ccf;
+        background-color: var(--secondary20);
+        color: var(--prime100);
+        border: 1px solid var(--secondary20);
     }
     
     .flash-warning {
-        background-color: #ffe;
-        color: #663;
-        border: 1px solid #ffc;
+        background-color: var(--warning20);
+        color: var(--warning100);
+        border: 1px solid var(--warning100);
     }
     
     /* Анимация появления сообщений */

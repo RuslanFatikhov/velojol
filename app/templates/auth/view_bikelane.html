@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="profile-container">
+<div class="vstack gap-s">
     
     <!-- Навигация -->
     <div class="island">
@@ -21,7 +21,7 @@
     <!-- Заголовок и статус -->
     <div class="island">
         <div class="bikelane-header">
-            <div class="bikelane-title-section">
+            <div class="island_heading">
                 <h1 class="prime100">{{ bikelane.title }}</h1>
                 <div class="bikelane-meta">
                     <span class="secondary100">{{ bikelane.city_display }}</span>
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="status-section">
-                <span class="status-badge status-{{ bikelane.status }}">
+                <span class="badge_s status-{{ bikelane.status }}">
                     {{ bikelane.status_display }}
                 </span>
             </div>
@@ -75,6 +75,10 @@
     <!-- Действия -->
     <div class="island">
         <div class="actions-grid">
+            <a href="{{ url_for('main.edit_bikelane', bikelane_id=bikelane.id) }}" class="action-button secondary-button">
+                <span>✏️ Редактировать</span>
+            </a>
+
             {% if bikelane.status == 'pending' %}
             <button onclick="deleteBikelane({{ bikelane.id }}, '{{ bikelane.title }}')" 
                     class="action-button delete-button">

@@ -21,18 +21,30 @@ h1, h2, h3, h4, h5, h6 {
 
 h3{
     font-size: 20px;
-    line-height: 24px;
+    line-height: var(--spacer-l);
     letter-spacing: -0.25px;
 }
 
+h4{
+    font-size: var(--spacer-m);
+    line-height: 20px;
+    letter-spacing: -0.25px;
+}
+
+.caption{
+    font-size: var(--spacer-sm);
+    line-height: 15px;
+    letter-spacing: -0.15px;
+}
+
 h5{
-    font-size: 16px;
-    line-height: 24px;
+    font-size: var(--spacer-m);
+    line-height: var(--spacer-l);
     letter-spacing: -0.25px;
 }
 
 h6{
-    font-size: 12px;
+    font-size: var(--spacer-sm);
     line-height: 15px;
     letter-spacing: 0.15px;
     font-weight: 500;
@@ -56,3 +68,9 @@ p, input, button, .cell, textarea{
     margin-top: var(--spacer-m);
     margin-bottom: var(--spacer-s);
 }
+
+
+.fw500{
+    font-weight: 500;
+}
+

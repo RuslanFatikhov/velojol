@@ -1,4 +1,4 @@
-from flask import render_template, request, flash, redirect, url_for
+from flask import current_app, render_template, request, flash, redirect, url_for
 from flask_login import current_user
 from app import db
 from app.models.bikelane import BikeLane
@@ -23,10 +23,18 @@ def approve_bikelane(bikelane_id):
     """Одобрение велодорожки"""
     bikelane = BikeLane.query.get_or_404(bikelane_id)
     comment = request.form.get('comment', '').strip()
-    
-    bikelane.approve(current_user, comment)
-    db.session.commit()
-    
+
+    try:
+        bikelane.approve(current_user, comment)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            'Не удалось одобрить велодорожку id=%s', bikelane_id
+        )
+        flash('Не удалось одобрить велодорожку. Подробности в логах сервера.', 'error')
+        return redirect(url_for('admin.view_bikelane', bikelane_id=bikelane_id))
+
     flash(f'Велодорожка "{bikelane.title}" одобрена!', 'success')
     return redirect(url_for('admin.bikelanes'))
 
@@ -41,9 +49,17 @@ def reject_bikelane(bikelane_id):
         flash('Комментарий обязателен при отклонении', 'error')
         return redirect(url_for('admin.bikelanes'))
     
-    bikelane.reject(current_user, comment)
-    db.session.commit()
-    
+    try:
+        bikelane.reject(current_user, comment)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            'Не удалось отклонить велодорожку id=%s', bikelane_id
+        )
+        flash('Не удалось отклонить велодорожку. Подробности в логах сервера.', 'error')
+        return redirect(url_for('admin.view_bikelane', bikelane_id=bikelane_id))
+
     flash(f'Велодорожка "{bikelane.title}" отклонена', 'info')
     return redirect(url_for('admin.bikelanes'))
 

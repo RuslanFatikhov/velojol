@@ -1,0 +1,6 @@
+[Unit]
+Description=Backup Open.Velojol SQLite database
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/velojol-backup.sh
