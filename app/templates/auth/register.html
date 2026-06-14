@@ -5,8 +5,9 @@
 
 
 {% block content %}
-<div class="island">
-    <div class="auth-header gap-s">
+<div class="auth-page">
+<div class="island ml-mr-auto">
+    <div class="auth-header gap-s pt-m">
         <h1 class="prime100">Присоединяйтесь к VELOJOL</h1>
         <p class="prime100 tac">Создайте аккаунт и станьте частью велосообщества</p>
     </div>
@@ -119,8 +120,9 @@
 
     <div class="vstack gap-s aic" style="margin-top: var(--spacer-xl);">
         <p class="prime100 tac">Уже есть аккаунт?</p>
-        <a class="button__label btn_gray" href="{{ url_for('auth.login') }}">Войти</a>
+        <a class="button__label btn_gray w100" href="{{ url_for('auth.login') }}">Войти</a>
     </div>
+</div>
 </div>
 {% endblock %}
 

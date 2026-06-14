@@ -7,6 +7,24 @@ import math
 class BikeLane(db.Model):
     """Модель велодорожки"""
     __tablename__ = 'bikelanes'
+    __table_args__ = (
+        db.Index(
+            'uq_bikelanes_osm_source_object',
+            'source',
+            'osm_type',
+            'osm_id',
+            unique=True
+        ),
+    )
+    SCORE_BASE = 5
+    SCORE_DESCRIPTION_MIN_LENGTH = 20
+    SCORE_DESCRIPTION = 5
+    SCORE_TRACK_TYPE = 2
+    SCORE_QUALITY = 2
+    SCORE_PER_PHOTO = 1
+    SCORE_MAX_PHOTOS = 10
+    SCORE_PER_VIDEO = 5
+    SCORE_MAX_VIDEOS = 1
     
     # Основные поля
     id = db.Column(db.Integer, primary_key=True)
@@ -58,6 +76,14 @@ class BikeLane(db.Model):
     
     # Связь с пользователем
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+
+    # Источник импорта
+    source = db.Column(db.String(50), default='manual', nullable=False)
+    osm_type = db.Column(db.String(20), nullable=True)
+    osm_id = db.Column(db.String(64), nullable=True)
+    osm_tags = db.Column(db.Text, nullable=True)
+    imported_at = db.Column(db.DateTime, nullable=True)
+    import_job_id = db.Column(db.Integer, nullable=True)
     
     # Связи с другими таблицами
     moderator = db.relationship('User', foreign_keys=[moderated_by], backref='moderated_bikelanes')
@@ -100,9 +126,9 @@ class BikeLane(db.Model):
         
         quality = base_quality.get(self.track_type, 3)
         
-        # Минус балл если паркуются автомобили
+        # Минус два балла если паркуются автомобили
         if self.has_parking:
-            quality -= 1
+            quality -= 2
         
         # Плюс балл если есть разметка
         if self.has_markings:
@@ -193,12 +219,84 @@ class BikeLane(db.Model):
     
     def calculate_score(self):
         """Рассчитать баллы за велодорожку"""
-        base_score = 5
         photos_count = len(self.get_photos_list())
-        score = base_score + photos_count
         videos_count = len(self.get_videos_list())
-        score += videos_count * 5
+        score = self.SCORE_BASE
+
+        if self.description and len(self.description.strip()) >= self.SCORE_DESCRIPTION_MIN_LENGTH:
+            score += self.SCORE_DESCRIPTION
+
+        if self.track_type:
+            score += self.SCORE_TRACK_TYPE
+
+        if self.quality and 1 <= self.quality <= 5:
+            score += self.SCORE_QUALITY
+
+        score += photos_count * self.SCORE_PER_PHOTO
+        score += videos_count * self.SCORE_PER_VIDEO
         return score
+
+    @classmethod
+    def get_reward_config(cls):
+        """Конфиг баллов для превью прогресса формы."""
+        track_checkpoint = cls.SCORE_BASE + cls.SCORE_TRACK_TYPE
+        description_checkpoint = track_checkpoint + cls.SCORE_DESCRIPTION
+        details_score = description_checkpoint + cls.SCORE_QUALITY
+        photos_checkpoint = details_score + cls.SCORE_MAX_PHOTOS * cls.SCORE_PER_PHOTO
+        max_score = (
+            cls.SCORE_BASE
+            + cls.SCORE_DESCRIPTION
+            + cls.SCORE_TRACK_TYPE
+            + cls.SCORE_QUALITY
+            + cls.SCORE_MAX_PHOTOS * cls.SCORE_PER_PHOTO
+            + cls.SCORE_MAX_VIDEOS * cls.SCORE_PER_VIDEO
+        )
+        return {
+            'maxScore': max_score,
+            'checkpoints': [
+                cls.SCORE_BASE,
+                track_checkpoint,
+                description_checkpoint,
+                details_score,
+                photos_checkpoint,
+                max_score
+            ],
+            'rules': [
+                {
+                    'id': 'base_submission',
+                    'points': cls.SCORE_BASE,
+                    'fields': ['geometry', 'distance']
+                },
+                {
+                    'id': 'track_type',
+                    'points': cls.SCORE_TRACK_TYPE,
+                    'fields': ['track_type']
+                },
+                {
+                    'id': 'description',
+                    'points': cls.SCORE_DESCRIPTION,
+                    'minLength': cls.SCORE_DESCRIPTION_MIN_LENGTH,
+                    'fields': ['description']
+                },
+                {
+                    'id': 'quality',
+                    'points': cls.SCORE_QUALITY,
+                    'fields': ['quality']
+                },
+                {
+                    'id': 'photos',
+                    'points': cls.SCORE_PER_PHOTO,
+                    'maxItems': cls.SCORE_MAX_PHOTOS,
+                    'fields': ['photos']
+                },
+                {
+                    'id': 'video',
+                    'points': cls.SCORE_PER_VIDEO,
+                    'maxItems': cls.SCORE_MAX_VIDEOS,
+                    'fields': ['video_url']
+                }
+            ]
+        }
     
     def to_dict(self):
         """Конвертация в словарь для JSON API"""
@@ -289,6 +387,13 @@ class BikeLane(db.Model):
             'rejected': 'Отклонено'
         }
         return status_names.get(self.status, self.status)
+
+    @property
+    def osm_url(self):
+        """Ссылка на объект OpenStreetMap, если велодорожка импортирована из OSM."""
+        if self.source != 'openstreetmap' or not self.osm_type or not self.osm_id:
+            return None
+        return f'https://www.openstreetmap.org/{self.osm_type}/{self.osm_id}'
     
     @property
     def quality_color(self):

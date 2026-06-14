@@ -1,9 +1,14 @@
 # app/routes/public.py
 
-from flask import Blueprint, render_template, request, jsonify, url_for, redirect
+from datetime import datetime, timedelta
+
+from flask import Blueprint, render_template, request, jsonify, url_for, redirect, abort
 from flask_login import current_user
+from sqlalchemy import false, func
+from app import db
 from app.models.city import City
 from app.models.bikelane import BikeLane
+from app.models.user import User
 
 # Создаем Blueprint для публичных страниц
 bp = Blueprint('public', __name__)
@@ -24,10 +29,207 @@ def _serialize_bikelane_for_viewer(bikelane):
     data['can_edit'] = can_edit
     return data
 
+
+def _get_tournament_period(value):
+    allowed_periods = {
+        'week': 'Неделя',
+        'month': 'Месяц',
+        'all': 'Всё время',
+    }
+    period = value if value in allowed_periods else 'week'
+    return period, allowed_periods
+
+
+def _get_tournament_filters():
+    countries = [
+        country for (country,) in db.session.query(City.country)
+        .filter_by(status='active')
+        .distinct()
+        .order_by(City.country)
+        .all()
+    ]
+
+    selected_country_id = request.args.get('country_id', '').strip()
+    if selected_country_id not in countries:
+        selected_country_id = ''
+
+    cities_query = City.query.filter_by(status='active')
+    if selected_country_id:
+        cities_query = cities_query.filter_by(country=selected_country_id)
+    cities = cities_query.order_by(City.name).all()
+
+    all_cities = City.query.filter_by(status='active').order_by(City.country, City.name).all()
+
+    selected_city_id = request.args.get('city_id', '').strip()
+    selected_city = None
+    if selected_city_id.isdigit():
+        selected_city = City.query.filter_by(id=int(selected_city_id), status='active').first()
+        if selected_city and selected_country_id and selected_city.country != selected_country_id:
+            selected_city = None
+
+    if not selected_city:
+        selected_city_id = ''
+
+    return {
+        'countries': countries,
+        'cities': cities,
+        'all_cities': all_cities,
+        'selected_country_id': selected_country_id,
+        'selected_city_id': selected_city_id,
+        'selected_city': selected_city,
+    }
+
+
+def _apply_tournament_geo_filters(query, selected_country_id='', selected_city=None):
+    if selected_city:
+        return query.filter(
+            db.or_(
+                BikeLane.city_id == selected_city.id,
+                BikeLane.city == selected_city.city_id
+            )
+        )
+
+    if selected_country_id:
+        country_cities = City.query.filter_by(
+            country=selected_country_id,
+            status='active'
+        ).all()
+        city_db_ids = [city.id for city in country_cities]
+        city_slugs = [city.city_id for city in country_cities]
+
+        if not city_db_ids and not city_slugs:
+            return query.filter(false())
+
+        return query.filter(
+            db.or_(
+                BikeLane.city_id.in_(city_db_ids),
+                BikeLane.city.in_(city_slugs)
+            )
+        )
+
+    return query
+
+
+def _get_tournament_scores(period, selected_country_id='', selected_city=None):
+    query = db.session.query(
+        BikeLane.user_id,
+        func.coalesce(func.sum(BikeLane.score), 0).label('points')
+    ).filter(
+        BikeLane.status == 'approved',
+        BikeLane.user_id.isnot(None),
+        BikeLane.score > 0
+    )
+
+    if period in ('week', 'month'):
+        days = 7 if period == 'week' else 30
+        since = datetime.utcnow() - timedelta(days=days)
+        query = query.filter(
+            db.or_(
+                BikeLane.moderated_at >= since,
+                db.and_(
+                    BikeLane.moderated_at.is_(None),
+                    BikeLane.created_at >= since
+                )
+            )
+        )
+
+    query = _apply_tournament_geo_filters(query, selected_country_id, selected_city)
+    rows = query.group_by(BikeLane.user_id).all()
+    scores = {user_id: int(points or 0) for user_id, points in rows}
+
+    if period == 'all' and not selected_country_id and not selected_city:
+        manual_users = User.query.filter(User.manual_score > 0).all()
+        for user in manual_users:
+            scores[user.id] = scores.get(user.id, 0) + int(user.manual_score or 0)
+
+    return scores
+
+
+def _build_tournament_leaderboard(scores):
+    if not scores:
+        return []
+
+    users = User.query.filter(
+        User.id.in_(scores.keys()),
+        User.is_banned.is_(False)
+    ).all()
+
+    ranked_users = sorted(
+        (
+            (user, scores.get(user.id, 0))
+            for user in users
+            if scores.get(user.id, 0) > 0
+        ),
+        key=lambda item: (-item[1], item[0].nickname.casefold())
+    )
+
+    leaderboard = []
+    for index, (user, points) in enumerate(ranked_users, start=1):
+        leaderboard.append({
+            'rank': index,
+            'user_id': user.id,
+            'display_name': user.nickname,
+            'avatar_url': user.display_avatar,
+            'points': points,
+            'is_current_user': current_user.is_authenticated and current_user.id == user.id,
+            'profile_url': url_for('main.user_profile', nickname=user.nickname),
+        })
+
+    return leaderboard
+
 @bp.route('/cities')
 def cities():
     """Редирект старой страницы городов на главную."""
     return redirect(url_for('main.index'), code=301)
+
+
+@bp.route('/rating')
+def rating():
+    """Совместимость со старой ссылкой на рейтинг."""
+    return redirect(url_for('public.tournament'), code=302)
+
+
+@bp.route('/tournament')
+def tournament():
+    """Страница турнира пользователей по баллам."""
+    period, periods = _get_tournament_period(request.args.get('period', 'week'))
+    filters = _get_tournament_filters()
+    scores = _get_tournament_scores(
+        period,
+        selected_country_id=filters['selected_country_id'],
+        selected_city=filters['selected_city']
+    )
+    leaderboard = _build_tournament_leaderboard(scores)
+
+    period_tabs = []
+    for period_key, label in periods.items():
+        params = {'period': period_key}
+        if filters['selected_country_id']:
+            params['country_id'] = filters['selected_country_id']
+        if filters['selected_city_id']:
+            params['city_id'] = filters['selected_city_id']
+
+        period_tabs.append({
+            'key': period_key,
+            'label': label,
+            'url': url_for('public.tournament', **params),
+            'is_active': period == period_key,
+        })
+
+    reset_filter_url = url_for('public.tournament', period=period)
+
+    return render_template(
+        'public/tournament.html',
+        leaderboard=leaderboard,
+        period=period,
+        period_tabs=period_tabs,
+        selected_country_id=filters['selected_country_id'],
+        selected_city_id=filters['selected_city_id'],
+        countries=filters['countries'],
+        cities=filters['cities'],
+        all_cities=filters['all_cities'],
+        reset_filter_url=reset_filter_url,
+    )
 
 @bp.route('/city/<city_id>')
 def city(city_id):
@@ -127,8 +329,13 @@ def api_city_bikelanes(city_id):
 @bp.route('/api/bikelane/<int:bikelane_id>')
 def api_bikelane(bikelane_id):
     """API endpoint для получения полной информации о велодорожке"""
-    # Находим велодорожку (только одобренные)
-    bikelane = BikeLane.query.filter_by(id=bikelane_id, status='approved').first_or_404()
+    bikelane = BikeLane.query.get_or_404(bikelane_id)
+    can_view_private = current_user.is_authenticated and (
+        bikelane.user_id == current_user.id or getattr(current_user, 'is_admin', False)
+    )
+
+    if bikelane.status != 'approved' and not can_view_private:
+        abort(404)
     
     return jsonify({
         'success': True,

@@ -1,0 +1,77 @@
+<nav class="tapbar" aria-label="Нижняя навигация">
+    {% set is_own_profile_page = current_user.is_authenticated and (
+        request.endpoint == 'auth.profile' or (
+            request.endpoint == 'main.user_profile' and request.view_args and request.view_args.get('nickname') == current_user.nickname
+        )
+    ) %}
+
+    <span class="button__wrapper">
+        <a
+            href="{{ url_for('main.add_bikelane') }}"
+            class="button__label btn_black"
+        >
+            <img
+                src="{{ url_for('static', filename='img/icon/tapbar/plus_active.svg' if request.endpoint == 'main.add_bikelane' else 'img/icon/tapbar/plus.svg') }}"
+                alt=""
+                aria-hidden="true"
+            >
+            <span>Добавить</span>
+        </a>
+    </span>
+
+    <div class="tapbar__inner">
+        <a
+            href="{{ url_for('main.index') }}"
+            class="tapbar__item{% if request.endpoint == 'main.index' %} is-active{% endif %}"
+        >
+            <img
+                class="tapbar__icon"
+                src="{{ url_for('static', filename='img/icon/tapbar/home_active.svg' if request.endpoint == 'main.index' else 'img/icon/tapbar/home.svg') }}"
+                alt=""
+                aria-hidden="true"
+            >
+            <span class="tapbar__label">Главная</span>
+        </a>
+
+        <a
+            href="{{ url_for('public.tournament') }}"
+            class="tapbar__item{% if request.endpoint in ['public.tournament', 'public.rating'] %} is-active{% endif %}"
+        >
+            <img
+                class="tapbar__icon"
+                src="{{ url_for('static', filename='img/icon/tapbar/cup_active.svg' if request.endpoint in ['public.tournament', 'public.rating'] else 'img/icon/tapbar/cup.svg') }}"
+                alt=""
+                aria-hidden="true"
+            >
+            <span class="tapbar__label">Турнир</span>
+        </a>
+
+        {% if current_user.is_authenticated %}
+            <a
+                href="{{ url_for('auth.profile') }}"
+                class="tapbar__item{% if is_own_profile_page %} is-active{% endif %}"
+            >
+                <img
+                    class="tapbar__icon"
+                    src="{{ url_for('static', filename='img/icon/tapbar/profile_active.svg' if is_own_profile_page else 'img/icon/tapbar/profile.svg') }}"
+                    alt=""
+                    aria-hidden="true"
+                >
+                <span class="tapbar__label">Профиль</span>
+            </a>
+        {% else %}
+            <a
+                href="{{ url_for('auth.login') }}"
+                class="tapbar__item{% if request.endpoint == 'auth.login' %} is-active{% endif %}"
+            >
+                <img
+                    class="tapbar__icon"
+                    src="{{ url_for('static', filename='img/icon/tapbar/profile_active.svg' if request.endpoint == 'auth.login' else 'img/icon/tapbar/profile.svg') }}"
+                    alt=""
+                    aria-hidden="true"
+                >
+                <span class="tapbar__label">Войти</span>
+            </a>
+        {% endif %}
+    </div>
+</nav>

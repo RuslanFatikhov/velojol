@@ -68,6 +68,24 @@
             </table>
         </div>
 
+        {% if bikelane.source == 'openstreetmap' %}
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Источник: OpenStreetMap</h3>
+            <table style="width: 100%;">
+                <tr><td><strong>OSM объект:</strong></td><td>{{ bikelane.osm_type }}/{{ bikelane.osm_id }}</td></tr>
+                {% if bikelane.imported_at %}
+                <tr><td><strong>Импортировано:</strong></td><td>{{ bikelane.imported_at.strftime('%d.%m.%Y %H:%M') }}</td></tr>
+                {% endif %}
+                {% if bikelane.osm_url %}
+                <tr>
+                    <td><strong>Ссылка:</strong></td>
+                    <td><a href="{{ bikelane.osm_url }}" target="_blank" rel="noopener">Открыть в OSM</a></td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        {% endif %}
+
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h3>Автор</h3>
             {% if bikelane.author %}

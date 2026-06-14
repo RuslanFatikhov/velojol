@@ -3,15 +3,4 @@
         <img src="{{ url_for('static', filename='img/icon/open_velojol_green.svg') }}" alt="Velojol">
     </a>
 
-    <span class="hstack gap-s" id="profile">
-        {% if current_user.is_authenticated %}
-            <!-- Залогиненный пользователь -->
-            <a href="{{ url_for('auth.profile') }}" class="button_square_label hstack gap-s aic">
-                <img src="{{ current_user.display_avatar }}" class="avatar_profile" alt="Аватар {{ current_user.nickname }}" 
-            </a>
-        {% else %}
-            <!-- Незалогиненный пользователь -->
-            <a href="{{ url_for('auth.login') }}" class="button__label">Войти</a>
-        {% endif %}
-    </span>
 </header>

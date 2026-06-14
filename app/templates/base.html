@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}OPEN-VELOJOL BETA 0.3.2{% endblock %}</title>
+    <title>{% block title %}OPEN-VELOJOL{% endblock %}</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon_io/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon_io/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon_io/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon_io/site.webmanifest') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon_io/favicon.ico') }}">
     
     <!-- Leaflet CSS для карт -->
     <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
@@ -19,8 +24,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/images.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shett.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cities.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/city.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tapbar.css') }}">
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
@@ -79,6 +86,10 @@
             {% endblock %}
         </main>
     </div>
+
+    {% if not hide_tapbar %}
+        {% include 'components/tapbar.html' %}
+    {% endif %}
 
     {% if not hide_footer %}
         {% include 'components/footer.html' %}

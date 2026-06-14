@@ -95,7 +95,7 @@
 
 <!-- Модальное окно удаления -->
 <div id="deleteModal" class="modal-overlay" style="display: none;">
-    <div class="modal">
+    <div class="modal-middle" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h3 class="prime100">Удалить велодорожку?</h3>
         </div>
@@ -105,12 +105,12 @@
                 Это действие нельзя отменить.
             </p>
         </div>
-        <div class="modal-actions">
-            <button onclick="closeDeleteModal()" class="button_square_label btn_gray">
+        <div class="modal-footer">
+            <button onclick="closeDeleteModal()" class="button__label btn_gray">
                 Отмена
             </button>
             <form method="post" action="{{ url_for('auth.delete_bikelane', bikelane_id=bikelane.id) }}" style="display: inline;">
-                <button type="submit" class="button_square_label" 
+                <button type="submit" class="button__label" 
                         style="background: #dc3545; color: white;">
                     Удалить
                 </button>

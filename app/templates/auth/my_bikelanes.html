@@ -1,4 +1,5 @@
 {% set hide_header = true %}
+{% set hide_tapbar = true %}
 {% extends "base.html" %}
 
 {% block title %}Мои велодорожки - VELOJOL{% endblock %}
@@ -62,8 +63,11 @@
             <div class="island pd-0">
             {% endif %}
 
-            <a href="{{ url_for('auth.view_bikelane', bikelane_id=bikelane.id) }}" 
-                class="my-bikelane-link">
+            <a
+                href="{{ url_for('auth.view_bikelane', bikelane_id=bikelane.id) }}"
+                class="my-bikelane-link"
+                data-bikelane-id="{{ bikelane.id }}"
+            >
 
                 <div class="bikelane-item">
 
@@ -131,7 +135,7 @@
         <div class="pagination-container">
             {% if bikelanes.has_prev %}
             <a href="{{ url_for('auth.my_bikelanes', page=bikelanes.prev_num, status=status_filter) }}" 
-               class="button_square_label btn_gray">
+               class="button_square_label btn_gray pagination-left">
                <img src="{{ url_for('static', filename='img/icon/chevron_left.svg') }}" alt="Назад" class="icon-left">
             </a>
             {% endif %}
@@ -144,7 +148,7 @@
 
             {% if bikelanes.has_next %}
             <a href="{{ url_for('auth.my_bikelanes', page=bikelanes.next_num, status=status_filter) }}" 
-               class="button_square_label btn_gray">
+               class="button_square_label btn_gray pagination-right">
                 <img src="{{ url_for('static', filename='img/icon/chevron_right.svg') }}" alt="Вперед" class="icon-right">
             </a>
             {% endif %}
@@ -180,9 +184,29 @@
     </div>
 </div>
 
+<!-- Модальное окно велодорожки -->
+<div id="bikelaneModal" style="display: none;">
+    <div class="modal-overlay" onclick="if (event.target === this) closeBikelaneModal()">
+    <div class="modal-bottom" onclick="event.stopPropagation()">
+
+        <!--Modal close-->
+        <button class="button_square_icon" onclick="closeBikelaneModal()" style="position: absolute; top: var(--spacer-m); right: var(--spacer-m);">
+            <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" 
+                 alt="Закрыть" 
+                 class="icon-small arrow_down">
+        </button>
+        
+        <div id="modalContent">
+            <!-- Содержимое загружается динамически -->
+            <div class="loading">Загрузка...</div>
+        </div>
+    </div>
+</div>
+</div>
+
 <!-- Модальное окно подтверждения удаления -->
 <div id="deleteModal" class="modal-overlay" style="display: none;">
-    <div class="modal">
+    <div class="modal-middle" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h3 class="prime100">Удалить велодорожку?</h3>
         </div>
@@ -192,12 +216,12 @@
                 Это действие нельзя отменить.
             </p>
         </div>
-        <div class="modal-actions">
-            <button onclick="closeDeleteModal()" class="button_square_label btn_gray">
+        <div class="modal-footer">
+            <button onclick="closeDeleteModal()" class="button__label btn_gray">
                 Отмена
             </button>
             <form method="post" id="deleteForm" style="display: inline;">
-                <button type="submit" class="button_square_label" 
+                <button type="submit" class="button__label" 
                         style="background: #dc3545; color: white;">
                     Удалить
                 </button>
@@ -209,6 +233,17 @@
 
 {% block scripts %}
 <script>
+window.MAPBOX_TOKEN = {{ config.MAPBOX_TOKEN | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/city_map_mapbox.js') }}"></script>
+<script>
+document.querySelectorAll('.my-bikelane-link[data-bikelane-id]').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+        event.preventDefault();
+        showBikelaneModal(this.dataset.bikelaneId);
+    });
+});
+
 // Функции для модального окна удаления
 function deleteBikelane(bikelaneId, title) {
     document.getElementById('deleteBikeLaneTitle').textContent = title;

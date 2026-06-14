@@ -1,4 +1,5 @@
 {% set hide_header = true %}
+{% set hide_tapbar = true %}
 {% extends "base.html" %}
 
 {% block title %}Редактировать профиль - VELOJOL{% endblock %}
@@ -63,17 +64,17 @@
 
 
         <div id="profile-main-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
-            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
-                <div class="profile-edit-sheet-header">
+            <div class="modal-middle" onclick="event.stopPropagation()">
+                <div class="modal-header">
                     <div>
                         <h3 class="prime100">Основное</h3>
                         <p class="secondary100">Ник и почта профиля</p>
                     </div>
-                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                    <button type="button" class="close button_square_label" data-profile-sheet-close aria-label="Закрыть">
                         <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
                     </button>
                 </div>
-                <div class="profile-edit-sheet-body">
+                <div class="modal-body">
                     <div class="form-section">
                         <div class="form-group" id="nickname-group">
                             <input type="text"
@@ -97,8 +98,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="profile-edit-sheet-footer">
-                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                <div class="modal-footer">
+                    <button type="submit" class="button__label btn_accent">
                         Сохранить
                     </button>
                 </div>
@@ -106,17 +107,17 @@
         </div>
 
         <div id="profile-password-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
-            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
-                <div class="profile-edit-sheet-header">
+            <div class="modal-middle" onclick="event.stopPropagation()">
+                <div class="modal-header">
                     <div>
                         <h3 class="prime100">Пароль</h3>
                         <p class="secondary100">Оставьте пустым, если не хотите менять пароль</p>
                     </div>
-                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                    <button type="button" class="close button_square_label" data-profile-sheet-close aria-label="Закрыть">
                         <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
                     </button>
                 </div>
-                <div class="profile-edit-sheet-body">
+                <div class="modal-body">
                     <div class="form-section">
                         <div class="form-group" id="current-password-group">
                             <input type="password"
@@ -145,8 +146,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="profile-edit-sheet-footer">
-                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                <div class="modal-footer">
+                    <button type="submit" class="button__label btn_accent">
                         Сохранить
                     </button>
                 </div>
@@ -154,17 +155,17 @@
         </div>
 
         <div id="profile-avatar-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
-            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
-                <div class="profile-edit-sheet-header">
+            <div class="modal-middle" onclick="event.stopPropagation()">
+                <div class="modal-header">
                     <div>
                         <h3 class="prime100">Аватар</h3>
                         <p class="secondary100">Текущий аватар и загрузка нового файла</p>
                     </div>
-                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                    <button type="button" class="close button_square_label" data-profile-sheet-close aria-label="Закрыть">
                         <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
                     </button>
                 </div>
-                <div class="profile-edit-sheet-body">
+                <div class="modal-body">
                     {% if current_user.display_avatar %}
                     <div class="current-avatar">
                         <img src="{{ current_user.display_avatar }}" alt="Текущий аватар" class="avatar-preview">
@@ -193,8 +194,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="profile-edit-sheet-footer">
-                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                <div class="modal-footer">
+                    <button type="submit" class="button__label btn_accent">
                         Сохранить
                     </button>
                 </div>
@@ -202,17 +203,17 @@
         </div>
 
         <div id="profile-social-sheet" class="modal-overlay profile-edit-modal" style="display: none;">
-            <div class="modal-bottom profile-edit-sheet" onclick="event.stopPropagation()">
-                <div class="profile-edit-sheet-header">
+            <div class="modal-middle" onclick="event.stopPropagation()">
+                <div class="modal-header">
                     <div>
                         <h3 class="prime100">Социальные сети</h3>
                         <p class="secondary100">Ссылки на ваши профили</p>
                     </div>
-                    <button type="button" class="button_square_icon profile-edit-sheet-close" data-profile-sheet-close aria-label="Закрыть">
+                    <button type="button" class="close button_square_label" data-profile-sheet-close aria-label="Закрыть">
                         <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
                     </button>
                 </div>
-                <div class="profile-edit-sheet-body">
+                <div class="modal-body">
                     <div class="form-section">
                         <div class="form-group" id="strava-group">
                             <input type="url"
@@ -251,8 +252,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="profile-edit-sheet-footer">
-                    <button type="submit" class="button__label btn_accent profile-edit-sheet-save">
+                <div class="modal-footer">
+                    <button type="submit" class="button__label btn_accent">
                         Сохранить
                     </button>
                 </div>

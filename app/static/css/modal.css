@@ -108,6 +108,7 @@
 }
 
 .modal-video h3{
+    padding-left: var(--spacer-m);
     margin-top: var(--spacer-m);
 }
 
@@ -136,57 +137,6 @@
 }
 
 
-/* Модальные окна */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index:999;
-    animation: modalOverlayFadeIn 0.24s ease;
-}
-
-.modal {
-    position: fixed;
-    background: var(--bg1);
-    border-radius: var(--spacer-m);
-    padding: var(--spacer-l);
-    max-width: 400px;
-    width: 100%;
-    align-items: flex-start;
-    z-index: 10000;
-    display: flex;
-    flex-direction: column;
-    animation: fadeIn 0.3s ease;
-}
-
-
-
-
-.modal-header {
-    margin-bottom: var(--spacer-m);
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 18px;
-}
-
-
-.modal-actions {
-    display: flex;
-    gap: var(--spacer-s);
-}
-
-.modal-actions .button_square_label {
-    flex: 1;
-}
-
 @keyframes modalBikeLaneEnter {
     from {
         opacity: 0;
@@ -210,7 +160,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .modal-overlay,
     .modal-bottom {
         animation: none;
     }

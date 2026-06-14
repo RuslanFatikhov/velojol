@@ -6,6 +6,7 @@ let isMobileMapLayout = false;
 let isSubmittingBikelaneForm = false;
 let selectedPhotoFiles = [];
 let photoPreviewRenderId = 0;
+let shouldShowValidationErrors = false;
 const DESCRIPTION_MIN_LENGTH = 20;
 
 function updateDescriptionCounter() {
@@ -29,8 +30,8 @@ function initDescriptionCounter() {
     return;
   }
 
-  description.minLength = DESCRIPTION_MIN_LENGTH;
-  description.required = true;
+  description.removeAttribute('minlength');
+  description.required = false;
   description.addEventListener('input', updateDescriptionCounter);
   description.addEventListener('change', updateDescriptionCounter);
   updateDescriptionCounter();
@@ -48,11 +49,9 @@ function showToast(message, type = 'info', options = {}) {
   toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
   toast.innerHTML = `
     <p class="toast-message"></p>
-    <button type="button" class="toast-close" aria-label="Закрыть уведомление"><img src="/static/img/icon/cross.svg" alt="Закрыть" class="icon-small arrow_down"></button>
   `;
 
   const messageElement = toast.querySelector('.toast-message');
-  const closeButton = toast.querySelector('.toast-close');
   if (messageElement) {
     messageElement.textContent = message;
   }
@@ -62,10 +61,6 @@ function showToast(message, type = 'info', options = {}) {
     window.setTimeout(() => toast.remove(), 180);
   };
 
-  if (closeButton) {
-    closeButton.addEventListener('click', removeToast);
-  }
-
   container.appendChild(toast);
   window.setTimeout(removeToast, duration);
 }
@@ -73,19 +68,13 @@ function showToast(message, type = 'info', options = {}) {
 function getFormValidationErrors() {
   const city = document.getElementById('city')?.value || '';
   const title = document.getElementById('title')?.value.trim() || '';
-  const description = document.getElementById('description')?.value.trim() || '';
   const trackType = document.querySelector('input[name="track_type"]:checked');
-  const quality = document.querySelector('input[name="quality"]:checked');
   const geometry = document.getElementById('geometry')?.value || '';
   const errors = [];
 
   if (!city) errors.push('Необходимо выбрать город');
   if (title.length < 3) errors.push('Название должно содержать минимум 3 символа');
-  if (description.length < DESCRIPTION_MIN_LENGTH) {
-    errors.push(`Описание должно содержать минимум ${DESCRIPTION_MIN_LENGTH} символов`);
-  }
   if (!trackType) errors.push('Необходимо выбрать тип дорожки');
-  if (!quality) errors.push('Необходимо оценить качество покрытия');
 
   if (!geometry || geometry.trim() === '') {
     errors.push('Необходимо нарисовать линию на карте');
@@ -105,6 +94,268 @@ function getFormValidationErrors() {
   return errors;
 }
 
+function getFirstInvalidFormElement() {
+  const city = document.getElementById('city');
+  if (city && !city.value) return city;
+
+  const title = document.getElementById('title');
+  if (title && title.value.trim().length < 3) return title;
+
+  const trackType = document.querySelector('input[name="track_type"]:checked');
+  if (!trackType) return document.querySelector('.track-types') || document.querySelector('input[name="track_type"]');
+
+  const geometry = document.getElementById('geometry')?.value || '';
+  if (!geometry || geometry.trim() === '') {
+    return document.getElementById('map-section') || document.getElementById('open-map-drawer-btn');
+  }
+
+  try {
+    const parsed = JSON.parse(geometry);
+    if (!parsed.coordinates || parsed.coordinates.length < 2 || calculateLineDistance(parsed.coordinates) < 10) {
+      return document.getElementById('map-section') || document.getElementById('open-map-drawer-btn');
+    }
+  } catch (error) {
+    return document.getElementById('map-section') || document.getElementById('open-map-drawer-btn');
+  }
+
+  return null;
+}
+
+function setElementError(element, hasError) {
+  if (!element) {
+    return;
+  }
+
+  element.classList.toggle('error', hasError);
+}
+
+function updateFormErrorClasses() {
+  const city = document.getElementById('city');
+  const title = document.getElementById('title');
+  const trackTypeInputs = document.querySelectorAll('input[name="track_type"]');
+  const trackTypes = document.querySelector('.track-types');
+  const mapSection = document.getElementById('map-section');
+  const geometry = document.getElementById('geometry')?.value || '';
+
+  setElementError(city, Boolean(city && !city.value));
+  setElementError(title, Boolean(title && title.value.trim().length < 3));
+
+  const hasTrackType = Boolean(document.querySelector('input[name="track_type"]:checked'));
+  trackTypeInputs.forEach((input) => setElementError(input, !hasTrackType));
+  setElementError(trackTypes, !hasTrackType);
+
+  let hasGeometryError = !geometry || geometry.trim() === '';
+  if (!hasGeometryError) {
+    try {
+      const parsed = JSON.parse(geometry);
+      hasGeometryError =
+        !parsed.coordinates ||
+        parsed.coordinates.length < 2 ||
+        calculateLineDistance(parsed.coordinates) < 10;
+    } catch (error) {
+      hasGeometryError = true;
+    }
+  }
+
+  setElementError(mapSection, hasGeometryError);
+}
+
+function clearFormErrorClasses() {
+  document
+    .querySelectorAll('#bikelane-form .error')
+    .forEach((element) => element.classList.remove('error'));
+}
+
+function scrollToRequiredFormElement(element) {
+  if (!element) {
+    return;
+  }
+
+  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  if (typeof element.focus === 'function' && !element.matches?.('.track-types, .island')) {
+    window.setTimeout(() => element.focus({ preventScroll: true }), 350);
+  }
+}
+
+function showDisabledSubmitFeedback() {
+  const errors = getFormValidationErrors();
+  if (errors.length === 0) {
+    return;
+  }
+
+  shouldShowValidationErrors = true;
+  updateFormErrorClasses();
+  showToast('Заполните обязательные поля, чтобы отправить велодорожку', 'error', { duration: 5000 });
+  scrollToRequiredFormElement(getFirstInvalidFormElement());
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function getRewardConfig() {
+  return window.bikelaneRewardConfig || {
+    maxScore: 0,
+    checkpoints: [],
+    rules: []
+  };
+}
+
+function getValidGeometryDistance(form) {
+  const geometry = form.querySelector('#geometry')?.value?.trim();
+  if (!geometry) {
+    return 0;
+  }
+
+  try {
+    const parsed = JSON.parse(geometry);
+    if (!parsed.coordinates || parsed.coordinates.length < 2) {
+      return 0;
+    }
+    return calculateLineDistance(parsed.coordinates);
+  } catch (error) {
+    return 0;
+  }
+}
+
+function getRewardRuleScore(rule, form) {
+  const points = Number(rule.points || 0);
+  const maxItems = Number(rule.maxItems || 1);
+
+  if (!points || maxItems <= 0) {
+    return 0;
+  }
+
+  if (rule.id === 'base_submission') {
+    return getValidGeometryDistance(form) >= 10 ? points : 0;
+  }
+
+  if (rule.id === 'photos') {
+    const photosInput = form.querySelector('#photos');
+    const selectedCount = photosInput?.files?.length || selectedPhotoFiles.length || 0;
+    const previewCount = document.querySelector('#photos-preview')?.children.length || 0;
+    return Math.min(Math.max(selectedCount, previewCount), maxItems) * points;
+  }
+
+  if (rule.id === 'video') {
+    const videoUrl = form.querySelector('input[name="video_url"]')?.value?.trim() || '';
+    return videoUrl ? points * Math.min(maxItems, 1) : 0;
+  }
+
+  const fields = Array.isArray(rule.fields) ? rule.fields : [];
+  const minLength = Number(rule.minLength || 0);
+  if (!fields.length) {
+    return 0;
+  }
+
+  const isComplete = fields.every((fieldName) => {
+    const field = form.querySelector(`#${fieldName}, [name="${fieldName}"]`);
+    if (!field) {
+      return false;
+    }
+    if (field.type === 'radio') {
+      return Boolean(form.querySelector(`input[name="${field.name}"]:checked`));
+    }
+    if (field.type === 'checkbox') {
+      return field.checked;
+    }
+
+    const value = field.value?.trim() || '';
+    if (minLength > 0) {
+      return value.length >= minLength;
+    }
+    return Boolean(value);
+  });
+
+  return isComplete ? points : 0;
+}
+
+function calculateCurrentRewardState(form, config) {
+  const rules = Array.isArray(config.rules) ? config.rules : [];
+  const score = rules.reduce((sum, rule) => sum + getRewardRuleScore(rule, form), 0);
+  const maxScore = Number(config.maxScore || score || 0);
+
+  return {
+    score: maxScore ? Math.min(score, maxScore) : score,
+    maxScore,
+    checkpoints: Array.isArray(config.checkpoints) ? config.checkpoints : []
+  };
+}
+
+function createSubmitScoreSegment(progressValue) {
+  const segment = document.createElement('span');
+  const fill = document.createElement('span');
+
+  segment.className = 'submit-score__segment';
+  fill.className = 'submit-score__segment-fill';
+  fill.style.setProperty('--segment-progress', String(clamp(progressValue, 0, 1)));
+
+  segment.appendChild(fill);
+  return segment;
+}
+
+function createSubmitScoreBadge(checkpoint, score) {
+  const badge = document.createElement('span');
+  const coin = document.createElement('img');
+  const label = document.createElement('span');
+
+  badge.className = 'submit-score__badge';
+  badge.classList.toggle('is-active', score >= checkpoint);
+  badge.dataset.scoreBadge = String(checkpoint);
+
+  coin.className = 'submit-score__coin';
+  coin.src = '/static/img/icon/coin.png';
+  coin.alt = '';
+  coin.setAttribute('aria-hidden', 'true');
+
+  label.textContent = String(checkpoint);
+
+  badge.appendChild(coin);
+  badge.appendChild(label);
+  return badge;
+}
+
+function renderSubmitScoreProgress(state) {
+  const progress = document.querySelector('#submit-score-progress');
+  if (!progress) {
+    return;
+  }
+
+  const checkpoints = state.checkpoints
+    .map((value) => Number(value))
+    .filter((value) => value > 0);
+  const allPoints = [0, ...checkpoints];
+
+  progress.innerHTML = '';
+
+  checkpoints.forEach((checkpoint, index) => {
+    const from = allPoints[index];
+    const segmentProgress = checkpoint > from ? (state.score - from) / (checkpoint - from) : 0;
+
+    progress.appendChild(createSubmitScoreSegment(segmentProgress));
+    progress.appendChild(createSubmitScoreBadge(checkpoint, state.score));
+  });
+
+  progress.setAttribute(
+    'aria-label',
+    `Прогресс заполнения формы: ${Math.round(state.score)} из ${Math.round(state.maxScore)} баллов`
+  );
+}
+
+function updateSubmitScoreProgress() {
+  const form = document.querySelector('#bikelane-form');
+  if (!form) {
+    return;
+  }
+
+  const config = getRewardConfig();
+  const state = calculateCurrentRewardState(form, config);
+  renderSubmitScoreProgress(state);
+}
+
+window.updateSubmitScoreProgress = updateSubmitScoreProgress;
+
 function updateSubmitButtonState() {
   const submitButton = document.getElementById('submit-bikelane-btn');
   if (!submitButton) {
@@ -117,6 +368,14 @@ function updateSubmitButtonState() {
   }
 
   submitButton.disabled = getFormValidationErrors().length > 0;
+
+  if (shouldShowValidationErrors) {
+    updateFormErrorClasses();
+  } else {
+    clearFormErrorClasses();
+  }
+
+  updateSubmitScoreProgress();
 }
 
 function getSubmitButtonDefaultLabel() {
@@ -396,11 +655,10 @@ function calculateOverallQuality() {
   const trackType = trackTypeInput.value;
 
   const qualityInput = document.querySelector('input[name="quality"]:checked');
+  const surfaceQuality = qualityInput ? parseInt(qualityInput.value) : 3;
   if (!qualityInput) {
-    console.log('Качество покрытия не выбрано');
-    return null;
+    console.log('Качество покрытия не выбрано, используется нейтральная оценка');
   }
-  const surfaceQuality = parseInt(qualityInput.value);
 
   const hasParking = document.getElementById('has_parking')?.checked ?? false;
   const hasMarkings = document.getElementById('has_markings')?.checked ?? false;
@@ -416,8 +674,8 @@ function calculateOverallQuality() {
   let quality = baseQuality[trackType] || 3;
 
   if (hasParking) {
-    quality -= 1;
-    console.log('Паркуются авто: -1 балл');
+    quality -= 2;
+    console.log('Паркуются авто: -2 балла');
   }
 
   if (hasMarkings) {
@@ -540,6 +798,13 @@ function addDistanceField(distance) {
   console.log(`Поле distance установлено: ${distance.toFixed(2)} м`);
 }
 
+function clearDistanceField() {
+  const distanceInput = document.getElementById('distance');
+  if (distanceInput) {
+    distanceInput.value = '';
+  }
+}
+
 /**
  * Инициализация карты с функциональностью рисования
  */
@@ -643,6 +908,7 @@ function initDrawingHandlers() {
     if (distanceElement) {
       distanceElement.style.display = 'none';
     }
+    clearDistanceField();
 
     currentPoints = [latlng];
     currentPolyline = L.polyline(currentPoints, {
@@ -706,6 +972,7 @@ function initDrawingHandlers() {
     if (distanceElement) {
       distanceElement.style.display = 'none';
     }
+    clearDistanceField();
 
     updateGeometryStatus('Кликните по карте для начала рисования линии', 'info');
     updateSubmitButtonState();
@@ -1023,6 +1290,7 @@ function handleFileSelection(files, fileInput, preview) {
   selectedPhotoFiles = selectedPhotoFiles.concat(imageFiles);
   syncPhotoInputFiles(fileInput);
   renderPhotoPreviews(fileInput, preview);
+  updateSubmitScoreProgress();
 }
 
 function syncPhotoInputFiles(fileInput) {
@@ -1062,6 +1330,7 @@ function renderPhotoPreviews(fileInput, preview) {
         selectedPhotoFiles.splice(index, 1);
         syncPhotoInputFiles(fileInput);
         renderPhotoPreviews(fileInput, preview);
+        updateSubmitScoreProgress();
       });
 
       preview.appendChild(photoDiv);
@@ -1100,7 +1369,35 @@ function initFormValidation() {
     }
   });
 
+  form.addEventListener('input', updateSubmitScoreProgress);
+  form.addEventListener('change', updateSubmitScoreProgress);
   updateSubmitButtonState();
+
+  if (submitBtn) {
+    let lastDisabledFeedbackAt = 0;
+    const handleDisabledPress = function () {
+      if (submitBtn.disabled) {
+        const now = Date.now();
+        if (now - lastDisabledFeedbackAt < 500) {
+          return;
+        }
+        lastDisabledFeedbackAt = now;
+        showDisabledSubmitFeedback();
+      }
+    };
+
+    submitBtn.addEventListener('pointerdown', handleDisabledPress);
+    submitBtn.addEventListener('touchstart', handleDisabledPress, { passive: true });
+
+    const submitSection = submitBtn.closest('.submit-section');
+    if (submitSection) {
+      submitSection.addEventListener('pointerdown', function (event) {
+        if (event.target === submitSection || event.target === submitBtn) {
+          handleDisabledPress();
+        }
+      });
+    }
+  }
 
   form.addEventListener('submit', function (e) {
     console.log('=== ВАЛИДАЦИЯ ФОРМЫ ===');
@@ -1111,6 +1408,8 @@ function initFormValidation() {
 
     if (errors.length > 0) {
       e.preventDefault();
+      shouldShowValidationErrors = true;
+      updateFormErrorClasses();
       showToast(errors.join('\n'), 'error', { duration: 5000 });
       updateSubmitButtonState();
       return false;
@@ -1167,6 +1466,11 @@ function initFormValidation() {
           }
 
           // Очищаем превью фотографий
+          selectedPhotoFiles = [];
+          const photosInput = document.getElementById('photos');
+          if (photosInput) {
+            syncPhotoInputFiles(photosInput);
+          }
           const preview = document.getElementById('photos-preview');
           if (preview) {
             preview.innerHTML = '';
@@ -1178,6 +1482,7 @@ function initFormValidation() {
           if (distanceElement) {
             distanceElement.style.display = 'none';
           }
+          clearDistanceField();
 
           updateSubmitButtonState();
         } else {

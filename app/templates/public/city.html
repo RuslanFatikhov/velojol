@@ -1,6 +1,7 @@
 {% set hide_header = true %}
 {% extends "base.html" %}
 {% set hide_footer = true %}
+{% set hide_tapbar = true %}
 
 {% block title %}{{ city.name }} - VELOJOL{% endblock %}
 
@@ -82,9 +83,8 @@
 
 
     <!-- Модальное окно фильтров -->
-    <div id="filtersModal" class="modal-middle" style="display: none;">
-        <div class="modal-overlay filters-modal-overlay" onclick="closeFiltersModal()">
-            <div class="modal-middle" onclick="event.stopPropagation()">
+    <div id="filtersModal" class="modal-overlay" style="display: none;" onclick="closeFiltersModal()">
+        <div class="modal-middle" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3 class="prime100">Фильтры</h3>
                 <button type="button" class="close button_square_label" onclick="closeFiltersModal()">
@@ -129,26 +129,27 @@
                     Применить
                 </button>
             </div>
-            </div>
         </div>
     </div>
 </div>
 
-<div class="city-mobile-tabs" role="tablist" aria-label="Переключение вида города">
-    <button
+<div class="tabs mobile" role="tablist" aria-label="Переключение вида города">
+    <span class="tabs_stack mb-m">
+        <button
         type="button"
         class="city-mobile-tab is-active"
         data-city-view-tab="map"
         aria-selected="true">
         Карта
-    </button>
-    <button
+        </button>
+        <button
         type="button"
         class="city-mobile-tab"
         data-city-view-tab="list"
         aria-selected="false">
         Список
-    </button>
+        </button>
+    </span>
 </div>
 
 <div class="city-container" data-city-view="map">

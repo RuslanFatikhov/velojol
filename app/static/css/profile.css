@@ -96,51 +96,7 @@ body.profile-sheet-open {
     z-index: 1002;
 }
 
-.profile-edit-sheet {
-    max-width: 390px;
-    background: var(--bg1);
-}
-
-.profile-edit-sheet-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--spacer-m);
-    padding: var(--spacer-m);
-    border-bottom: 0.5px solid var(--secondary20);
-    background: var(--bg1);
-}
-
-.profile-edit-sheet-header h3 {
-    margin: 0;
-}
-
-.profile-edit-sheet-header p {
-    margin-top: 4px;
-}
-
-.profile-edit-sheet-close {
-    flex-shrink: 0;
-}
-
-.profile-edit-sheet-body {
-    padding: var(--spacer-m);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacer-m);
-    background: var(--bg1);
-}
-
-.profile-edit-sheet-footer {
-    padding: 0 var(--spacer-m) var(--spacer-m);
-    background: var(--bg1);
-}
-
-.profile-edit-sheet-save {
-    width: 100%;
-}
-
-.profile-edit-sheet-body .form-section {
+.profile-edit-modal .form-section {
     border-color: var(--secondary20);
 }
 

@@ -45,7 +45,11 @@ class City(db.Model):
     
     def get_average_rating(self):
         """Рассчитать средний рейтинг (качество покрытия)"""
-        approved = self.get_approved_bikelanes()
+        approved = [
+            bikelane
+            for bikelane in self.get_approved_bikelanes()
+            if bikelane.quality and 1 <= bikelane.quality <= 5
+        ]
         if not approved:
             return 0.0
         

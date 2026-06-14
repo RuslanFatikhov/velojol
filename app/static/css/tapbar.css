@@ -1,0 +1,196 @@
+/** Mobile **/
+@media (max-width: 980px) {
+    .tapbar {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        z-index: 200;
+        pointer-events: none;
+    }
+
+    .tapbar .button__wrapper {
+        pointer-events: auto;
+    }
+
+    .tapbar__inner {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacer-s);
+        min-height: 80px;
+        padding: var(--spacer-s);
+        padding-bottom: var(--spacer-m);
+        border-top: 0.2px solid var(--secondary20);
+        background-color: var(--prime-invert100);
+        pointer-events: auto;
+    }
+
+    .tapbar__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: var(--secondary100);
+        background-color: transparent;
+        transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .tapbar__icon {
+        width: 24px;
+        height: 24px;
+        display: block;
+    }
+
+    .tapbar__item:hover {
+        background-color: var(--secondary10);
+        color: var(--accent200);
+    }
+
+    .tapbar__item.is-active {
+        color: var(--accent100);
+    }
+
+    .tapbar__label {
+        display: block;
+        font-size: var(--spacer-sm);
+        line-height: 1;
+    }
+}
+
+/** Compact Desktop **/
+@media (min-width: 981px) and (max-width: 1310px) {
+    .tapbar {
+        display: flex;
+        flex-direction: column-reverse;
+        position: fixed;
+        left: var(--spacer-m);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        z-index: 200;
+    }
+
+    .tapbar .button__wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacer-m) 0 0;
+    }
+
+    .tapbar .button__label {
+        width: 48px;
+        min-width: 48px;
+        padding: 0;
+    }
+
+    .tapbar .button__label span {
+        display: none;
+    }
+
+    .tapbar__inner {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: var(--spacer-m);
+        background-color: var(--prime-invert100);
+    }
+
+    .tapbar__item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        padding-left: 0;
+        gap: var(--spacer-sm);
+        color: var(--secondary100);
+        background-color: transparent;
+        transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .tapbar__icon {
+        width: 24px;
+        height: 24px;
+        display: block;
+    }
+
+    .tapbar__item:hover {
+        background-color: var(--secondary10);
+        color: var(--accent200);
+    }
+
+    .tapbar__item.is-active {
+        color: var(--accent100);
+    }
+
+    .tapbar__label {
+        display: none;
+    }
+}
+
+/** Wide Desktop **/
+@media (min-width: 1311px) {
+    .tapbar {
+        display: flex;
+        flex-direction: column-reverse;
+        position: fixed;
+        left: var(--spacer-m);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 200px;
+        z-index: 200;
+    }
+
+    .tapbar .button__wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacer-m) 0 0;
+    }
+
+    .tapbar__inner {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: var(--spacer-m);
+        background-color: var(--prime-invert100);
+    }
+
+    .tapbar__item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        height: 48px;
+        padding-left: var(--spacer-m);
+        gap: var(--spacer-sm);
+        color: var(--secondary100);
+        background-color: transparent;
+        transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .tapbar__icon {
+        width: 24px;
+        height: 24px;
+        display: block;
+    }
+
+    .tapbar__item:hover {
+        background-color: var(--secondary10);
+        color: var(--accent200);
+    }
+
+    .tapbar__item.is-active {
+        color: var(--accent100);
+    }
+
+    .tapbar__label {
+        display: block;
+        font-size: var(--spacer-sm);
+        line-height: 1;
+    }
+}

@@ -3,7 +3,8 @@
 {% block title %}Вход | Velojol{% endblock %}
 
 {% block content %}
-<div class="island">
+<div class="auth-page">
+<div class="island ml-mr-auto">
     
     <!-- Flash сообщения -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -18,7 +19,7 @@
         {% endif %}
     {% endwith %}
 
-    <form method="POST">
+    <form method="POST" class="pt-m">
         <div class="input_login_form">
             <div class="form-group">
                 <input type="email" 
@@ -61,69 +62,77 @@
         <a style="margin-top: var(--spacer-l);" class="button__label btn_gray" href="{{ url_for('auth.register') }}">Создать аккаунт</a>
     </div>
 </div>
+</div>
 
 <!-- Модальное окно: Забыли пароль - Ввод Email -->
 <div id="forgotPasswordModal" class="modal-overlay" style="display: none;">
-    <div class="modal-middle">
+    <div class="modal-middle" onclick="event.stopPropagation()">
 
-        <span class="modal-header">
-            <span class="close button_square_label" id="closeForgotModal">
+        <div class="modal-header">
+            <div>
+                <h3 class="prime100">Восстановление пароля</h3>
+                <p class="prime100">Введите ваш email для получения кода восстановления</p>
+            </div>
+            <button type="button" class="close button_square_label" id="closeForgotModal" aria-label="Закрыть">
                 <img src="/static/img/icon/cross.svg" alt="Закрыть" class="icon-small arrow_down">
-            </span>
-
-            <h2 class="prime100">Восстановление пароля</h2>
-            <p class="prime100" style="margin-top: var(--spacer-s);">Введите ваш email для получения кода восстановления</p>
-
-        </span>
+            </button>
+        </div>
         
         <div class="modal-body">
-            <div class="form-group" style="margin-top: var(--spacer-m);">
+            <div class="form-group">
                 <input type="email" 
                     id="forgot-email" 
                     placeholder="Ваш email"
                     required>
                 <div class="validation-message" id="forgot-email-validation"></div>
             </div>
-        
-            <div style="margin-top: var(--spacer-m);">
-                <button type="button" class="button__label btn_accent" id="sendResetCodeBtn">
-                    Отправить код
-                </button>
-            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="button__label btn_accent" id="sendResetCodeBtn">
+                Отправить код
+            </button>
         </div>
     </div>
 </div>
 
 <!-- Модальное окно: Ввод кода восстановления -->
-<div id="verifyResetCodeModal" class="modal-middle" style="display: none;">
-    <div class="modal-content">
-        <span class="close" id="closeVerifyModal">&times;</span>
-        <h2 class="prime100">Введите код</h2>
-        <p class="prime100" style="margin-top: var(--spacer-s);">Мы отправили 6-значный код на <strong id="reset-email-display"></strong></p>
-        
-        <div class="form-group" style="margin-top: var(--spacer-m);">
-            <input type="text" 
-                   id="reset-code" 
-                   placeholder="Введите 6-значный код"
-                   maxlength="6"
-                   pattern="[0-9]{6}"
-                   autocomplete="off"
-                   style="text-align: center; font-size: var(--spacer-l); letter-spacing: 10px;">
-            <div class="validation-message" id="reset-code-validation"></div>
+<div id="verifyResetCodeModal" class="modal-overlay" style="display: none;">
+    <div class="modal-middle" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div>
+                <h3 class="prime100">Введите код</h3>
+                <p class="prime100">Мы отправили 6-значный код на <strong id="reset-email-display"></strong></p>
+            </div>
+            <button type="button" class="close button_square_label" id="closeVerifyModal" aria-label="Закрыть">
+                <img src="/static/img/icon/cross.svg" alt="Закрыть" class="icon-small arrow_down">
+            </button>
         </div>
-        
-        <div style="margin-top: var(--spacer-m);">
+
+        <div class="modal-body">
+            <div class="form-group">
+                <input type="text" 
+                    id="reset-code" 
+                    placeholder="Введите 6-значный код"
+                    maxlength="6"
+                    pattern="[0-9]{6}"
+                    autocomplete="off">
+                <div class="validation-message" id="reset-code-validation"></div>
+            </div>
+
+            <div style="text-align: center;">
+                <p class="prime100">Не получили код?</p>
+                <button type="button" class="button__label btn_gray" id="resendResetCodeBtn" style="margin-top: var(--spacer-s);">
+                    Отправить повторно
+                </button>
+                <p id="reset-resend-timer" class="prime100" style="margin-top: var(--spacer-s); color: var(--gray-500); display: none;"></p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
             <button type="button" class="button__label btn_accent" id="verifyResetCodeBtn">
                 Подтвердить
             </button>
-        </div>
-        
-        <div style="margin-top: var(--spacer-l); text-align: center;">
-            <p class="prime100">Не получили код?</p>
-            <button type="button" class="button__label btn_gray" id="resendResetCodeBtn" style="margin-top: var(--spacer-s);">
-                Отправить повторно
-            </button>
-            <p id="reset-resend-timer" class="prime100" style="margin-top: var(--spacer-s); color: var(--gray-500); display: none;"></p>
         </div>
     </div>
 </div>

@@ -1,0 +1,107 @@
+{% extends "admin/base.html" %}
+
+{% block title %}OSM импорт - VELOJOL{% endblock %}
+
+{% block content %}
+<h2>OSM импорт велодорожек</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div style="margin: 15px 0;">
+            {% for category, message in messages %}
+                <div style="padding: 10px; margin-bottom: 8px; border-radius: 4px; background: {% if category == 'error' %}#f8d7da{% elif category == 'success' %}#d4edda{% else %}#e2e3e5{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<form method="post" style="display: grid; gap: 16px; max-width: 680px; margin: 20px 0;">
+    <label>
+        <strong>Город</strong><br>
+        <select name="city_id" required style="width: 100%; padding: 8px; margin-top: 6px;">
+            <option value="">Выберите город</option>
+            {% for city in cities %}
+                <option value="{{ city.city_id }}" {% if selected_city_id == city.city_id %}selected{% endif %}>
+                    {{ city.name }}{% if city.country %}, {{ city.country }}{% endif %}
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        <strong>Лимит</strong><br>
+        <select name="limit" style="width: 180px; padding: 8px; margin-top: 6px;">
+            {% for option in [10, 25, 50] %}
+                <option value="{{ option }}" {% if limit|int == option %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" name="approve" {% if approve %}checked{% endif %}>
+        <span>Сразу одобрять импортированные велодорожки</span>
+    </label>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="submit" formaction="{{ url_for('admin.osm_import_preview') }}" style="background: #007bff; color: white; border: none; padding: 10px 14px; border-radius: 4px;">
+            Проверить импорт
+        </button>
+        <button type="submit" formaction="{{ url_for('admin.osm_import_run') }}" onclick="return confirm('Запустить импорт из OpenStreetMap?')" style="background: #28a745; color: white; border: none; padding: 10px 14px; border-radius: 4px;">
+            Запустить импорт
+        </button>
+    </div>
+</form>
+
+{% if preview_result %}
+<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+    <h3>Результат проверки: {{ preview_result.city.name }}</h3>
+    <table style="border-collapse: collapse; width: 100%; max-width: 520px;">
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Найдено валидных линий</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.found }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Уже есть</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.existing }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Можно импортировать</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.importable }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Ошибки/пропуски</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.errors|length }}</td></tr>
+    </table>
+
+    {% if preview_result.errors %}
+        <h4>Ошибки и пропущенные объекты</h4>
+        <ul>
+            {% for error in preview_result.errors[:10] %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if import_result %}
+<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+    <h3>Результат импорта: {{ import_result.city.name }}</h3>
+    <table style="border-collapse: collapse; width: 100%; max-width: 520px;">
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Найдено валидных линий</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.found }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Импортировано</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.imported }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Пропущено как дубликаты</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.duplicates }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Ошибки/пропуски</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.errors|length }}</td></tr>
+    </table>
+
+    {% if import_result.bikelanes %}
+        <h4>Созданные велодорожки</h4>
+        <ul>
+            {% for bikelane in import_result.bikelanes %}
+                <li><a href="{{ url_for('admin.view_bikelane', bikelane_id=bikelane.id) }}">{{ bikelane.title }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if import_result.errors %}
+        <h4>Ошибки и пропущенные объекты</h4>
+        <ul>
+            {% for error in import_result.errors[:10] %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

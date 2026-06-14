@@ -57,7 +57,7 @@ def create_app(config_class=Config):
         return message, 413
     
     # Импорт моделей
-    from app.models import User, BikeLane, Notification, City, VerificationCode
+    from app.models import User, BikeLane, Notification, City, VerificationCode, BannerResponse
     
     # Загрузка пользователя для Flask-Login
     @login_manager.user_loader

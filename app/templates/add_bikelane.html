@@ -1,5 +1,6 @@
 {% set hide_header = true %}
 {% set hide_footer = true %}
+{% set hide_tapbar = true %}
 {% extends "base.html" %}
 
 {% set is_edit_mode = is_edit_mode | default(false) %}
@@ -66,8 +67,6 @@
                         rows="4" 
                         placeholder="Описание"
                         class="form-textarea"
-                        required
-                        minlength="20"
                         aria-describedby="description-counter description-required">{{ form_data.description if form_data else '' }}</textarea>
                 <div class="description-meta">
                     <span id="description-counter" class="description-counter">0</span>
@@ -318,6 +317,9 @@
 
     <!-- Кнопка отправки -->
     <div class="submit-section">
+        <div class="submit-score" aria-live="polite">
+            <div class="submit-score__progress" id="submit-score-progress" aria-label="Прогресс заполнения формы"></div>
+        </div>
         <button type="submit" class="button__label btn_black" id="submit-bikelane-btn" data-default-label="{{ submit_label }}" disabled>
             {{ submit_label }}
         </button>
@@ -354,6 +356,7 @@
 <!-- Подключаем наши скрипты страницы -->
 <script>
     window.citiesDataFromServer = {{ cities_data | default({'cities': []}) | tojson }};
+    window.bikelaneRewardConfig = {{ reward_config | default({'maxScore': 0, 'checkpoints': [], 'rules': []}) | tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/add_bikelane.js') }}"></script>
 {% endblock %}

@@ -1,20 +1,64 @@
 from flask_login import current_user, login_required
 # app/routes/main.py
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
+from sqlalchemy.exc import IntegrityError
 from app import db
 from app.models.bikelane import BikeLane
+from app.models.banner_response import BannerResponse
 from app.models.city import City
 from app.utils.validators import BikeLaneValidator
 from app.utils.file_handler import FileHandler
 import json
+import uuid
 
 # Создаем Blueprint
 bp = Blueprint('main', __name__)
+
+BANNER_BUS_LANES_KEY = 'bus_lanes'
+BANNER_COOKIE_NAME = 'velojol_banner_id'
+BANNER_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
+BANNER_ALLOWED_ANSWERS = {'yes', 'no'}
 
 
 def _get_active_cities_data():
     cities = City.query.filter_by(status='active').order_by(City.name).all()
     return {'cities': [city.to_dict() for city in cities]}
+
+
+def _get_bikelane_reward_config():
+    return BikeLane.get_reward_config()
+
+
+def _get_banner_cookie_id():
+    return request.cookies.get(BANNER_COOKIE_NAME, '').strip()
+
+
+def _build_banner_cookie_id():
+    return uuid.uuid4().hex
+
+
+def _find_banner_response(banner_key, cookie_id=None):
+    query = BannerResponse.query.filter_by(banner_key=banner_key)
+
+    if current_user.is_authenticated:
+        return query.filter_by(user_id=current_user.id).first()
+
+    if cookie_id:
+        return query.filter_by(cookie_id=cookie_id).first()
+
+    return None
+
+
+def _set_banner_cookie(response, cookie_id):
+    response.set_cookie(
+        BANNER_COOKIE_NAME,
+        cookie_id,
+        max_age=BANNER_COOKIE_MAX_AGE,
+        httponly=True,
+        samesite='Lax',
+        secure=current_app.config.get('SESSION_COOKIE_SECURE', False)
+    )
+    return response
 
 
 def _extract_bikelane_form_data():
@@ -43,14 +87,8 @@ def _validate_bikelane_form_data(form_data):
     if len(form_data['title']) < 3:
         errors.append('Название должно содержать минимум 3 символа')
 
-    if len(form_data['description']) < 20:
-        errors.append('Описание должно содержать минимум 20 символов')
-
     if not form_data['track_type']:
         errors.append('Необходимо выбрать тип дорожки')
-
-    if not form_data['quality']:
-        errors.append('Необходимо оценить качество покрытия')
 
     if not form_data['geometry']:
         errors.append('Необходимо нарисовать линию на карте')
@@ -77,6 +115,14 @@ def _validate_bikelane_form_data(form_data):
     if form_data['track_type'] not in allowed_track_types:
         errors.append('Недопустимый тип дорожки')
 
+    if form_data['quality']:
+        try:
+            quality_value = int(form_data['quality'])
+            if quality_value < 1 or quality_value > 5:
+                errors.append('Недопустимое качество покрытия')
+        except (ValueError, TypeError):
+            errors.append('Недопустимое качество покрытия')
+
     return errors, distance_value
 
 
@@ -87,7 +133,7 @@ def _build_bikelane_form_context(bikelane):
         'title': bikelane.title,
         'description': bikelane.description,
         'track_type': bikelane.track_type,
-        'quality': str(bikelane.quality) if bikelane.quality is not None else '',
+        'quality': str(bikelane.quality) if bikelane.quality else '',
         'has_parking': bikelane.has_parking,
         'has_markings': bikelane.has_markings,
         'has_signs': bikelane.has_signs,
@@ -108,7 +154,7 @@ def _apply_bikelane_form_data(bikelane, form_data, distance_value=None, reset_mo
     bikelane.city = form_data['city']
     bikelane.city_id = city_obj.id
     bikelane.track_type = form_data['track_type']
-    bikelane.quality = int(form_data['quality'])
+    bikelane.quality = int(form_data['quality']) if form_data['quality'] else 0
     bikelane.has_parking = form_data['has_parking']
     bikelane.has_markings = form_data['has_markings']
     bikelane.has_signs = form_data['has_signs']
@@ -175,6 +221,54 @@ def index():
     return render_template('index.html', cities_by_country=cities_by_country)
 
 
+@bp.route('/api/banner/bus-lanes', methods=['GET'])
+def get_bus_lanes_banner():
+    """Проверить, нужно ли показывать баннер про автобусные полосы."""
+    cookie_id = _get_banner_cookie_id()
+    response = _find_banner_response(BANNER_BUS_LANES_KEY, cookie_id=cookie_id)
+    return jsonify({'show': response is None})
+
+
+@bp.route('/api/banner/bus-lanes', methods=['POST'])
+def submit_bus_lanes_banner():
+    """Сохранить ответ на баннер про автобусные полосы."""
+    payload = request.get_json(silent=True) or {}
+    answer = payload.get('answer')
+
+    if answer not in BANNER_ALLOWED_ANSWERS:
+        return jsonify({'ok': False, 'error': 'Недопустимый ответ'}), 400
+
+    cookie_id = _get_banner_cookie_id()
+    if not current_user.is_authenticated and not cookie_id:
+        cookie_id = _build_banner_cookie_id()
+
+    existing_response = _find_banner_response(BANNER_BUS_LANES_KEY, cookie_id=cookie_id)
+    api_response = jsonify({'ok': True})
+
+    if existing_response:
+        if not current_user.is_authenticated and cookie_id:
+            _set_banner_cookie(api_response, cookie_id)
+        return api_response
+
+    banner_response = BannerResponse(
+        banner_key=BANNER_BUS_LANES_KEY,
+        user_id=current_user.id if current_user.is_authenticated else None,
+        cookie_id=None if current_user.is_authenticated else cookie_id,
+        answer=answer
+    )
+
+    db.session.add(banner_response)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+
+    if not current_user.is_authenticated and cookie_id:
+        _set_banner_cookie(api_response, cookie_id)
+
+    return api_response
+
+
 @bp.route('/healthz')
 def healthz():
     """Простой health-check для nginx/systemd/deploy."""
@@ -191,7 +285,8 @@ def add_bikelane():
         return render_template(
             'add_bikelane.html',
             preselected_city=preselected_city,
-            cities_data=_get_active_cities_data()
+            cities_data=_get_active_cities_data(),
+            reward_config=_get_bikelane_reward_config()
         )
 
     try:
@@ -273,7 +368,8 @@ def edit_bikelane(bikelane_id):
             form_data=_build_bikelane_form_context(bikelane),
             is_edit_mode=True,
             form_action=url_for('main.edit_bikelane', bikelane_id=bikelane.id),
-            cities_data=_get_active_cities_data()
+            cities_data=_get_active_cities_data(),
+            reward_config=_get_bikelane_reward_config()
         )
 
     try:

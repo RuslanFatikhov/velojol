@@ -1,0 +1,215 @@
+{% set hide_header = true %}
+{% extends 'base.html' %}
+
+{% block title %}Турнир | OPEN-VELOJOL{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tournament.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="tournament-page">
+
+
+
+    <!--Hero-->
+    <div class="tournament-hero">
+        <a href="/">
+            <img src="/static/img/icon/open_velojol_white.svg" alt="Velojol">
+        </a>
+
+        <div class="vstack gap-s">
+            <h1 class="prime-invert100">Турнир</h1>
+            <p class="prime-invert100">Рейтинг участников, которые добавляют велодорожки на карту</p>
+        </div>
+        
+        <!--Stories-->
+        <div class="tournament-stories" aria-label="Подсказки о турнире">
+            <button type="button" class="tournament-story-button" data-tournament-story="how" aria-label="Как это работает"></button>
+            <button type="button" class="tournament-story-button" data-tournament-story="why" aria-label="Зачем это нужно"></button>
+            <button type="button" class="tournament-story-button" data-tournament-story="coins" aria-label="Как получить монетки"></button>
+        </div>
+    </div>
+
+    
+
+
+    <!--Top-->
+    <div class="island pt-m" style="margin-top: 220px;">
+        <nav class="tabs_stack" aria-label="Период рейтинга">
+            {% for tab in period_tabs %}
+                <a href="{{ tab.url }}" class="tab{% if tab.is_active %} is-active{% endif %}">
+                    {{ tab.label }}
+                </a>
+            {% endfor %}
+
+        </nav>
+
+        <button type="button" class="button__label btn_gray tournament-filter-button mt-s" id="openTournamentFilter">
+                Весь мир
+        </button>
+    </div>
+
+
+
+    {% if selected_country_id or selected_city_id %}
+        <div class="tournament-active-filter">
+            <span class="secondary100">
+                {% if selected_city_id %}
+                    Фильтр по городу
+                {% else %}
+                    Фильтр по стране
+                {% endif %}
+            </span>
+            <a href="{{ reset_filter_url }}" class="secondary100">Сбросить</a>
+        </div>
+    {% endif %}
+
+
+    <div class="tournament-leaderboard">
+        {% if leaderboard %}
+            {% for row in leaderboard %}
+                <a
+                    href="{{ row.profile_url }}"
+                    class="tournament-row{% if row.is_current_user %} tournament-row--me{% endif %}"
+                >
+                    <span class="tournament-rank">{{ row.rank }}</span>
+                    <img class="tournament-avatar" src="{{ row.avatar_url }}" alt="Аватар {{ row.display_name }}">
+                    <span class="tournament-user">
+                        <span class="tournament-name">
+                            {% if row.is_current_user %}Вы{% else %}{{ row.display_name }}{% endif %}
+                        </span>
+                        {% if row.is_current_user %}
+                            <span class="tournament-nickname secondary100">{{ row.display_name }}</span>
+                        {% endif %}
+                    </span>
+                    <span class="tournament-points">
+                        {{ row.points }}
+                        <img src="{{ url_for('static', filename='img/icon/coin.png') }}" alt="Баллы" class="coin_icon">
+                    </span>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="tournament-empty island">
+                <h3 class="prime100">Пока нет участников в этом рейтинге</h3>
+                <p class="secondary100">Попробуйте другой период или сбросьте фильтр.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<div id="tournamentStoriesViewer" class="tournament-stories-viewer" aria-hidden="true">
+    <div class="tournament-stories-card" role="dialog" aria-modal="true" aria-label="Stories турнира">
+        <button type="button" class="tournament-stories-tap-zone tournament-stories-tap-zone--prev" data-story-nav="prev" aria-label="Предыдущий слайд"></button>
+        <img id="tournamentStoryImage" class="tournament-stories-image" src="" alt="">
+        <button type="button" class="tournament-stories-tap-zone tournament-stories-tap-zone--next" data-story-nav="next" aria-label="Следующий слайд"></button>
+        <div id="tournamentStoriesProgress" class="tournament-stories-progress" aria-hidden="true"></div>
+        <button type="button" id="closeTournamentStories" class="button_square_label tournament-stories-close" aria-label="Закрыть stories"><img src="/static/img/icon/cross.svg" alt="Закрыть" class="icon-small arrow_down"></button>
+    </div>
+</div>
+
+<div id="tournamentFilterModal" class="modal-overlay tournament-modal" style="display: none;">
+    <form method="GET" action="{{ url_for('public.tournament') }}" class="modal-middle" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div>
+                <h3 class="prime100">Фильтр</h3>
+                <p class="secondary100">Выберите страну и город</p>
+            </div>
+            <button type="button" class="close button_square_label" id="closeTournamentFilter" aria-label="Закрыть">
+                <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <input type="hidden" name="period" value="{{ period }}">
+
+            <label class="filter-group">
+                <span class="filter-label prime100">Страна</span>
+                <select name="country_id" id="tournamentCountrySelect">
+                    <option value="">Все страны</option>
+                    {% for country in countries %}
+                        <option value="{{ country }}" {% if selected_country_id == country %}selected{% endif %}>
+                            {{ country }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label class="filter-group">
+                <span class="filter-label prime100">Город</span>
+                <select name="city_id" id="tournamentCitySelect">
+                    <option value="">Все города</option>
+                    {% for city in all_cities %}
+                        <option
+                            value="{{ city.id }}"
+                            data-country="{{ city.country }}"
+                            {% if selected_city_id == city.id|string %}selected{% endif %}
+                        >
+                            {{ city.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <div class="modal-footer">
+            <a href="{{ reset_filter_url }}" class="button__label btn_gray">Сбросить</a>
+            <button type="submit" class="button__label btn_accent">Применить</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tournament_stories.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('tournamentFilterModal');
+    const openButton = document.getElementById('openTournamentFilter');
+    const closeButton = document.getElementById('closeTournamentFilter');
+    const countrySelect = document.getElementById('tournamentCountrySelect');
+    const citySelect = document.getElementById('tournamentCitySelect');
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    function updateCityOptions() {
+        const selectedCountry = countrySelect.value;
+        Array.from(citySelect.options).forEach(function(option) {
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
+
+            option.hidden = Boolean(selectedCountry) && option.dataset.country !== selectedCountry;
+        });
+
+        const selectedOption = citySelect.options[citySelect.selectedIndex];
+        if (selectedOption && selectedOption.hidden) {
+            citySelect.value = '';
+        }
+    }
+
+    openButton.addEventListener('click', function() {
+        modal.style.display = 'flex';
+        updateCityOptions();
+    });
+
+    closeButton.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    countrySelect.addEventListener('change', function() {
+        citySelect.value = '';
+        updateCityOptions();
+    });
+
+    updateCityOptions();
+});
+</script>
+{% endblock %}

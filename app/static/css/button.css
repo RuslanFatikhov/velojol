@@ -36,6 +36,7 @@ a{
     align-items: center;
     justify-content: center;
     padding: var(--spacer-m) 14px;
+    gap: var(--spacer-s);
     min-width: 48px;
     height: 48px;
     color: var(--text-button);
@@ -94,7 +95,7 @@ a{
     left: 0px;
     width: 100%;
     padding: var(--spacer-l) var(--spacer-m);
-    z-index: 1000;
+    z-index: 100;
     max-width:600px;
     left:50%;
     transform: translateX(-50%);
@@ -296,4 +297,12 @@ a{
     background: var(--prime_invert100);
     border-color: var(--blue100);
     color: var(--blue100);
+}
+
+
+.button__wrapper{
+    display: flex;
+    align-items: center;
+    padding: var(--spacer-m);
+    justify-content: center;
 }

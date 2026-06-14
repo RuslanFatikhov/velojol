@@ -15,17 +15,7 @@
             <img src="{{ url_for('static', filename='img/icon/open_velojol_white.svg') }}" alt="Velojol">
         </a>
 
-        <span class="hstack gap-s" id="profile">
-            {% if current_user.is_authenticated %}
-                <!-- Залогиненный пользователь -->
-                <a href="{{ url_for('auth.profile') }}" class="button_square_label hstack gap-s aic">
-                    <img src="{{ current_user.display_avatar }}" alt="Аватар {{ current_user.nickname }}" class="avatar_profile">
-                </a>
-            {% else %}
-                <!-- Незалогиненный пользователь -->
-                <a href="{{ url_for('auth.login') }}" class="button__label"><p style="display: block !important;" class="prime-invert100">Войти</p></a>
-            {% endif %}
-        </span>
+
     </span>
 
     <span class="spacer-l"></span>
@@ -54,10 +44,22 @@
 
 <span class="spacer100"></span>
 <div class="cities-container">
-    
-    
+    <section class="bus-lanes-banner" id="bus-lanes-banner" aria-live="polite" hidden>
+        <div class="vstack gap-m" style="max-width: 390px;">
+                <h3 class="prime-invert100">Надо ли добавить автобусные полосы?</h3>
+                <p class="prime-invert100">Законы некоторых стран разрешают езду на велосипеде по автобусным полосам</p>
 
-    
+
+            <div class="hstack gap-s" data-banner-actions>
+                <button type="button" class="button__label" data-banner-answer="yes">Да</button>
+                <button type="button" class="button__label" data-banner-answer="no">Нет</button>
+            </div>
+        </div>
+        <img
+            src="{{ url_for('static', filename='img/banner/bus-lanes.png') }}"
+            alt=""
+            aria-hidden="true">
+    </section>
 
     <!-- Список городов по странам -->
     {% if cities_by_country %}

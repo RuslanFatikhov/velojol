@@ -75,6 +75,10 @@ function initCityMobileTabs() {
 function initCityMap() {
     console.log('Инициализация Mapbox карты...');
     
+    if (!document.getElementById('cityMap')) {
+        return;
+    }
+
     if (!window.cityData) {
         console.error('Данные города не найдены');
         return;
@@ -466,6 +470,10 @@ async function showBikelaneModal(bikelaneId) {
 
 function closeBikelaneModal() {
     const modal = document.getElementById('bikelaneModal');
+    if (!modal) {
+        return;
+    }
+
     modal.style.display = 'none';
 }
 
@@ -503,19 +511,26 @@ function openPhotoGallery(index) {
     overlay.className = 'photo-modal-overlay';
     overlay.innerHTML = `
         <div class="photo-modal" onclick="event.stopPropagation()">
-            <button class="photo-modal-close button_square_label" type="button" aria-label="Закрыть галерею" onclick="closePhotoGallery()">
+
+            
+            <button class="button_square_label close" type="button" aria-label="Закрыть галерею" onclick="closePhotoGallery()">
                 <img src="/static/img/icon/cross.svg" alt="Закрыть">
             </button>
 
-            <button class="photo-modal-nav photo-modal-prev" type="button" aria-label="Предыдущее фото" onclick="changePhotoGalleryImage(-1)">
-                <img src="/static/img/icon/chevron_left.svg" alt="Предыдущее фото">
-            </button>
-            <img src="" alt="Фото велodorожки" id="photoGalleryImage">
-            <button class="photo-modal-nav photo-modal-next" type="button" aria-label="Следующее фото" onclick="changePhotoGalleryImage(1)">
-                <img src="/static/img/icon/chevron_right.svg" alt="Следующее фото">
-            </button>
-            <div class="photo-modal-counter" id="photoGalleryCounter"></div>
-        </div>
+            <img src="" alt="Фото велодорожки" id="photoGalleryImage">
+
+            <div class="photo-container">
+                <button class="button_square_label btn_gray " type="button" aria-label="Предыдущее фото" onclick="changePhotoGalleryImage(-1)">
+                    <img src="/static/img/icon/chevron_left.svg" alt="Предыдущее фото">
+                </button>
+
+                <div class="photo-info" id="photoGalleryCounter"></div>
+            
+                <button class="button_square_label btn_gray " type="button" aria-label="Следующее фото" onclick="changePhotoGalleryImage(1)">
+                    <img src="/static/img/icon/chevron_right.svg" alt="Следующее фото">
+                </button>
+            
+            </div>
     `;
 
     overlay.addEventListener('click', closePhotoGallery);
@@ -609,11 +624,19 @@ function formatDate(dateString) {
 
 function openFiltersModal() {
     const modal = document.getElementById('filtersModal');
+    if (!modal) {
+        return;
+    }
+
     modal.style.display = 'flex';
 }
 
 function closeFiltersModal() {
     const modal = document.getElementById('filtersModal');
+    if (!modal) {
+        return;
+    }
+
     modal.style.display = 'none';
 }
 
