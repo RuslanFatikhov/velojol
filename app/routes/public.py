@@ -8,6 +8,7 @@ from sqlalchemy import false, func
 from app import db
 from app.models.city import City
 from app.models.bikelane import BikeLane
+from app.models.infrastructure_point import InfrastructurePoint
 from app.models.user import User
 
 # Создаем Blueprint для публичных страниц
@@ -27,6 +28,21 @@ def _serialize_bikelane_for_viewer(bikelane):
         data['edit_url'] = None
 
     data['can_edit'] = can_edit
+    return data
+
+
+def _serialize_infrastructure_for_viewer(point):
+    data = point.to_dict()
+    edit_endpoint = (
+        'main.edit_parking'
+        if point.infrastructure_type == InfrastructurePoint.TYPE_BICYCLE_PARKING
+        else 'main.edit_repair'
+    )
+    data['edit_url'] = (
+        url_for(edit_endpoint, infrastructure_id=point.id)
+        if current_user.is_authenticated and getattr(current_user, 'is_admin', False)
+        else None
+    )
     return data
 
 
@@ -268,11 +284,19 @@ def city(city_id):
     
     # Конвертируем велодорожки в JSON для JavaScript
     bikelanes_json = json.dumps([_serialize_bikelane_for_viewer(bl) for bl in bikelanes])
+    infrastructure_points = InfrastructurePoint.query.filter_by(city_id=city.id).all()
+    infrastructure_json = json.dumps([
+        _serialize_infrastructure_for_viewer(point)
+        for point in infrastructure_points
+    ])
     
     # Статистика города
+    distance_breakdown = city.get_distance_breakdown()
     city_stats = {
         'total_bikelanes': city.get_bikelanes_count(),
-        'total_distance': city.get_total_distance(),
+        'total_distance': distance_breakdown['total'],
+        'bikelanes_distance': distance_breakdown['bikelanes'],
+        'bus_lanes_distance': distance_breakdown['bus_lanes'],
         'average_rating': city.get_average_rating()
     }
     
@@ -280,6 +304,7 @@ def city(city_id):
                          city=city,
                          bikelanes=bikelanes,
                          bikelanes_json=bikelanes_json,
+                         infrastructure_json=infrastructure_json,
                          city_stats=city_stats,
                          search_query=search_query,
                          track_type_filter=track_type_filter,
@@ -318,13 +343,30 @@ def api_city_bikelanes(city_id):
     
     # Конвертируем в JSON
     bikelanes_data = [_serialize_bikelane_for_viewer(bl) for bl in bikelanes]
+    infrastructure_data = [
+        _serialize_infrastructure_for_viewer(point)
+        for point in InfrastructurePoint.query.filter_by(city_id=city.id).all()
+    ]
     
     return jsonify({
         'success': True,
         'city': city.to_dict(),
         'bikelanes': bikelanes_data,
-        'count': len(bikelanes_data)
+        'infrastructure': infrastructure_data,
+        'count': len(bikelanes_data),
+        'infrastructure_count': len(infrastructure_data),
     })
+
+
+@bp.route('/api/infrastructure/<int:infrastructure_id>')
+def api_infrastructure(infrastructure_id):
+    """Полная информация о велопарковке или ремонтной стойке."""
+    point = InfrastructurePoint.query.get_or_404(infrastructure_id)
+    return jsonify({
+        'success': True,
+        'infrastructure': _serialize_infrastructure_for_viewer(point),
+    })
+
 
 @bp.route('/api/bikelane/<int:bikelane_id>')
 def api_bikelane(bikelane_id):

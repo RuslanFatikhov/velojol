@@ -79,7 +79,11 @@
                         <div class="vstack gap-xs w100">
                             <h4 class="prime100 fw500">{{ bikelane.title }}</h4>
                             <p class="secondary100 fw500">
+                                {% if bikelane.track_type == 'bus_lane' %}
+                                {{ bikelane.track_type_display }}
+                                {% else %}
                                 {{ bikelane.track_type_display }} • {{ '%.2f'|format(bikelane.calculate_length()) }} км
+                                {% endif %}
                             </p>
                         </div>
                         <!--Coins-->

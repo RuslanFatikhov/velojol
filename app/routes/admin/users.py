@@ -1,11 +1,21 @@
 # app/routes/admin/users.py
 
-from flask import render_template, request, flash, redirect, url_for, jsonify
+from flask import (
+    current_app,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user
 from app import db
 from app.models.user import User
 from app.models.bikelane import BikeLane
 from app.models.notification import Notification
+from app.models.review import Review
+from app.models.verification import VerificationCode
 from . import bp, admin_required
 
 @bp.route('/users')
@@ -14,7 +24,7 @@ def users():
     """Страница управления пользователями"""
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
-    per_page = 20
+    per_page = 50
     
     # Базовый запрос
     query = User.query
@@ -55,6 +65,83 @@ def users():
                          users=users,
                          search=search,
                          stats=stats)
+
+
+@bp.route('/users/bulk-delete', methods=['POST'])
+@admin_required
+def bulk_delete_users():
+    """Удалить выбранных пользователей, сохранив созданные ими объекты."""
+    selected_ids = []
+    for raw_id in request.form.getlist('user_ids'):
+        try:
+            selected_ids.append(int(raw_id))
+        except (TypeError, ValueError):
+            continue
+    selected_ids = list(dict.fromkeys(selected_ids))
+
+    if not selected_ids:
+        flash('Выберите хотя бы одного пользователя.', 'error')
+        return redirect(url_for('admin.users'))
+
+    protected_current_user = current_user.id in selected_ids
+    selected_ids = [
+        user_id for user_id in selected_ids
+        if user_id != current_user.id
+    ]
+    selected_users = User.query.filter(User.id.in_(selected_ids)).all()
+
+    if not selected_users:
+        flash('Нельзя удалить текущего администратора.', 'error')
+        return redirect(url_for('admin.users'))
+
+    user_ids = [user.id for user in selected_users]
+    user_emails = [user.email for user in selected_users if user.email]
+
+    try:
+        # Публичные объекты сохраняем, но отвязываем от удаляемых аккаунтов.
+        BikeLane.query.filter(BikeLane.user_id.in_(user_ids)).update(
+            {BikeLane.user_id: None},
+            synchronize_session=False,
+        )
+        BikeLane.query.filter(BikeLane.moderated_by.in_(user_ids)).update(
+            {BikeLane.moderated_by: None},
+            synchronize_session=False,
+        )
+        User.query.filter(User.banned_by.in_(user_ids)).update(
+            {User.banned_by: None},
+            synchronize_session=False,
+        )
+
+        # Персональные данные аккаунта удаляем вместе с пользователем.
+        Notification.query.filter(
+            Notification.user_id.in_(user_ids)
+        ).delete(synchronize_session=False)
+        Review.query.filter(
+            Review.user_id.in_(user_ids)
+        ).delete(synchronize_session=False)
+        if user_emails:
+            VerificationCode.query.filter(
+                VerificationCode.email.in_(user_emails)
+            ).delete(synchronize_session=False)
+
+        for user in selected_users:
+            db.session.delete(user)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception(
+            'Не удалось удалить пользователей %s',
+            user_ids,
+        )
+        flash('Не удалось удалить выбранных пользователей.', 'error')
+        return redirect(url_for('admin.users'))
+
+    message = f'Удалено пользователей: {len(selected_users)}.'
+    if protected_current_user:
+        message += ' Текущий администратор не был удалён.'
+    flash(message, 'success')
+    return redirect(url_for('admin.users'))
+
 
 @bp.route('/users/<int:user_id>')
 @admin_required

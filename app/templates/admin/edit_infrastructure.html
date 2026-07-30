@@ -1,0 +1,218 @@
+{% set hide_header = true %}
+{% set hide_footer = true %}
+{% set hide_tapbar = true %}
+{% extends "base.html" %}
+
+{% set is_create_mode = is_create_mode | default(false) %}
+{% set is_parking = point.infrastructure_type == 'bicycle_parking' %}
+{% if is_create_mode %}
+    {% set editor_title = 'Добавление велопарковки' if is_parking else 'Добавление ремонтной стойки' %}
+{% else %}
+    {% set editor_title = 'Редактирование велопарковки' if is_parking else 'Редактирование ремонтной станции' %}
+{% endif %}
+
+{% block title %}{{ editor_title }} - OPEN-VELOJOL {{ app_version }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/add_bikelane.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/edit_infrastructure.css') }}">
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="">
+{% endblock %}
+
+{% block content %}
+{% if is_create_mode %}
+    {% include 'components/add_object_tabs.html' %}
+{% endif %}
+
+<div class="page-header">
+    <div>
+        <h1 class="prime100">{{ editor_title }}</h1>
+        <p class="infrastructure-editor__subtitle secondary100">
+            {% if is_create_mode %}
+                Выберите город и укажите объект на карте
+            {% else %}
+                {{ city.name if city else 'Город не указан' }} · ID {{ point.id }}
+            {% endif %}
+        </p>
+    </div>
+    <a
+        href="{{ 'javascript:history.back()' if is_create_mode else url_for('admin.bikelanes', data_type=point.infrastructure_type, status='all') }}"
+        class="button_square_icon"
+        aria-label="Закрыть редактор">
+        <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">
+    </a>
+</div>
+
+<form
+    method="post"
+    enctype="multipart/form-data"
+    action="{{ form_action }}"
+    id="infrastructure-edit-form">
+    {% if is_create_mode %}
+        <input type="hidden" name="object_type" value="{{ add_object_type }}">
+        <div class="island">
+            <div class="form-group">
+                <select id="infrastructure-city" name="city" class="form-input" required>
+                    <option value="">Выберите город</option>
+                    {% for city_option in cities_data.cities | default([]) %}
+                        <option
+                            value="{{ city_option.id }}"
+                            data-lat="{{ city_option.coords[0] }}"
+                            data-lng="{{ city_option.coords[1] }}"
+                            {% if city_option.id == selected_city_value %}selected{% endif %}>
+                            {{ city_option.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    {% endif %}
+
+    <input type="hidden" name="latitude" id="infrastructure-latitude" value="{{ point.latitude }}">
+    <input type="hidden" name="longitude" id="infrastructure-longitude" value="{{ point.longitude }}">
+
+    <div class="island">
+        <h3 class="prime100 island_heading">Основная информация</h3>
+        <div class="infrastructure-editor__fields">
+            <label class="infrastructure-editor__field">
+                <span class="secondary100">Тип объекта</span>
+                <input
+                    class="form-input"
+                    type="text"
+                    value="{{ point.type_display }}"
+                    disabled>
+            </label>
+
+            <label class="infrastructure-editor__field">
+                <span class="secondary100">Название</span>
+                <input
+                    class="form-input"
+                    type="text"
+                    name="title"
+                    value="{{ point.title }}"
+                    minlength="3"
+                    maxlength="200"
+                    required>
+            </label>
+
+            <label class="infrastructure-editor__field infrastructure-editor__field--wide">
+                <span class="secondary100">Описание</span>
+                <textarea
+                    class="form-input infrastructure-editor__textarea"
+                    name="description"
+                    rows="5"
+                    placeholder="Опишите расположение, состояние и особенности объекта">{{ point.description or '' }}</textarea>
+            </label>
+        </div>
+    </div>
+
+    <div class="island" id="infrastructure-map-section">
+        <div class="infrastructure-editor__section-heading">
+            <div>
+                <h3 class="prime100 island_heading">Метка на карте</h3>
+                <p class="secondary100">Перетащите метку или нажмите на нужное место.</p>
+            </div>
+            <span class="infrastructure-editor__coordinates" id="infrastructure-coordinates"></span>
+        </div>
+        <div id="infrastructure-edit-map" aria-label="Карта расположения объекта"></div>
+        <p class="infrastructure-editor__map-error" id="infrastructure-map-error" hidden>
+            Карта недоступна. Текущие координаты будут сохранены без изменений.
+        </p>
+    </div>
+
+    <div class="island">
+        <h3 class="prime100 island_heading">
+            {{ 'Характеристики парковки' if is_parking else 'Оснащение станции' }}
+        </h3>
+        <div class="infrastructure-editor__fields">
+            {% for field in form_fields %}
+                <label class="infrastructure-editor__field">
+                    <span class="secondary100">{{ field.label }}</span>
+                    {% if field.type == 'select' %}
+                        <select class="form-input" name="{{ field.name }}">
+                            {% for option_value, option_label in field.options %}
+                                <option
+                                    value="{{ option_value }}"
+                                    {% if field.value == option_value %}selected{% endif %}>
+                                    {{ option_label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input
+                            class="form-input"
+                            type="{{ 'number' if field.type == 'number' else 'text' }}"
+                            name="{{ field.name }}"
+                            value="{{ field.value }}"
+                            placeholder="{{ field.placeholder | default('') }}"
+                            {% if field.type == 'number' %}min="0" step="1"{% endif %}>
+                    {% endif %}
+                </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="island">
+        <h3 class="prime100 island_heading">Фотографии</h3>
+
+        {% if not is_create_mode and point.get_photos_list() %}
+            <div class="infrastructure-editor__photos" aria-label="Добавленные фотографии">
+                {% for photo in point.get_photos_list() %}
+                    <img
+                        src="{{ url_for('static', filename=photo) }}"
+                        alt="Фото объекта {{ loop.index }}">
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <label class="infrastructure-editor__upload" for="infrastructure-photos">
+            <strong>Добавить фотографии</strong>
+            <span class="secondary100">JPG или PNG, максимум 10 фотографий</span>
+            <input
+                type="file"
+                name="photos"
+                id="infrastructure-photos"
+                multiple
+                accept="image/*">
+        </label>
+        <div class="infrastructure-editor__photos" id="infrastructure-photo-preview"></div>
+    </div>
+
+    {% if not is_create_mode %}
+        <div class="island infrastructure-editor__source">
+            <h3 class="prime100 island_heading">Источник</h3>
+            <p class="secondary100">
+                {{ point.source }} · {{ point.osm_type }}/{{ point.osm_id }}
+            </p>
+            <p class="secondary100">
+                Неизвестные OSM-теги сохраняются при редактировании.
+            </p>
+        </div>
+    {% endif %}
+
+    <div class="submit-section">
+        <button type="submit" class="button__label btn_black" id="save-infrastructure-btn">
+            {{ 'Добавить' if is_create_mode else 'Сохранить и опубликовать' }}
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.infrastructureEditorData = {
+    coordinates: [{{ point.longitude | tojson }}, {{ point.latitude | tojson }}],
+    iconUrl: {{ url_for('static', filename='img/icon/parking.svg' if is_parking else 'img/icon/repair.svg') | tojson }},
+    isCreateMode: {{ is_create_mode | tojson }}
+};
+</script>
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+<script src="{{ url_for('static', filename='js/edit_infrastructure.js') }}"></script>
+{% endblock %}

@@ -30,6 +30,7 @@
 .city-header-coat {
     width: 40px;
     height: 40px;
+    object-fit: contain;
 }
 
 .city-header h1 {
@@ -43,6 +44,55 @@
     border-top: 1px solid var(--bg3);
 }
 
+.city-distance {
+    position: relative;
+}
+
+.city-distance summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.city-distance summary::-webkit-details-marker {
+    display: none;
+}
+
+.city-distance summary:focus-visible {
+    border-radius: var(--spacer-xs);
+    outline: 2px solid var(--accent100);
+    outline-offset: 4px;
+}
+
+.city-distance-tooltip {
+    position: absolute;
+    top: calc(100% + var(--spacer-s));
+    right: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
+    width: max-content;
+    min-width: 220px;
+    padding: var(--spacer-m);
+    border: 1px solid var(--secondary30);
+    border-radius: var(--spacer-s);
+    background: var(--bg1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.city-distance-tooltip-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacer-l);
+    color: var(--secondary100);
+    white-space: nowrap;
+}
+
+.city-distance-tooltip-row strong {
+    color: var(--prime100);
+}
+
 /* Форма фильтров */
 .filters-form {
     display: flex;
@@ -54,6 +104,23 @@
     position: fixed;
     right: var(--spacer-m);
     bottom: 120px;
+}
+
+.city-geolocation-btn {
+    position: fixed;
+    right: var(--spacer-m);
+    bottom: 176px;
+    z-index: 1;
+}
+
+.city-geolocation-btn img {
+    width: var(--spacer-l);
+    height: var(--spacer-l);
+}
+
+.city-geolocation-btn:disabled {
+    opacity: 0.5;
+    cursor: wait;
 }
 
 .city-add-bikelane-btn span {
@@ -75,6 +142,17 @@
 
 .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right{
     margin-bottom: 20px;
+}
+
+.map-config-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: var(--spacer-l);
+    text-align: center;
 }
 
 
@@ -128,6 +206,24 @@
     margin-right: 0;
 }
 
+.bikelanes-sort {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    width: 100%;
+    padding: var(--spacer-s) var(--spacer-m);
+    border-bottom: 1px solid var(--secondary30);
+}
+
+.bikelanes-sort label {
+    flex: 0 0 auto;
+}
+
+.bikelanes-sort .form-input {
+    min-width: 0;
+    height: 44px;
+}
+
 /* Список велодорожек */
 .bikelanes-list {
     width: 100%;
@@ -154,7 +250,6 @@
     background-color: var(--bg1);
     border-bottom: 1px solid var(--secondary30);
     width: 100%;
-    min-height: 74px;
     padding: var(--spacer-m);
     position: relative;
     cursor: pointer;
@@ -298,20 +393,55 @@
     width: auto !important;
     padding-left: var(--spacer-m);
     padding-right: var(--spacer-m);
+    position: relative;
 }
 
 .filter-badge {
-    display: none !important;
+    display: none;
     background: var(--accent100);
     color: white;
     border-radius: 50%;
     width: 20px;
     height: 20px;
-    display: flex;
     align-items: center;
     justify-content: center;
     font-size: var(--spacer-sm);
     font-weight: 600;
+    position:absolute;
+    right:-4px;
+    top:-8px
+}
+
+.map-layer-filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
+    margin-top: var(--spacer-s);
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+    min-height: 40px;
+    cursor: pointer;
+}
+
+
+
+.infrastructure-marker {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.infrastructure-marker img {
+    display: block;
+    width: 32px;
+    height: 32px;
 }
 
 @media (max-width: 768px) {

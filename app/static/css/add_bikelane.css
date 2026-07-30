@@ -6,6 +6,36 @@ body {
     padding: 0;
 }
 
+.add-object-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    margin-bottom: var(--spacer-m);
+    padding: 4px;
+    border-radius: var(--spacer-m);
+    background: var(--bg3);
+}
+
+.add-object-tab {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px var(--spacer-s);
+    border-radius: 12px;
+    color: var(--secondary100);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.add-object-tab.is-active {
+    background: var(--prime100);
+    color: var(--prime_invert100);
+}
+
 
 
 
@@ -72,13 +102,61 @@ body {
 
 /* Карта */
 #map {
-    height: 300px;
+    height: 420px;
     width: 100%;
     border-radius: var(--spacer-m)
 }
 
 .map-container {
     position: relative;
+}
+
+.map-editor-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacer-s);
+    min-height: 48px;
+    margin-bottom: var(--spacer-s);
+    padding: 10px var(--spacer-m);
+    border-radius: var(--spacer-m);
+    background: var(--bg3);
+}
+
+.map-editor-state {
+    flex: 0 0 auto;
+    color: var(--prime100);
+    font-weight: 700;
+}
+
+.map-editor-state.is-drawing {
+    color: var(--blue100);
+}
+
+.map-editor-state.is-ready {
+    color: var(--accent200);
+}
+
+.map-editor-meta {
+    color: var(--secondary100);
+    font-size: 13px;
+    line-height: 17px;
+    text-align: right;
+}
+
+.map-container.is-drawing .leaflet-container {
+    cursor: crosshair;
+}
+
+#map .leaflet-editing-icon {
+    width: 18px !important;
+    height: 18px !important;
+    margin-left: -9px !important;
+    margin-top: -9px !important;
+    border: 3px solid #fefefe !important;
+    border-radius: 50%;
+    background: var(--blue100) !important;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
 }
 
 #map-section.error .map-container {
@@ -200,16 +278,9 @@ body {
 }
 
 .geometry-status.info {
-    position: fixed;
-    bottom: 100px;
-    left: var(--spacer-m);
     background:var(--bg4);
     color: var(--prime100);
-    width: calc(100vw - 32px);
-    max-width: 400px;
-    left: 50%;
-    z-index: 500;
-    transform: translateX(-50%);
+    border: 1px solid var(--secondary20);
 }
 
 /* Типы велодорожек */
@@ -262,6 +333,10 @@ body {
 .track-title {
     color: var(--prime100);
     text-align: center;
+}
+
+#bikelane-form.is-bus-lane .bikelane-only {
+    display: none;
 }
 
 /* Рейтинг качества */
@@ -488,6 +563,18 @@ body {
     width: 100%;
 }
 
+.admin-edit-actions {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+}
+
+.admin-edit-actions > *,
+.admin-delete-bikelane-form {
+    flex: 1;
+    min-width: 0;
+}
+
 .submit-score__progress {
     width: 100%;
     display: flex;
@@ -619,7 +706,6 @@ body {
 
 .map-controls {
     display: flex;
-    left: var(--spacer-m);
     gap: var(--spacer-s);
     margin-top: var(--spacer-s);
 }
@@ -635,6 +721,11 @@ body {
     font-size: 15px;
     font-weight: 600;
     flex: 1;
+}
+
+.map-control-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
 }
 
 .map-control-btn:active {
@@ -756,6 +847,21 @@ body {
 }
 
 @media (max-width: 768px) {
+    .add-object-tabs {
+        overflow-x: auto;
+        grid-template-columns: max-content max-content max-content;
+        scrollbar-width: none;
+    }
+
+    .add-object-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .add-object-tab {
+        min-width: max-content;
+        padding-inline: var(--spacer-m);
+    }
+
     .map-drawer-trigger {
         display: flex;
     }
@@ -765,11 +871,29 @@ body {
     }
 
     #map {
-        height: min(52vh, 460px);
+        height: min(58vh, 520px);
+        min-height: 360px;
+    }
+
+    .map-editor-summary {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .map-editor-meta {
+        text-align: left;
+    }
+
+    #map .leaflet-editing-icon {
+        width: 24px !important;
+        height: 24px !important;
+        margin-left: -12px !important;
+        margin-top: -12px !important;
     }
 
     .map-controls {
         position: fixed;
+        left: var(--spacer-m);
         width: calc(100vw - 32px);
         bottom: var(--spacer-m);
         z-index: 10;
@@ -779,10 +903,8 @@ body {
 
     .map-control-btn {
         min-height: 48px;
-    }
-
-    .geometry-status.info {
-        bottom: 80px;;
+        padding: 0 var(--spacer-s);
+        font-size: 14px;
     }
 
     .photos-preview {

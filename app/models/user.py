@@ -11,9 +11,11 @@ class User(UserMixin, db.Model):
     
     # Основные поля
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(120), unique=True, nullable=True, index=True)
     password_hash = db.Column(db.String(128), nullable=False)
     nickname = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    google_sub = db.Column(db.String(255), unique=True, nullable=True, index=True)
+    telegram_sub = db.Column(db.String(255), unique=True, nullable=True, index=True)
     
     # Права доступа
     is_admin = db.Column(db.Boolean, default=False, nullable=False)

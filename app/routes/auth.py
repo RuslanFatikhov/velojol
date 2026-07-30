@@ -1,7 +1,7 @@
 # app/routes/auth.py
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, jsonify, session
 from flask_login import login_user, logout_user, login_required, current_user
-from app import db
+from app import db, oauth
 from app.models.user import User
 from app.models.bikelane import BikeLane
 from app.models.verification import VerificationCode
@@ -9,11 +9,194 @@ from app.utils.email_sender import send_verification_code
 from app.utils.file_handler import FileHandler
 from datetime import datetime, timezone
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+from authlib.integrations.base_client.errors import OAuthError
+from authlib.jose import JsonWebToken
+from authlib.jose.errors import JoseError
+from urllib.parse import urlsplit
+import json
+import secrets
 import re
 import os
 
 # Создаем Blueprint для аутентификации
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+
+def _safe_next_url(target):
+    """Возвращает только локальный URL, чтобы не допустить open redirect."""
+    if not target:
+        return None
+
+    reference = urlsplit(request.host_url)
+    candidate = urlsplit(target)
+    if candidate.scheme not in ('', reference.scheme):
+        return None
+    if candidate.netloc not in ('', reference.netloc):
+        return None
+    if not candidate.path.startswith('/'):
+        return None
+    return candidate.path + (f'?{candidate.query}' if candidate.query else '')
+
+
+def _get_google_client():
+    """Отдельная точка получения клиента упрощает безопасное тестирование OAuth."""
+    return oauth.create_client('google')
+
+
+def _get_telegram_client():
+    """Возвращает OIDC-клиент Telegram."""
+    return oauth.create_client('telegram')
+
+
+def _google_redirect_uri():
+    configured_uri = current_app.config.get('GOOGLE_REDIRECT_URI', '').strip()
+    if configured_uri:
+        return configured_uri
+    return url_for(
+        'auth.google_callback',
+        _external=True,
+        _scheme=current_app.config.get('PREFERRED_URL_SCHEME', 'http'),
+    )
+
+
+def _telegram_redirect_uri():
+    configured_uri = current_app.config.get('TELEGRAM_REDIRECT_URI', '').strip()
+    if configured_uri:
+        return configured_uri
+    return url_for(
+        'auth.telegram_callback',
+        _external=True,
+        _scheme=current_app.config.get('PREFERRED_URL_SCHEME', 'http'),
+    )
+
+
+def _build_unique_nickname(source, fallback='rider'):
+    """Создает допустимый свободный никнейм из внешнего профиля."""
+    base = re.sub(r'[^a-zA-Z0-9_-]+', '_', str(source or '')).strip('_')
+    if len(base) < 3:
+        base = re.sub(
+            r'[^a-zA-Z0-9_-]+',
+            '_',
+            str(fallback or ''),
+        ).strip('_')
+    if len(base) < 3:
+        base = 'rider'
+    base = base[:30]
+
+    nickname = base
+    suffix = 2
+    while User.query.filter_by(nickname=nickname).first():
+        suffix_text = f'_{suffix}'
+        nickname = f'{base[:30 - len(suffix_text)]}{suffix_text}'
+        suffix += 1
+    return nickname
+
+
+def _build_google_nickname(userinfo):
+    """Создает допустимый и свободный никнейм из профиля Google."""
+    source = userinfo.get('given_name') or userinfo.get('name') or userinfo['email'].split('@')[0]
+    fallback = re.sub(
+        r'[^a-zA-Z0-9_-]+',
+        '_',
+        userinfo['email'].split('@')[0],
+    ).strip('_')
+    return _build_unique_nickname(source, fallback=fallback or 'rider')
+
+
+def _build_telegram_nickname(userinfo, telegram_sub):
+    """Создает никнейм из username/имени Telegram без доверия к их уникальности."""
+    source = (
+        userinfo.get('preferred_username')
+        or userinfo.get('given_name')
+        or userinfo.get('name')
+    )
+    return _build_unique_nickname(source, fallback=f'rider_{telegram_sub[-8:]}')
+
+
+def _load_telegram_jwks():
+    configured_jwks = current_app.config.get('TELEGRAM_JWKS')
+    if configured_jwks:
+        return configured_jwks
+
+    with current_app.open_resource('data/telegram_jwks.json') as jwks_file:
+        return json.load(jwks_file)
+
+
+def _telegram_id_token_userinfo(id_token):
+    """Проверяет Telegram ID token по закреплённым публичным ключам."""
+    expected_nonce = session.pop('telegram_login_nonce', None)
+    client_id = str(current_app.config.get('TELEGRAM_CLIENT_ID', '')).strip()
+    if not id_token or not expected_nonce or not client_id:
+        return None
+
+    try:
+        claims = JsonWebToken(['RS256']).decode(
+            id_token,
+            _load_telegram_jwks(),
+        )
+        claims.validate(leeway=60)
+    except (JoseError, ValueError, TypeError, KeyError):
+        return None
+
+    audience = claims.get('aud')
+    valid_audience = (
+        client_id in audience
+        if isinstance(audience, list)
+        else str(audience or '') == client_id
+    )
+    if (
+        claims.get('iss') != 'https://oauth.telegram.org'
+        or not valid_audience
+        or not secrets.compare_digest(
+            str(claims.get('nonce', '')),
+            expected_nonce,
+        )
+        or not str(claims.get('sub', '')).strip()
+    ):
+        return None
+
+    return dict(claims)
+
+
+def _finish_telegram_login(userinfo):
+    """Создаёт/находит Telegram-пользователя и завершает вход."""
+    telegram_sub = str(userinfo.get('sub', '')).strip()
+    if not telegram_sub:
+        flash('Telegram не передал идентификатор аккаунта', 'error')
+        return redirect(url_for('auth.login'))
+
+    user = User.query.filter_by(telegram_sub=telegram_sub).first()
+    if user is None:
+        username = str(userinfo.get('preferred_username', '')).strip()
+        user = User(
+            email=None,
+            nickname=_build_telegram_nickname(userinfo, telegram_sub),
+            telegram_sub=telegram_sub,
+            telegram_url=f'https://t.me/{username}' if re.fullmatch(
+                r'[a-zA-Z0-9_]{5,32}',
+                username,
+            ) else None,
+        )
+        # password_hash остается обязательным для старых локальных аккаунтов.
+        # Случайное значение никогда не используется для Telegram-входа.
+        user.set_password(secrets.token_urlsafe(32))
+        db.session.add(user)
+
+    picture = str(userinfo.get('picture', '')).strip()
+    if picture and not user.avatar_url:
+        user.avatar_url = picture
+
+    if user.is_banned:
+        db.session.rollback()
+        flash(f'Ваш аккаунт заблокирован. Причина: {user.ban_reason}', 'error')
+        return redirect(url_for('auth.login'))
+
+    db.session.commit()
+    session.permanent = True
+    login_user(user, remember=True)
+
+    next_page = session.pop('telegram_oauth_next', None)
+    return redirect(next_page or url_for('main.index'))
 
 
 def _get_json_payload():
@@ -83,7 +266,7 @@ def register():
     
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    
+
     if request.method == 'POST':
         # Получаем данные из формы
         email = request.form.get('email', '').strip().lower()
@@ -160,7 +343,9 @@ def register():
                 existing_code.increment_request_count()
                 
                 # Отправляем код повторно
-                send_verification_code(email, existing_code.code, 'registration')
+                if not send_verification_code(email, existing_code.code, 'registration'):
+                    flash('Не удалось отправить код на почту. Попробуйте позже или свяжитесь с администратором.', 'error')
+                    return render_template('auth/register.html', form_data=request.form)
                 
                 # Сохраняем email в сессии
                 session['pending_registration_email'] = email
@@ -182,7 +367,9 @@ def register():
         verification = VerificationCode.create_code(email, 'registration', registration_data)
         
         # Отправляем код на email
-        send_verification_code(email, verification.code, 'registration')
+        if not send_verification_code(email, verification.code, 'registration'):
+            flash('Не удалось отправить код на почту. Попробуйте позже или свяжитесь с администратором.', 'error')
+            return render_template('auth/register.html', form_data=request.form)
         
         # Сохраняем email в сессии
         session['pending_registration_email'] = email
@@ -286,7 +473,8 @@ def resend_code():
         return jsonify({'success': False, 'message': 'Превышен лимит запросов. Попробуйте через 1 час.'}), 429
     
     # Отправляем код
-    send_verification_code(email, verification.code, code_type)
+    if not send_verification_code(email, verification.code, code_type):
+        return jsonify({'success': False, 'message': 'Не удалось отправить код на почту. Попробуйте позже.'}), 503
 
     if code_type == 'registration':
         session['pending_registration_email'] = email
@@ -297,10 +485,18 @@ def resend_code():
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """Страница входа"""
+    """Страница входа через внешних провайдеров.
+
+    POST оставлен как временный аварийный путь для существующих аккаунтов,
+    но форма email/пароля больше не публикуется в интерфейсе.
+    """
     
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
+
+    telegram_login_nonce = secrets.token_urlsafe(32)
+    session['telegram_login_nonce'] = telegram_login_nonce
+    session['telegram_oauth_next'] = _safe_next_url(request.args.get('next'))
     
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
@@ -309,28 +505,166 @@ def login():
         
         if not email or not password:
             flash('Заполните все поля', 'error')
-            return render_template('auth/login.html', form_data=request.form)
+            return render_template(
+                'auth/login.html',
+                form_data=request.form,
+                telegram_login_nonce=telegram_login_nonce,
+            )
         
         user = User.query.filter_by(email=email).first()
         
         if not user or not user.check_password(password):
             flash('Неверный email или пароль', 'error')
-            return render_template('auth/login.html', form_data=request.form)
+            return render_template(
+                'auth/login.html',
+                form_data=request.form,
+                telegram_login_nonce=telegram_login_nonce,
+            )
         
         if user.is_banned:
             flash(f'Ваш аккаунт заблокирован. Причина: {user.ban_reason}', 'error')
-            return render_template('auth/login.html', form_data=request.form)
+            return render_template(
+                'auth/login.html',
+                form_data=request.form,
+                telegram_login_nonce=telegram_login_nonce,
+            )
 
         session.permanent = True
         login_user(user, remember=remember)
         
-        next_page = request.args.get('next')
+        next_page = _safe_next_url(request.args.get('next'))
         if next_page:
             return redirect(next_page)
         
         return redirect(url_for('main.index'))
     
-    return render_template('auth/login.html')
+    return render_template(
+        'auth/login.html',
+        telegram_login_nonce=telegram_login_nonce,
+    )
+
+
+@bp.route('/telegram')
+def telegram_login():
+    """Fallback для браузеров, где Telegram Login Widget не загрузился."""
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    if not current_app.config.get('TELEGRAM_OAUTH_ENABLED'):
+        flash('Вход через Telegram пока не настроен', 'error')
+        return redirect(url_for('auth.login'))
+
+    session['telegram_oauth_next'] = _safe_next_url(request.args.get('next'))
+    flash('Нажмите «Войти через Telegram» ещё раз', 'info')
+    return redirect(url_for('auth.login'))
+
+
+@bp.route('/telegram/callback', methods=['GET', 'POST'])
+def telegram_callback():
+    """Проверяет ответ Telegram и выполняет вход."""
+    if not current_app.config.get('TELEGRAM_OAUTH_ENABLED'):
+        flash('Вход через Telegram пока не настроен', 'error')
+        return redirect(url_for('auth.login'))
+
+    if request.values.get('id_token'):
+        userinfo = _telegram_id_token_userinfo(request.values.get('id_token'))
+        if userinfo is None:
+            current_app.logger.warning('Telegram Login ID token rejected')
+            flash('Не удалось проверить вход через Telegram. Попробуйте ещё раз.', 'error')
+            return redirect(url_for('auth.login'))
+    else:
+        # Оставляем совместимость с уже начатыми OIDC-сессиями.
+        try:
+            token = _get_telegram_client().authorize_access_token()
+            userinfo = token.get('userinfo') or {}
+        except OAuthError as exc:
+            current_app.logger.warning('Telegram OAuth failed: %s', exc.error)
+            flash('Не удалось войти через Telegram. Попробуйте ещё раз.', 'error')
+            return redirect(url_for('auth.login'))
+        except Exception:
+            current_app.logger.exception('Unexpected Telegram OAuth error')
+            flash('Не удалось войти через Telegram. Попробуйте ещё раз.', 'error')
+            return redirect(url_for('auth.login'))
+
+    return _finish_telegram_login(userinfo)
+
+
+@bp.route('/google')
+def google_login():
+    """Начинает серверный OpenID Connect flow через Google."""
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    if not current_app.config.get('GOOGLE_OAUTH_ENABLED'):
+        flash('Вход через Google пока не настроен', 'error')
+        return redirect(url_for('auth.login'))
+
+    session['google_oauth_next'] = _safe_next_url(request.args.get('next'))
+    return _get_google_client().authorize_redirect(_google_redirect_uri())
+
+
+@bp.route('/google/callback')
+def google_callback():
+    """Проверяет ответ Google, связывает аккаунт и выполняет вход."""
+    if not current_app.config.get('GOOGLE_OAUTH_ENABLED'):
+        flash('Вход через Google пока не настроен', 'error')
+        return redirect(url_for('auth.login'))
+
+    try:
+        token = _get_google_client().authorize_access_token()
+        userinfo = token.get('userinfo') or {}
+    except OAuthError as exc:
+        current_app.logger.warning('Google OAuth failed: %s', exc.error)
+        flash('Не удалось войти через Google. Попробуйте ещё раз.', 'error')
+        return redirect(url_for('auth.login'))
+    except Exception:
+        current_app.logger.exception('Unexpected Google OAuth error')
+        flash('Не удалось войти через Google. Попробуйте ещё раз.', 'error')
+        return redirect(url_for('auth.login'))
+
+    google_sub = str(userinfo.get('sub', '')).strip()
+    email = str(userinfo.get('email', '')).strip().lower()
+    email_verified = userinfo.get('email_verified') is True or str(
+        userinfo.get('email_verified', '')
+    ).lower() == 'true'
+
+    if not google_sub or not email or not email_verified:
+        flash('Google не подтвердил email этого аккаунта', 'error')
+        return redirect(url_for('auth.login'))
+
+    user = User.query.filter_by(google_sub=google_sub).first()
+    if user is None:
+        user = User.query.filter_by(email=email).first()
+        if user and user.google_sub and user.google_sub != google_sub:
+            flash('Этот email уже связан с другим Google-аккаунтом', 'error')
+            return redirect(url_for('auth.login'))
+
+        if user:
+            user.google_sub = google_sub
+        else:
+            user = User(
+                email=email,
+                nickname=_build_google_nickname(userinfo),
+                google_sub=google_sub,
+            )
+            # Поле пока обязательно для локальных аккаунтов; случайный пароль
+            # не используется для Google-входа и не хранится в открытом виде.
+            user.set_password(secrets.token_urlsafe(32))
+            db.session.add(user)
+
+    picture = str(userinfo.get('picture', '')).strip()
+    if picture and not user.avatar_url:
+        user.avatar_url = picture
+
+    if user.is_banned:
+        db.session.rollback()
+        flash(f'Ваш аккаунт заблокирован. Причина: {user.ban_reason}', 'error')
+        return redirect(url_for('auth.login'))
+
+    db.session.commit()
+    session.permanent = True
+    login_user(user, remember=True)
+
+    next_page = session.pop('google_oauth_next', None)
+    return redirect(next_page or url_for('main.index'))
 
 @bp.route('/forgot-password', methods=['POST'])
 def forgot_password():
@@ -360,7 +694,8 @@ def forgot_password():
         # Если код не истек, используем существующий
         if not existing_code.is_expired():
             existing_code.increment_request_count()
-            send_verification_code(email, existing_code.code, 'password_reset')
+            if not send_verification_code(email, existing_code.code, 'password_reset'):
+                return jsonify({'success': False, 'message': 'Не удалось отправить код на почту. Попробуйте позже.'}), 503
             session['password_reset_email'] = email
             return jsonify({'success': True, 'message': 'Код отправлен на вашу почту'})
     
@@ -368,7 +703,8 @@ def forgot_password():
     verification = VerificationCode.create_code(email, 'password_reset')
     
     # Отправляем код на email
-    send_verification_code(email, verification.code, 'password_reset')
+    if not send_verification_code(email, verification.code, 'password_reset'):
+        return jsonify({'success': False, 'message': 'Не удалось отправить код на почту. Попробуйте позже.'}), 503
     
     # Сохраняем email в сессии
     session['password_reset_email'] = email
@@ -629,6 +965,14 @@ def edit_profile():
                 errors.append('Некорректный никнейм')
             elif User.query.filter_by(nickname=nickname).first():
                 errors.append('Никнейм уже занят')
+
+        normalized_email = email.lower() if email else None
+        if normalized_email and not validate_email(normalized_email):
+            errors.append('Некорректный email')
+        elif normalized_email and normalized_email != current_user.email:
+            existing_email_user = User.query.filter_by(email=normalized_email).first()
+            if existing_email_user and existing_email_user.id != current_user.id:
+                errors.append('Пользователь с таким email уже существует')
         
         # Валидация URL
         if strava_url and not validate_url(strava_url):
@@ -679,6 +1023,7 @@ def edit_profile():
                         current_user.avatar_url = f"uploads/avatars/{current_user.id}/{filename}"
         # Обновляем данные
         current_user.nickname = nickname
+        current_user.email = normalized_email
         current_user.strava_url = strava_url if strava_url else None
         current_user.komoot_url = komoot_url if komoot_url else None
         current_user.telegram_url = telegram_url if telegram_url else None

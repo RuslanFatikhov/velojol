@@ -3,11 +3,46 @@
 // Глобальные переменные для карты
 let map, drawnItems, drawControl, currentPolyline, citiesData;
 let isMobileMapLayout = false;
+let isDrawingLine = false;
+let currentLinePoints = [];
+let drawingPointMarkers = [];
 let isSubmittingBikelaneForm = false;
 let selectedPhotoFiles = [];
 let photoPreviewRenderId = 0;
 let shouldShowValidationErrors = false;
-const DESCRIPTION_MIN_LENGTH = 20;
+
+function isBusLaneSelected() {
+  return document.querySelector('input[name="track_type"]:checked')?.value === 'bus_lane';
+}
+
+function updateTrackTypeFormMode() {
+  const form = document.getElementById('bikelane-form');
+  const title = document.getElementById('title');
+  const isBusLane = isBusLaneSelected();
+
+  if (form) {
+    form.classList.toggle('is-bus-lane', isBusLane);
+    form.querySelectorAll('.bikelane-only').forEach((section) => {
+      section.hidden = isBusLane;
+      section.setAttribute('aria-hidden', isBusLane ? 'true' : 'false');
+      section.querySelectorAll('input, textarea, select').forEach((field) => {
+        field.disabled = isBusLane;
+      });
+    });
+  }
+  if (title) {
+    title.placeholder = isBusLane ? 'Название улицы' : 'Название или адрес';
+  }
+
+  updateDescriptionCounter();
+  updateSubmitButtonState();
+}
+
+function getDescriptionMinLength() {
+  const form = document.getElementById('bikelane-form');
+  const configured = Number.parseInt(form?.dataset.descriptionMinLength || '20', 10);
+  return Number.isFinite(configured) && configured >= 1 ? configured : 20;
+}
 
 function updateDescriptionCounter() {
   const description = document.getElementById('description');
@@ -18,9 +53,10 @@ function updateDescriptionCounter() {
   }
 
   const length = description.value.trim().length;
+  const minLength = getDescriptionMinLength();
   counter.textContent = String(length);
-  counter.classList.toggle('is-short', length > 0 && length < DESCRIPTION_MIN_LENGTH);
-  counter.classList.toggle('is-valid', length >= DESCRIPTION_MIN_LENGTH);
+  counter.classList.toggle('is-short', length > 0 && length < minLength);
+  counter.classList.toggle('is-valid', length >= minLength);
 }
 
 function initDescriptionCounter() {
@@ -68,12 +104,17 @@ function showToast(message, type = 'info', options = {}) {
 function getFormValidationErrors() {
   const city = document.getElementById('city')?.value || '';
   const title = document.getElementById('title')?.value.trim() || '';
+  const description = document.getElementById('description')?.value.trim() || '';
   const trackType = document.querySelector('input[name="track_type"]:checked');
+  const isBusLane = trackType?.value === 'bus_lane';
   const geometry = document.getElementById('geometry')?.value || '';
   const errors = [];
 
   if (!city) errors.push('Необходимо выбрать город');
   if (title.length < 3) errors.push('Название должно содержать минимум 3 символа');
+  if (!isBusLane && description.length < getDescriptionMinLength()) {
+    errors.push(`Описание должно содержать минимум ${getDescriptionMinLength()} символов`);
+  }
   if (!trackType) errors.push('Необходимо выбрать тип дорожки');
 
   if (!geometry || geometry.trim() === '') {
@@ -100,6 +141,13 @@ function getFirstInvalidFormElement() {
 
   const title = document.getElementById('title');
   if (title && title.value.trim().length < 3) return title;
+
+  const description = document.getElementById('description');
+  if (
+    !isBusLaneSelected()
+    && description
+    && description.value.trim().length < getDescriptionMinLength()
+  ) return description;
 
   const trackType = document.querySelector('input[name="track_type"]:checked');
   if (!trackType) return document.querySelector('.track-types') || document.querySelector('input[name="track_type"]');
@@ -224,6 +272,13 @@ function getRewardRuleScore(rule, form) {
   const maxItems = Number(rule.maxItems || 1);
 
   if (!points || maxItems <= 0) {
+    return 0;
+  }
+
+  if (
+    isBusLaneSelected()
+    && ['description', 'quality', 'video'].includes(rule.id)
+  ) {
     return 0;
   }
 
@@ -423,6 +478,12 @@ function openMapDrawer() {
   setTimeout(() => {
     if (map) {
       map.invalidateSize();
+      if (currentPolyline) {
+        map.fitBounds(currentPolyline.getBounds(), {
+          padding: [24, 24],
+          maxZoom: 17
+        });
+      }
     }
   }, 260);
 }
@@ -587,6 +648,21 @@ function focusMapOnSelectedCity(selectedCity) {
 function applySelectedCityState(selectedCity) {
   toggleMapSectionVisibility(selectedCity);
   focusMapOnSelectedCity(selectedCity);
+  updateAddObjectTabCities(selectedCity);
+}
+
+function updateAddObjectTabCities(selectedCity) {
+  document.querySelectorAll('[data-add-object-type]').forEach((tab) => {
+    const type = tab.dataset.addObjectType;
+    const url = new URL('/add-bikelane', window.location.origin);
+    if (type && type !== 'bikelane') {
+      url.searchParams.set('type', type);
+    }
+    if (selectedCity) {
+      url.searchParams.set('city', selectedCity);
+    }
+    tab.href = `${url.pathname}${url.search}`;
+  });
 }
 
 /**
@@ -653,6 +729,9 @@ function calculateOverallQuality() {
     return null;
   }
   const trackType = trackTypeInput.value;
+  if (trackType === 'bus_lane') {
+    return null;
+  }
 
   const qualityInput = document.querySelector('input[name="quality"]:checked');
   const surfaceQuality = qualityInput ? parseInt(qualityInput.value) : 3;
@@ -703,6 +782,25 @@ function calculateOverallQuality() {
   return quality;
 }
 
+function getQualityStarsColor(quality) {
+  if (isBusLaneSelected() || quality === null) {
+    return '#3498db';
+  }
+  return {
+    1: '#e74c3c',
+    2: '#e67e22',
+    3: '#f39c12',
+    4: '#2ecc71',
+    5: '#27ae60'
+  }[quality] || '#3498db';
+}
+
+function updateCurrentPolylineColor(quality = calculateOverallQuality()) {
+  currentPolyline?.setStyle({
+    color: getQualityStarsColor(quality)
+  });
+}
+
 /**
  * Обновляет отображение качества велодорожки
  */
@@ -712,9 +810,11 @@ function updateQualityDisplay() {
   const section = document.getElementById('quality-display-section');
   if (quality === null) {
     if (section) section.style.display = 'none';
+    updateCurrentPolylineColor(null);
     return;
   }
   if (section) section.style.display = 'block';
+  updateCurrentPolylineColor(quality);
 
   const starsContainer = document.getElementById('quality-stars');
   if (starsContainer) {
@@ -856,201 +956,241 @@ function initMap() {
 /**
  * Инициализация обработчиков для рисования линий
  */
-function initDrawingHandlers() {
-  let isDrawing = false;
-  let currentPoints = [];
+function getCurrentLineCoordinates() {
+  const points = isDrawingLine
+    ? currentLinePoints
+    : (currentPolyline?.getLatLngs?.() || []);
+  return points.map((point) => [point.lng, point.lat]);
+}
 
+function updateMapEditorUi() {
+  const state = document.getElementById('map-editor-state');
+  const meta = document.getElementById('map-editor-meta');
+  const drawerSubtitle = document.getElementById('map-drawer-subtitle');
+  const triggerLabel = document.getElementById('open-map-drawer-label');
+  const finishBtn = document.getElementById('finish-line-btn');
+  const undoBtn = document.getElementById('undo-line-point-btn');
+  const resetBtn = document.getElementById('reset-line-btn');
+  const mapContainer = document.getElementById('map-container');
+  const coordinates = getCurrentLineCoordinates();
+  const pointCount = coordinates.length;
+  const distance = calculateLineDistance(coordinates);
+  const hasLine = Boolean(currentPolyline && pointCount);
+
+  mapContainer?.classList.toggle('is-drawing', isDrawingLine);
+  if (undoBtn) undoBtn.disabled = !isDrawingLine || pointCount === 0;
+  if (finishBtn) finishBtn.disabled = !isDrawingLine || pointCount < 2;
+  if (resetBtn) resetBtn.disabled = !hasLine;
+
+  state?.classList.toggle('is-drawing', isDrawingLine);
+  state?.classList.toggle('is-ready', hasLine && !isDrawingLine);
+
+  if (isDrawingLine) {
+    if (state) state.textContent = 'Рисование линии';
+    const instruction = pointCount < 2
+      ? 'Добавьте ещё минимум одну точку'
+      : `${pointCount} точек • ${formatDistance(distance)} • Нажмите «Готово»`;
+    if (meta) meta.textContent = instruction;
+    if (drawerSubtitle) drawerSubtitle.textContent = instruction;
+    if (triggerLabel) triggerLabel.textContent = `Продолжить рисование • ${pointCount} точек`;
+    return;
+  }
+
+  if (hasLine) {
+    if (state) state.textContent = 'Линия готова';
+    const details = `${pointCount} точек • ${formatDistance(distance)} • Точки можно перетаскивать`;
+    if (meta) meta.textContent = details;
+    if (drawerSubtitle) drawerSubtitle.textContent = 'Перетаскивайте точки для точной корректировки линии.';
+    if (triggerLabel) triggerLabel.textContent = `Изменить линию • ${formatDistance(distance)}`;
+    return;
+  }
+
+  if (state) state.textContent = 'Линия не добавлена';
+  if (meta) meta.textContent = 'Нажмите на карту, чтобы поставить первую точку';
+  if (drawerSubtitle) drawerSubtitle.textContent = 'Нажмите на карту, чтобы поставить первую точку.';
+  if (triggerLabel) triggerLabel.textContent = 'Открыть карту для рисования';
+}
+
+function bindPolylineEditing(polyline) {
+  currentPolyline = polyline;
+  if (polyline.editing) {
+    polyline.editing.enable();
+  }
+  if (polyline._velojolEditHandlerBound) {
+    return;
+  }
+  polyline._velojolEditHandlerBound = true;
+  polyline.on('edit', function () {
+    updateGeometryFromMap();
+    updateGeometryStatus('Изменения линии сохранены в форме', 'valid');
+    updateMapEditorUi();
+  });
+}
+
+function clearCurrentLine() {
+  drawnItems?.clearLayers();
+  currentLinePoints = [];
+  drawingPointMarkers = [];
+  currentPolyline = null;
+  isDrawingLine = false;
+
+  const geometryInput = document.getElementById('geometry');
+  if (geometryInput) geometryInput.value = '';
+
+  const distanceElement = document.getElementById('distance-display');
+  if (distanceElement) distanceElement.style.display = 'none';
+
+  clearDistanceField();
+  updateSubmitButtonState();
+  updateMapEditorUi();
+}
+
+function addDrawingPointMarker(latlng) {
+  const marker = L.circleMarker(latlng, {
+    radius: isMobileViewport() ? 7 : 6,
+    color: '#fefefe',
+    weight: 3,
+    fillColor: '#3498db',
+    fillOpacity: 1,
+    interactive: false
+  }).addTo(drawnItems);
+  drawingPointMarkers.push(marker);
+}
+
+function startNewLine(latlng) {
+  clearCurrentLine();
+  currentLinePoints = [latlng];
+  currentPolyline = L.polyline(currentLinePoints, {
+    color: getQualityStarsColor(calculateOverallQuality()),
+    weight: 5,
+    opacity: 0.9
+  }).addTo(drawnItems);
+  addDrawingPointMarker(latlng);
+  isDrawingLine = true;
+  updateGeometryStatus(
+    'Добавляйте точки по ходу линии. Ошибочную точку можно отменить.',
+    'info'
+  );
+  updateMapEditorUi();
+}
+
+function addPointToLine(latlng) {
+  currentLinePoints.push(latlng);
+  currentPolyline.setLatLngs(currentLinePoints);
+  addDrawingPointMarker(latlng);
+  updateMapEditorUi();
+}
+
+function undoLastLinePoint() {
+  if (!isDrawingLine || currentLinePoints.length === 0) {
+    return;
+  }
+
+  currentLinePoints.pop();
+  const removedMarker = drawingPointMarkers.pop();
+  if (removedMarker) {
+    drawnItems.removeLayer(removedMarker);
+  }
+  if (currentLinePoints.length === 0) {
+    clearCurrentLine();
+    updateGeometryStatus('Нажмите на карту, чтобы поставить первую точку', 'info');
+    return;
+  }
+
+  currentPolyline.setLatLngs(currentLinePoints);
+  updateMapEditorUi();
+}
+
+function resetLine() {
+  const coordinates = getCurrentLineCoordinates();
+  if (
+    coordinates.length >= 2
+    && !window.confirm('Очистить текущую линию и нарисовать заново?')
+  ) {
+    return;
+  }
+
+  clearCurrentLine();
+  updateGeometryStatus('Нажмите на карту, чтобы поставить первую точку', 'info');
+}
+
+function finishLine() {
+  if (!isDrawingLine || currentLinePoints.length < 2) {
+    updateGeometryStatus('Линия должна содержать минимум 2 точки', 'invalid');
+    return;
+  }
+
+  isDrawingLine = false;
+  const coordinates = getCurrentLineCoordinates();
+  const geojson = {
+    type: 'LineString',
+    coordinates
+  };
+  const distance = updateDistanceDisplay(coordinates);
+  addDistanceField(distance);
+
+  const geometryInput = document.getElementById('geometry');
+  if (!geometryInput) {
+    return;
+  }
+  geometryInput.value = JSON.stringify(geojson);
+  drawingPointMarkers.forEach((marker) => drawnItems.removeLayer(marker));
+  drawingPointMarkers = [];
+  bindPolylineEditing(currentPolyline);
+  updateSubmitButtonState();
+  validateGeometry();
+  updateGeometryStatus(
+    `Линия готова. Дистанция: ${formatDistance(distance)}. Перетаскивайте точки для корректировки.`,
+    'valid'
+  );
+  updateMapEditorUi();
+
+  if (isMobileViewport()) {
+    closeMapDrawer();
+  }
+}
+
+function initDrawingHandlers() {
   console.log('Инициализация обработчиков рисования');
 
   const finishBtn = document.getElementById('finish-line-btn');
+  const undoBtn = document.getElementById('undo-line-point-btn');
   const resetBtn = document.getElementById('reset-line-btn');
-  const mapControls = document.getElementById('map-controls');
-  console.log('Кнопки найдены:', !!finishBtn, !!resetBtn, !!mapControls);
 
-  map.on('click', function (e) {
-    console.log('Клик по карте:', e.latlng);
-
-    if (!isDrawing) {
-      startNewLine(e.latlng);
+  map.on('click', function (event) {
+    if (!isDrawingLine && currentPolyline) {
+      updateGeometryStatus(
+        'Линия уже готова. Перетаскивайте точки или нажмите «Заново».',
+        'info'
+      );
+      return;
+    }
+    if (isDrawingLine) {
+      addPointToLine(event.latlng);
     } else {
-      addPointToLine(e.latlng);
+      startNewLine(event.latlng);
     }
   });
 
-  map.on('dblclick', function () {
-    console.log('Двойной клик по карте');
-    if (isDrawing) {
-      setTimeout(() => {
-        finishLine();
-      }, 100);
+  finishBtn?.addEventListener('click', finishLine);
+  undoBtn?.addEventListener('click', undoLastLinePoint);
+  resetBtn?.addEventListener('click', resetLine);
+
+  document.addEventListener('keydown', function (event) {
+    const target = event.target;
+    const isTextField = target?.matches?.('input, textarea, select');
+    if (
+      isDrawingLine
+      && !isTextField
+      && (event.metaKey || event.ctrlKey)
+      && event.key.toLowerCase() === 'z'
+    ) {
+      event.preventDefault();
+      undoLastLinePoint();
     }
   });
 
-  if (finishBtn) finishBtn.addEventListener('click', () => isDrawing && finishLine());
-  if (resetBtn) resetBtn.addEventListener('click', resetLine);
-
-  /**
-   * Начинает рисование новой линии
-   */
-  function startNewLine(latlng) {
-    console.log('Начало новой линии в точке:', latlng);
-
-    drawnItems.clearLayers();
-
-    const geometryInput = document.getElementById('geometry');
-    if (geometryInput) {
-      geometryInput.value = '';
-      console.log('Поле геометрии очищено');
-      updateSubmitButtonState();
-    }
-
-    const distanceElement = document.getElementById('distance-display');
-    if (distanceElement) {
-      distanceElement.style.display = 'none';
-    }
-    clearDistanceField();
-
-    currentPoints = [latlng];
-    currentPolyline = L.polyline(currentPoints, {
-      color: '#3498db',
-      weight: 4,
-      opacity: 0.8
-    }).addTo(drawnItems);
-
-    isDrawing = true;
-
-    if (mapControls) {
-      mapControls.style.display = 'none';
-    }
-    updateGeometryStatus(
-      'Кликайте по карте для добавления точек. Двойной клик завершит линию.',
-      'info'
-    );
-  }
-
-  /**
-   * Добавляет точку к текущей линии
-   */
-  function addPointToLine(latlng) {
-    console.log('Добавление точки:', latlng);
-    currentPoints.push(latlng);
-    currentPolyline.setLatLngs(currentPoints);
-
-    console.log('Всего точек в линии:', currentPoints.length);
-
-    if (currentPoints.length >= 2 && mapControls) {
-      mapControls.style.display = 'flex';
-      console.log('Кнопки управления показаны');
-    }
-  } // ← ВАЖНО: закрывающая скобка для addPointToLine
-
-  /**
-   * Сбрасывает рисование линии
-   */
-  function resetLine() {
-    console.log('=== СБРОС РИСОВАНИЯ ЛИНИИ ===');
-
-    if (drawnItems) {
-      drawnItems.clearLayers();
-    }
-
-    currentPoints = [];
-    currentPolyline = null;
-    isDrawing = false;
-
-    if (mapControls) {
-      mapControls.style.display = 'none';
-    }
-
-    const geometryInput = document.getElementById('geometry');
-    if (geometryInput) {
-      geometryInput.value = '';
-      console.log('Поле геометрии очищено');
-    }
-
-    const distanceElement = document.getElementById('distance-display');
-    if (distanceElement) {
-      distanceElement.style.display = 'none';
-    }
-    clearDistanceField();
-
-    updateGeometryStatus('Кликните по карте для начала рисования линии', 'info');
-    updateSubmitButtonState();
-
-    console.log('=== СБРОС ЗАВЕРШЕН ===');
-  }
-
-  /**
-   * Завершает рисование линии
-   */
-  function finishLine() {
-    console.log('=== ЗАВЕРШЕНИЕ РИСОВАНИЯ ЛИНИИ ===');
-    console.log('Количество точек:', currentPoints.length);
-    console.log('Точки:', currentPoints);
-
-    if (currentPoints.length < 2) {
-      updateGeometryStatus('Линия должна содержать минимум 2 точки', 'invalid');
-      console.log('ОШИБКА: Недостаточно точек');
-      return;
-    }
-
-    isDrawing = false;
-
-    if (mapControls) {
-      mapControls.style.display = 'none';
-    }
-
-    const coordinates = currentPoints.map((point) => [point.lng, point.lat]);
-    const geojson = {
-      type: 'LineString',
-      coordinates: coordinates
-    };
-
-    console.log('Создан GeoJSON:', geojson);
-
-    const distance = updateDistanceDisplay(coordinates);
-    addDistanceField(distance);
-
-    const geometryInput = document.getElementById('geometry');
-    if (!geometryInput) {
-      console.error('КРИТИЧЕСКАЯ ОШИБКА: Поле geometry не найдено!');
-      return;
-    }
-
-    const geometryString = JSON.stringify(geojson);
-    geometryInput.value = geometryString;
-    updateSubmitButtonState();
-
-    console.log('ГЕОМЕТРИЯ СОХРАНЕНА:', geometryString);
-
-    if (currentPolyline && currentPolyline.editing) {
-      currentPolyline.editing.enable();
-      console.log('Редактирование линии включено');
-
-      currentPolyline.on('edit', function () {
-        console.log('Линия отредактирована, обновляем геометрию и дистанцию');
-        updateGeometryFromMap();
-      });
-    }
-
-    setTimeout(() => {
-      console.log('Принудительное обновление геометрии через 100мс');
-      updateGeometryFromMap();
-    }, 100);
-
-    validateGeometry();
-
-    updateGeometryStatus(
-      `Линия нарисована! Дистанция: ${formatDistance(
-        distance
-      )}. Можете перетаскивать точки для корректировки.`,
-      'valid'
-    );
-
-    closeMapDrawer();
-
-    console.log('=== ЗАВЕРШЕНИЕ ОБРАБОТКИ ЛИНИИ ===');
-  }
+  updateMapEditorUi();
 }
 
 /**
@@ -1065,14 +1205,12 @@ function loadExistingGeometry() {
       if (geojson.coordinates && geojson.coordinates.length > 1) {
         const latlngs = geojson.coordinates.map((coord) => [coord[1], coord[0]]);
         const polyline = L.polyline(latlngs, {
-          color: '#3498db',
-          weight: 4,
-          opacity: 0.8
+          color: getQualityStarsColor(calculateOverallQuality()),
+          weight: 5,
+          opacity: 0.9
         }).addTo(drawnItems);
 
-        if (polyline.editing) {
-          polyline.editing.enable();
-        }
+        bindPolylineEditing(polyline);
 
         map.fitBounds(polyline.getBounds());
 
@@ -1081,6 +1219,7 @@ function loadExistingGeometry() {
 
         updateGeometryStatus('Линия загружена из сохраненных данных', 'valid');
         updateSubmitButtonState();
+        updateMapEditorUi();
       }
     } catch (e) {
       console.error('Ошибка при загрузке геометрии:', e);
@@ -1165,6 +1304,7 @@ function updateGeometryFromMap() {
 
       const distance = updateDistanceDisplay(coordinates);
       addDistanceField(distance);
+      updateMapEditorUi();
 
       console.log('Геометрия и дистанция обновлены:', geometryString);
       console.log('Новая дистанция:', distance.toFixed(2), 'м');
@@ -1533,6 +1673,7 @@ function initQualityHandlers() {
   trackTypeInputs.forEach((input) => {
     input.addEventListener('change', function () {
       console.log('Изменен тип велодорожки:', this.value);
+      updateTrackTypeFormMode();
       updateQualityDisplay();
     });
   });
@@ -1575,6 +1716,15 @@ function initQualityHandlers() {
     });
   }
 
+  const oneWayToggle = document.getElementById('is_one_way');
+  if (oneWayToggle) {
+    oneWayToggle.addEventListener('change', function () {
+      console.log('Изменена односторонность:', this.checked);
+      const hidden = document.getElementById('is_one_way_hidden');
+      if (hidden) hidden.value = this.checked;
+    });
+  }
+
   console.log('Обработчики качества инициализированы');
 }
 
@@ -1582,7 +1732,8 @@ function syncExistingToggleState() {
   const toggleMappings = [
     ['has_parking', 'has_parking_hidden'],
     ['has_markings', 'has_markings_hidden'],
-    ['has_signs', 'has_signs_hidden']
+    ['has_signs', 'has_signs_hidden'],
+    ['is_one_way', 'is_one_way_hidden']
   ];
 
   toggleMappings.forEach(([checkboxId, hiddenId]) => {
@@ -1605,37 +1756,14 @@ function getCityPageUrl(data = {}) {
 }
 
 /**
- * Добавляет тестовую кнопку для отладки геометрии
- */
-function addDebugButton() {
-  const debugBtn = document.createElement('button');
-  debugBtn.textContent = 'Debug Geometry';
-  debugBtn.type = 'button';
-  debugBtn.className = 'debug-geometry-btn';
-  debugBtn.style.position = 'fixed';
-  debugBtn.style.top = '10px';
-  debugBtn.style.right = '10px';
-  debugBtn.style.zIndex = '10000';
-  debugBtn.style.padding = '5px 10px';
-  debugBtn.style.fontSize = '12px';
-  debugBtn.onclick = function () {
-    const geometryInput = document.getElementById('geometry');
-    console.log('=== DEBUG GEOMETRY ===');
-    console.log('Поле найдено:', geometryInput ? 'ДА' : 'НЕТ');
-    if (geometryInput) {
-      console.log('Значение:', geometryInput.value);
-      console.log('Длина:', geometryInput.value.length);
-    }
-    console.log('drawnItems слои:', drawnItems ? drawnItems.getLayers().length : 'нет drawnItems');
-  };
-  document.body.appendChild(debugBtn);
-}
-
-/**
  * Основная функция инициализации страницы
  */
 async function initAddBikeLanePage() {
   console.log('Начало инициализации страницы');
+
+  initDescriptionCounter();
+  initQualityHandlers();
+  updateTrackTypeFormMode();
 
   await loadCitiesData();
 
@@ -1643,13 +1771,10 @@ async function initAddBikeLanePage() {
   initMap();
   initPhotoHandlers();
   initFormValidation();
-  initDescriptionCounter();
   initInteractiveElements();
-  initQualityHandlers();
   syncExistingToggleState();
   updateQualityDisplay();
 
-  addDebugButton();
   updateSubmitButtonState();
 
   console.log('Инициализация страницы завершена');

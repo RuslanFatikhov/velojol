@@ -8,6 +8,7 @@ import sys
 REQUIRED_FILES = [
     "run.py",
     "config.py",
+    "VERSION",
     "app/__init__.py",
     "app/models/__init__.py",
     "app/models/user.py",

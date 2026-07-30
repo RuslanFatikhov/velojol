@@ -17,81 +17,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    initBusLanesBanner();
     animateCityCards();
-});
 
-function setBusLanesBannerAnswered(banner) {
-    const actions = banner.querySelector('[data-banner-actions]');
-    if (!actions) {
-        return;
+    const cityRequestModal = document.getElementById('cityRequestModal');
+    const openCityRequestModal = document.getElementById('openCityRequestModal');
+    const closeCityRequestModal = document.getElementById('closeCityRequestModal');
+    const cityRequestInput = document.getElementById('cityRequestInput');
+
+    function closeRequestModal() {
+        if (!cityRequestModal) return;
+        cityRequestModal.hidden = true;
+        cityRequestModal.style.display = 'none';
+        openCityRequestModal?.setAttribute('aria-expanded', 'false');
+        openCityRequestModal?.focus();
     }
 
-    banner.classList.add('is-answered');
-    actions.innerHTML = '<span class="bus-lanes-banner__thanks">Спасибо!</span>';
-}
+    openCityRequestModal?.addEventListener('click', function(event) {
+        event.preventDefault();
+        cityRequestModal.hidden = false;
+        cityRequestModal.style.display = 'flex';
+        openCityRequestModal.setAttribute('aria-expanded', 'true');
+        cityRequestInput?.focus();
+    });
 
-function setBusLanesBannerButtonsDisabled(banner, disabled) {
-    banner
-        .querySelectorAll('[data-banner-answer]')
-        .forEach((button) => {
-            button.disabled = disabled;
-        });
-}
+    closeCityRequestModal?.addEventListener('click', closeRequestModal);
 
-async function initBusLanesBanner() {
-    const banner = document.getElementById('bus-lanes-banner');
-    if (!banner) {
-        return;
-    }
-
-    try {
-        const response = await fetch('/api/banner/bus-lanes');
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (!data.show) {
-            return;
-        }
-
-        banner.hidden = false;
-    } catch (error) {
-        console.error('Ошибка проверки баннера автобусных полос:', error);
-        return;
-    }
-
-    banner.addEventListener('click', async function(event) {
-        const button = event.target.closest('[data-banner-answer]');
-        if (!button || button.disabled) {
-            return;
-        }
-
-        const answer = button.dataset.bannerAnswer;
-        setBusLanesBannerButtonsDisabled(banner, true);
-
-        try {
-            const response = await fetch('/api/banner/bus-lanes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ answer })
-            });
-
-            const data = await response.json();
-            if (!response.ok || !data.ok) {
-                throw new Error(data.error || `HTTP ${response.status}`);
-            }
-
-            setBusLanesBannerAnswered(banner);
-        } catch (error) {
-            console.error('Ошибка отправки ответа на баннер:', error);
-            setBusLanesBannerButtonsDisabled(banner, false);
+    cityRequestModal?.addEventListener('click', function(event) {
+        if (event.target === cityRequestModal) {
+            closeRequestModal();
         }
     });
-}
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && cityRequestModal && !cityRequestModal.hidden) {
+            closeRequestModal();
+        }
+    });
+});
 
 /**
  * Фильтрация городов по поисковому запросу

@@ -44,10 +44,24 @@
         <div class="hstack gap-m aic">
 
             
-            <span class="hstack gap-xs">
-                <p class="secondary100 fw700" >{{ city_stats.total_distance }}</p>
-                <p class="secondary100 fw700">км</p>
-            </span>
+            <details class="city-distance">
+                <summary aria-label="Показать протяжённость по типам">
+                    <span class="hstack gap-xs">
+                        <span class="secondary100 fw700">{{ city_stats.total_distance }}</span>
+                        <span class="secondary100 fw700">км</span>
+                    </span>
+                </summary>
+                <div class="city-distance-tooltip" role="tooltip">
+                    <span class="city-distance-tooltip-row">
+                        <span>Автобусные полосы</span>
+                        <strong>{{ city_stats.bus_lanes_distance }} км</strong>
+                    </span>
+                    <span class="city-distance-tooltip-row">
+                        <span>Велодорожки</span>
+                        <strong>{{ city_stats.bikelanes_distance }} км</strong>
+                    </span>
+                </div>
+            </details>
             
             <span class="hstack gap-xs aic">
                 <img src="{{ url_for('static', filename='img/icon/star.svg') }}" alt="Star" class="icon-small">
@@ -109,7 +123,7 @@
                 
                 <!-- Фильтр по качеству -->
                 <div class="filter-group">
-                    <label class="filter-label prime100">Качество покрытия</label>
+                    <label class="filter-label prime100">Качество</label>
                     <select id="qualityFilter" class="form-input">
                         <option value="">Любое качество</option>
                         <option value="5">⭐⭐⭐⭐⭐ Отлично</option>
@@ -118,6 +132,29 @@
                         <option value="2">⭐⭐ Плохо</option>
                         <option value="1">⭐ Ужасно</option>
                     </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label prime100">Объекты на карте</label>
+                    <div class="vstack">
+                        <label class="cell">
+                            <span>Велодорожки</span>
+                            <input id="showBikelanesFilter" class="checkbox" type="checkbox" checked>
+                        </label>
+                        <label class="cell">
+                            <span>Автобусные полосы</span>
+                            <input id="showBusLanesFilter" class="checkbox" type="checkbox" checked>
+                        </label>
+                        <label class="cell">
+                            <span>Велопарковки</span>
+
+                            <input id="showParkingFilter" class="checkbox" type="checkbox" checked>
+                        </label>
+                        <label class="cell">
+                            <span>Ремонтные стойки</span>
+                            <input id="showRepairFilter" class="checkbox" type="checkbox" checked>
+                        </label>
+                    </div>
                 </div>
             </div>
             
@@ -158,7 +195,16 @@
         <!-- Список велодорожек -->
         {% if bikelanes %}
         <div class="island pd-0">
-            
+            <div class="bikelanes-sort">
+                <label for="bikelanesSort" class="secondary100">Сортировка</label>
+                <select id="bikelanesSort" class="form-input">
+                    <option value="date_desc">По дате добавления</option>
+                    <option value="alphabetical">По алфавиту</option>
+                    <option value="distance_desc">По расстоянию</option>
+                    <option value="quality_desc">По оценке</option>
+                </select>
+            </div>
+
             <div class="bikelanes-list">
                 {% for bikelane in bikelanes %}
                 <div class="bikelane-item" data-bikelane-id="{{ bikelane.id }}" onclick="showBikelaneModal({{ bikelane.id }})">
@@ -169,7 +215,11 @@
                         <div class="vstack gap-xs">
                             <h4 class="prime100 bikelane-title">{{ bikelane.title }}</h4>
                             <p class="secondary100 bikelane-meta">
-                                {{ bikelane.track_type_display }} • {{ bikelane.calculate_length() }} км
+                                {% if bikelane.track_type == 'bus_lane' %}
+                                {{ bikelane.track_type_display }}
+                                {% else %}
+                                {{ bikelane.track_type_display }} • ★ {{ bikelane.effective_overall_quality }}/5 • {{ bikelane.calculate_length() }} км
+                                {% endif %}
                             </p>
                         </div>
                         
@@ -192,6 +242,16 @@
     <!-- Карта -->
     <div id="cityMap" class="city-map" data-city-view-panel="map"></div>
 
+    <button
+        type="button"
+        id="cityGeolocationButton"
+        class="button_square_label btn_white city-geolocation-btn"
+        aria-label="Моя геолокация"
+        title="Моя геолокация">
+        <img
+            src="{{ url_for('static', filename='img/icon/target.svg') }}"
+            alt="">
+    </button>
 
     
 
@@ -228,6 +288,7 @@ window.cityData = {
 };
 
 window.bikelanesData = {{ bikelanes_json | safe }};
+window.infrastructureData = {{ infrastructure_json | safe }};
 window.MAPBOX_TOKEN = {{ config.MAPBOX_TOKEN | tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/city_map_mapbox.js') }}"></script>

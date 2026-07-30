@@ -4,7 +4,7 @@ import random
 
 import click
 from app import create_app, db
-from app.models import User, BikeLane, City, Notification
+from app.models import User, BikeLane, City, Notification, InfrastructurePoint
 from flask_migrate import upgrade
 
 app = create_app()
@@ -97,7 +97,8 @@ def make_shell_context():
         'User': User, 
         'BikeLane': BikeLane, 
         'City': City, 
-        'Notification': Notification
+        'Notification': Notification,
+        'InfrastructurePoint': InfrastructurePoint,
     }
 
 @app.cli.command()

@@ -1,6 +1,15 @@
 [Unit]
-Description=Backup Open.Velojol SQLite database
+Description=Open Velojol encrypted off-server backup
+After=network.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/velojol-backup.sh
+User=root
+Group=root
+WorkingDirectory=/opt/open-velojol/current
+Environment=APP_ROOT=/opt/open-velojol
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/opt/open-velojol/shared/backup.env
+ExecStart=/usr/local/bin/velojol-backup-restic.sh
+TimeoutStartSec=2h

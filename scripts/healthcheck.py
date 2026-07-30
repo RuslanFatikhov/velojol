@@ -34,6 +34,8 @@ def check_healthz(url):
     payload = json.loads(body)
     if payload.get("status") != "ok":
         raise RuntimeError(f"{url} returned unexpected payload: {payload}")
+    if not payload.get("version"):
+        raise RuntimeError(f"{url} did not include the application version: {payload}")
 
 
 def main():
@@ -46,10 +48,14 @@ def main():
         check_healthz(f"{base_url}/healthz")
         check_endpoint(
             f"{base_url}/",
-            contains=["<title>Главная - VELOJOL", "<title>Главная - Velojol"],
+            contains="OPEN-VELOJOL",
             content_type="text/html",
         )
-        check_endpoint(f"{base_url}/auth/login", contains="<title>Вход", content_type="text/html")
+        check_endpoint(
+            f"{base_url}/auth/login",
+            contains="Войти через Telegram",
+            content_type="text/html",
+        )
         print(json.dumps({"status": "ok", "base_url": base_url}))
     except (RuntimeError, urllib.error.URLError) as exc:
         print(json.dumps({"status": "failed", "base_url": base_url, "error": str(exc)}), file=sys.stderr)

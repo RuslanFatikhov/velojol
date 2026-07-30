@@ -15,6 +15,12 @@ class BikeLane(db.Model):
             'osm_id',
             unique=True
         ),
+        db.Index(
+            'uq_bikelanes_source_external_id',
+            'source',
+            'external_id',
+            unique=True
+        ),
     )
     SCORE_BASE = 5
     SCORE_DESCRIPTION_MIN_LENGTH = 20
@@ -52,6 +58,9 @@ class BikeLane(db.Model):
     
     # Наличие дорожных знаков
     has_signs = db.Column(db.Boolean, default=False, nullable=False)
+
+    # Одностороннее движение по велодорожке
+    is_one_way = db.Column(db.Boolean, default=False, nullable=False)
     
     # Общее качество велодорожки (рассчитывается автоматически от 1 до 5)
     overall_quality = db.Column(db.Integer, nullable=True)
@@ -79,6 +88,8 @@ class BikeLane(db.Model):
 
     # Источник импорта
     source = db.Column(db.String(50), default='manual', nullable=False)
+    external_id = db.Column(db.String(160), nullable=True)
+    source_metadata = db.Column(db.Text, nullable=True)
     osm_type = db.Column(db.String(20), nullable=True)
     osm_id = db.Column(db.String(64), nullable=True)
     osm_tags = db.Column(db.Text, nullable=True)
@@ -146,8 +157,8 @@ class BikeLane(db.Model):
         elif surface_quality >= 4:
             quality += 1  # Хорошее покрытие - плюс балл
         
-        # Ограничиваем значение от 1 до 5
-        return max(1, min(5, int(round(quality))))
+        # Округляем так же, как Math.round() в форме, и ограничиваем от 1 до 5.
+        return max(1, min(5, int(math.floor(quality + 0.5))))
     
     @staticmethod
     def _haversine_distance(lat1, lon1, lat2, lon2):
@@ -220,6 +231,13 @@ class BikeLane(db.Model):
     def calculate_score(self):
         """Рассчитать баллы за велодорожку"""
         photos_count = len(self.get_photos_list())
+        if self.track_type == 'bus_lane':
+            return (
+                self.SCORE_BASE
+                + self.SCORE_TRACK_TYPE
+                + photos_count * self.SCORE_PER_PHOTO
+            )
+
         videos_count = len(self.get_videos_list())
         score = self.SCORE_BASE
 
@@ -311,6 +329,11 @@ class BikeLane(db.Model):
             'track_type_display': self.track_type_display,
             'quality': self.quality,
             'quality_display': self.quality_display,
+            'overall_quality': self.effective_overall_quality,
+            'overall_quality_display': self.overall_quality_display,
+            'color': self.quality_color,
+            'is_bus_lane': self.track_type == 'bus_lane',
+            'is_one_way': self.is_one_way,
             'photos': self.get_photos_list(),
             'videos': self.get_videos_list(),
             'length': self.calculate_length(),
@@ -362,13 +385,14 @@ class BikeLane(db.Model):
             'lane': 'Полоса',
             'bollards': 'Полоса с боллардами', 
             'separated': 'Обособленная велодорожка',
-            'shared': 'Вело-пешеходная дорожка'
+            'shared': 'Вело-пешеходная дорожка',
+            'bus_lane': 'Автобусная полоса',
         }
         return track_type_names.get(self.track_type, self.track_type)
     
     @property 
     def quality_display(self):
-        """Отображаемое название качества"""
+        """Отображаемое название качества покрытия."""
         quality_names = {
             1: 'Ужасно',
             2: 'Плохо',
@@ -377,6 +401,25 @@ class BikeLane(db.Model):
             5: 'Отлично'
         }
         return quality_names.get(self.quality, 'Не указано')
+
+    @property
+    def effective_overall_quality(self):
+        """Итоговая оценка из всех характеристик, используемая для звёзд и цвета."""
+        if self.track_type == 'bus_lane':
+            return None
+        return self.calculate_overall_quality()
+
+    @property
+    def overall_quality_display(self):
+        """Текст итоговой оценки велодорожки."""
+        quality_names = {
+            1: 'Очень плохо',
+            2: 'Плохо',
+            3: 'Средне',
+            4: 'Хорошо',
+            5: 'Отлично',
+        }
+        return quality_names.get(self.effective_overall_quality, 'Не указано')
     
     @property
     def status_display(self):
@@ -397,7 +440,10 @@ class BikeLane(db.Model):
     
     @property
     def quality_color(self):
-        """Цвет для отображения на карте в зависимости от качества"""
+        """Цвет на карте в зависимости от итогового уровня quality-stars."""
+        if self.track_type == 'bus_lane':
+            return '#3498db'
+
         colors = {
             1: '#e74c3c',  # Красный
             2: '#e67e22',  # Оранжевый
@@ -405,4 +451,4 @@ class BikeLane(db.Model):
             4: '#2ecc71',  # Зелёный
             5: '#27ae60'   # Тёмно-зелёный
         }
-        return colors.get(self.quality, '#3498db')
+        return colors.get(self.effective_overall_quality, '#3498db')

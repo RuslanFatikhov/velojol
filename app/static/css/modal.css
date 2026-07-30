@@ -124,6 +124,237 @@
     border: none;
 }
 
+/* Отзывы об объектах карты */
+.object-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-xs);
+    width: 100%;
+}
+
+.object-reviews .island {
+    box-sizing: border-box;
+}
+
+.review-summary {
+    min-height: 150px;
+    padding-top: var(--spacer-m);
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacer-l);
+}
+
+.review-average {
+    color: var(--prime100);
+    font-size: clamp(64px, 18vw, 104px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.06em;
+}
+
+.review-summary-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-xs);
+    color: var(--secondary100);
+}
+
+.review-summary-stars,
+.review-card-rating {
+    display: flex;
+    gap: 2px;
+}
+
+.review-star,
+.review-star-button {
+    color: var(--secondary20);
+    font-size: 28px;
+    line-height: 1;
+}
+
+.review-star.is-active,
+.review-star-button.is-active {
+    color: #F5A800;
+}
+
+.review-editor {
+    padding-top: var(--spacer-m);
+}
+
+.review-form,
+.review-login-prompt {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-m);
+}
+
+.review-rating-input {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.review-star-button {
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-size: 44px;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.review-star-button:hover,
+.review-star-button:focus-visible {
+    color: #F5A800;
+    transform: scale(1.06);
+    outline: none;
+}
+
+.review-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 110px;
+    padding: var(--spacer-m);
+    resize: vertical;
+    border: 1px solid var(--secondary20);
+    border-radius: var(--spacer-s);
+    background: var(--bg3);
+    color: var(--prime100);
+    font: inherit;
+}
+
+.review-photo-input {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-xs);
+    padding: var(--spacer-m);
+    border-radius: var(--spacer-s);
+    background: var(--bg3);
+    color: var(--prime100);
+    cursor: pointer;
+}
+
+.review-photo-input input {
+    max-width: 100%;
+}
+
+.review-submit:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.review-form-status {
+    min-height: 20px;
+    color: var(--secondary100);
+    font-size: 14px;
+    text-align: center;
+}
+
+.review-list-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-s);
+}
+
+.review-list-heading {
+    padding: var(--spacer-m) var(--spacer-m) 0;
+}
+
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.review-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-m);
+    padding: var(--spacer-m);
+    background: var(--bg1);
+}
+
+.review-card:first-child {
+    border-radius: var(--spacer-m) var(--spacer-m) 0 0;
+}
+
+.review-card:last-child {
+    border-radius: 0 0 var(--spacer-m) var(--spacer-m);
+}
+
+.review-card:only-child {
+    border-radius: var(--spacer-m);
+}
+
+.review-author-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-s);
+}
+
+.review-author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--secondary20);
+}
+
+.review-author-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--prime100);
+}
+
+.review-author-copy span {
+    color: var(--secondary100);
+    font-size: 14px;
+}
+
+.review-card-rating .review-star {
+    font-size: 24px;
+}
+
+.review-text {
+    margin: 0;
+    color: var(--prime100);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.review-photos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacer-xs);
+}
+
+.review-photo-button {
+    aspect-ratio: 1;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--spacer-s);
+    background: var(--bg3);
+    cursor: pointer;
+}
+
+.review-photo-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.review-empty {
+    padding-top: var(--spacer-m);
+    color: var(--secondary100);
+    text-align: center;
+}
+
 /* Автор */
 .modal-author {
     margin-top: var(--spacer-m);

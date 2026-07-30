@@ -36,12 +36,31 @@ class City(db.Model):
     
     def get_total_distance(self):
         """Рассчитать общую протяжённость велодорожек в км"""
-        total = 0
+        return self.get_distance_breakdown()['total']
+
+    def get_distance_breakdown(self):
+        """Рассчитать протяжённость велодорожек и автобусных полос в км."""
+        bikelanes_distance = 0
+        bus_lanes_distance = 0
+
         for bikelane in self.get_approved_bikelanes():
             length = bikelane.calculate_length()
-            if length:
-                total += length
-        return round(total, 2)
+            if not length:
+                continue
+
+            if bikelane.track_type == 'bus_lane':
+                bus_lanes_distance += length
+            else:
+                bikelanes_distance += length
+
+        bikelanes_distance = round(bikelanes_distance, 2)
+        bus_lanes_distance = round(bus_lanes_distance, 2)
+
+        return {
+            'bikelanes': bikelanes_distance,
+            'bus_lanes': bus_lanes_distance,
+            'total': round(bikelanes_distance + bus_lanes_distance, 2),
+        }
     
     def get_average_rating(self):
         """Рассчитать средний рейтинг (качество покрытия)"""

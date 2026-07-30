@@ -18,4 +18,13 @@ def admin_required(f):
     return decorated_function
 
 # Импортируем все роуты админки
-from . import dashboard, cities, bikelanes, users, osm_import
+from . import (
+    bikelanes,
+    cities,
+    city_requests,
+    dashboard,
+    infrastructure,
+    osm_import,
+    reviews,
+    users,
+)

@@ -78,6 +78,47 @@ a{
     color: var(--prime100);
 }
 
+.btn_google{
+    width: 100%;
+    color: var(--prime100);
+    border: 1px solid var(--prime100);
+    font-weight: 500;
+}
+
+.btn_google:hover{
+    background-color: #f8faff;
+    border-color: #5f6368;
+}
+
+.btn_telegram{
+    width: 100%;
+    margin-top: var(--spacer-l);
+    background-color: #229ed9;
+    color: #fff;
+    font-weight: 600;
+}
+
+.btn_telegram:hover{
+    background-color: #168ac3;
+}
+
+.btn_white{
+    background-color: var(--prime_invert100);
+}
+
+.provider-icon{
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    filter: brightness(0) invert(1);
+}
+
+.google-icon{
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+}
+
 
 
 .btn_black{
@@ -305,4 +346,28 @@ a{
     align-items: center;
     padding: var(--spacer-m);
     justify-content: center;
+}
+
+.checkbox{
+    -webkit-appearance: none;
+    appearance: none;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    display: flex;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    border: none;
+    background: var(--secondary-40, rgba(106, 106, 106, 0.40));
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.checkbox:checked{
+    background: var(--accent-100, #34C759);
+    background-image: url("../img/icon/check.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
 }

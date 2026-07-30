@@ -1,0 +1,43 @@
+{% macro render_pagination(pagination, endpoint, url_args={}) %}
+{% if pagination and pagination.pages > 1 %}
+<nav
+    aria-label="Пагинация"
+    style="display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 20px;">
+    {% if pagination.has_prev %}
+        <a
+            href="{{ url_for(endpoint, page=pagination.prev_num, **url_args) }}"
+            style="padding: 8px var(--spacer-sm); border: 1px solid #dee2e6; text-decoration: none; color: #495057;">
+            ← Предыдущая
+        </a>
+    {% endif %}
+
+    {% for page_num in pagination.iter_pages() %}
+        {% if page_num %}
+            {% if page_num == pagination.page %}
+                <span
+                    aria-current="page"
+                    style="padding: 8px var(--spacer-sm); background: #007bff; color: white; border: 1px solid #007bff;">
+                    {{ page_num }}
+                </span>
+            {% else %}
+                <a
+                    href="{{ url_for(endpoint, page=page_num, **url_args) }}"
+                    style="padding: 8px var(--spacer-sm); border: 1px solid #dee2e6; text-decoration: none; color: #495057;">
+                    {{ page_num }}
+                </a>
+            {% endif %}
+        {% else %}
+            <span style="padding: 8px var(--spacer-sm);">…</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+        <a
+            href="{{ url_for(endpoint, page=pagination.next_num, **url_args) }}"
+            style="padding: 8px var(--spacer-sm); border: 1px solid #dee2e6; text-decoration: none; color: #495057;">
+            Следующая →
+        </a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endmacro %}

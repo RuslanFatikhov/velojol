@@ -1,9 +1,11 @@
 [Unit]
-Description=Run Open.Velojol database backup daily
+Description=Run Open Velojol off-server backup daily
 
 [Timer]
-OnCalendar=*-*-* 03:00:00
+OnCalendar=*-*-* 03:15:00
 Persistent=true
+Unit=velojol-backup.service
+RandomizedDelaySec=10m
 
 [Install]
 WantedBy=timers.target

@@ -21,17 +21,6 @@
 </div>
 
 <div style="margin-top: 30px;">
-    <h3>Опросы</h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
-        <div style="background: #f5f5f5; padding: 20px; border-radius: 8px;">
-            <h4 style="margin-bottom: 12px;">Автобусные полосы</h4>
-            <p>Да: <strong>{{ banner_stats.bus_lanes.yes }}</strong></p>
-            <p>Нет: <strong>{{ banner_stats.bus_lanes.no }}</strong></p>
-        </div>
-    </div>
-</div>
-
-<div style="margin-top: 30px;">
     <h3>Быстрые действия</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
         <a href="{{ url_for('admin.bikelanes', status='pending') }}" style="display: block; padding: 20px; background: #fff3cd; border-radius: 8px; text-decoration: none; color: #856404; text-align: center;">

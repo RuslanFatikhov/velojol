@@ -3,6 +3,10 @@ from flask_mail import Message
 from app import mail
 from threading import Thread
 from flask import current_app
+import json
+import socket
+import urllib.error
+import urllib.request
 
 def send_async_email(app, msg):
     """Асинхронная отправка email"""
@@ -12,20 +16,86 @@ def send_async_email(app, msg):
         except Exception:
             app.logger.exception('Ошибка отправки email')
 
-def send_email(subject, recipient, text_body, html_body=None):
-    """Отправка email"""
+def _send_smtp_email(subject, recipient, text_body, html_body=None):
+    sender = current_app.config.get('MAIL_DEFAULT_SENDER') or current_app.config.get('MAIL_USERNAME')
+    if not sender:
+        raise RuntimeError('MAIL_DEFAULT_SENDER or MAIL_USERNAME is not configured')
+
     msg = Message(
         subject=subject,
+        sender=sender,
         recipients=[recipient],
         body=text_body,
         html=html_body
     )
-    
-    # Асинхронная отправка в отдельном потоке
-    Thread(
-        target=send_async_email,
-        args=(current_app._get_current_object(), msg)
-    ).start()
+
+    if current_app.config.get('EMAIL_SEND_ASYNC'):
+        Thread(
+            target=send_async_email,
+            args=(current_app._get_current_object(), msg)
+        ).start()
+        return True
+
+    timeout = int(current_app.config.get('MAIL_TIMEOUT') or 10)
+    previous_timeout = socket.getdefaulttimeout()
+    socket.setdefaulttimeout(timeout)
+    try:
+        mail.send(msg)
+    finally:
+        socket.setdefaulttimeout(previous_timeout)
+    return True
+
+def _send_resend_email(subject, recipient, text_body, html_body=None):
+    api_key = current_app.config.get('RESEND_API_KEY')
+    sender = current_app.config.get('RESEND_FROM') or current_app.config.get('MAIL_DEFAULT_SENDER')
+
+    if not api_key:
+        raise RuntimeError('RESEND_API_KEY is not configured')
+    if not sender:
+        raise RuntimeError('RESEND_FROM or MAIL_DEFAULT_SENDER is not configured')
+
+    payload = {
+        'from': sender,
+        'to': [recipient],
+        'subject': subject,
+        'text': text_body,
+    }
+    if html_body:
+        payload['html'] = html_body
+
+    request = urllib.request.Request(
+        'https://api.resend.com/emails',
+        data=json.dumps(payload).encode('utf-8'),
+        headers={
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json',
+        },
+        method='POST',
+    )
+
+    timeout = int(current_app.config.get('MAIL_TIMEOUT') or 10)
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        if response.status >= 400:
+            raise RuntimeError(f'Resend API returned HTTP {response.status}')
+
+    return True
+
+def send_email(subject, recipient, text_body, html_body=None):
+    """Отправка email"""
+    provider = current_app.config.get('EMAIL_PROVIDER', 'smtp')
+
+    try:
+        if provider == 'resend':
+            return _send_resend_email(subject, recipient, text_body, html_body)
+        if provider == 'smtp':
+            return _send_smtp_email(subject, recipient, text_body, html_body)
+        raise RuntimeError(f'Unsupported EMAIL_PROVIDER: {provider}')
+    except (urllib.error.URLError, TimeoutError):
+        current_app.logger.exception('Ошибка отправки email: сетевой таймаут или недоступный провайдер')
+        return False
+    except Exception:
+        current_app.logger.exception('Ошибка отправки email')
+        return False
 
 def send_verification_code(email, code, code_type):
     """Отправка кода верификации"""
@@ -105,4 +175,4 @@ def send_verification_code(email, code, code_type):
         </html>
         '''
     
-    send_email(subject, email, text_body, html_body)
+    return send_email(subject, email, text_body, html_body)

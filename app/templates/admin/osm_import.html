@@ -3,7 +3,7 @@
 {% block title %}OSM импорт - VELOJOL{% endblock %}
 
 {% block content %}
-<h2>OSM импорт велодорожек</h2>
+<h2>OSM импорт велоинфраструктуры</h2>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -33,15 +33,31 @@
     <label>
         <strong>Лимит</strong><br>
         <select name="limit" style="width: 180px; padding: 8px; margin-top: 6px;">
-            {% for option in [10, 25, 50] %}
+            {% for option in import_limit_options %}
                 <option value="{{ option }}" {% if limit|int == option %}selected{% endif %}>{{ option }}</option>
             {% endfor %}
         </select>
     </label>
 
+    <fieldset style="border: 1px solid #dee2e6; border-radius: 6px; padding: 14px;">
+        <legend style="padding: 0 6px;"><strong>Что импортировать</strong></legend>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+            {% for value, label in import_type_options %}
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input
+                        type="checkbox"
+                        name="import_types"
+                        value="{{ value }}"
+                        {% if value in selected_import_types %}checked{% endif %}>
+                    <span>{{ label }}</span>
+                </label>
+            {% endfor %}
+        </div>
+    </fieldset>
+
     <label style="display: flex; align-items: center; gap: 8px;">
         <input type="checkbox" name="approve" {% if approve %}checked{% endif %}>
-        <span>Сразу одобрять импортированные велодорожки</span>
+        <span>Сразу одобрять импортированные полосы</span>
     </label>
 
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -61,6 +77,8 @@
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Найдено валидных линий</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.found }}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Уже есть</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.existing }}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Можно импортировать</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.importable }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Найдено автобусных полос</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.bus_lanes_found }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Можно импортировать автобусных полос</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.bus_lanes_importable }}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Ошибки/пропуски</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ preview_result.errors|length }}</td></tr>
     </table>
 
@@ -75,18 +93,31 @@
 </div>
 {% endif %}
 
+{% if infrastructure_preview_result %}
+<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+    <h3>Велопарковки и ремонтные стойки: {{ infrastructure_preview_result.city.name }}</h3>
+    <table style="border-collapse: collapse; width: 100%; max-width: 520px;">
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Найдено объектов</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_preview_result.found }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Уже есть</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_preview_result.existing }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Можно импортировать</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_preview_result.importable }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Ошибки/пропуски</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_preview_result.errors|length }}</td></tr>
+    </table>
+</div>
+{% endif %}
+
 {% if import_result %}
 <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
     <h3>Результат импорта: {{ import_result.city.name }}</h3>
     <table style="border-collapse: collapse; width: 100%; max-width: 520px;">
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Найдено валидных линий</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.found }}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Импортировано</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.imported }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Импортировано автобусных полос</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.bus_lanes|length }}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Пропущено как дубликаты</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.duplicates }}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Ошибки/пропуски</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ import_result.errors|length }}</td></tr>
     </table>
 
     {% if import_result.bikelanes %}
-        <h4>Созданные велодорожки</h4>
+        <h4>Созданные линейные объекты</h4>
         <ul>
             {% for bikelane in import_result.bikelanes %}
                 <li><a href="{{ url_for('admin.view_bikelane', bikelane_id=bikelane.id) }}">{{ bikelane.title }}</a></li>
@@ -99,6 +130,31 @@
         <ul>
             {% for error in import_result.errors[:10] %}
                 <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if infrastructure_import_result %}
+<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+    <h3>Импорт велопарковок и ремонтных стоек: {{ infrastructure_import_result.city.name }}</h3>
+    <table style="border-collapse: collapse; width: 100%; max-width: 520px;">
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Найдено объектов</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_import_result.found }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Импортировано</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_import_result.imported }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Пропущено как дубликаты</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_import_result.duplicates }}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #dee2e6;">Ошибки/пропуски</td><td style="padding: 8px; border: 1px solid #dee2e6;">{{ infrastructure_import_result.errors|length }}</td></tr>
+    </table>
+
+    {% if infrastructure_import_result.points %}
+        <h4>Созданные объекты</h4>
+        <ul>
+            {% for point in infrastructure_import_result.points %}
+                <li>
+                    <a href="{{ url_for('main.edit_parking' if point.infrastructure_type == 'bicycle_parking' else 'main.edit_repair', infrastructure_id=point.id) }}">
+                        {{ point.type_display }} — {{ point.title }}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     {% endif %}

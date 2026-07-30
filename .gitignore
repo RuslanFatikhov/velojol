@@ -12,6 +12,7 @@ __pycache__/
 venv/
 .venv/
 .env
+.deploy.env
 
 # Flask instance folder
 instance/
@@ -20,9 +21,6 @@ app/static/uploads/
 *.db
 *.sqlite
 *.sqlite3
-
-# Migrations cache
-migrations/
 
 # Local logs and deployment artifacts
 logs/

@@ -1,0 +1,105 @@
+{% extends "admin/base.html" %}
+{% from "admin/_pagination.html" import render_pagination %}
+
+{% block title %}Отзывы - VELOJOL{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px;">
+    <h2>Отзывы</h2>
+    <span style="color: #6c757d;">Всего: {{ reviews.total }}</span>
+</div>
+
+{% if reviews.items %}
+<div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f8f9fa;">
+                <th style="width: 70px; padding: var(--spacer-sm); border: 1px solid #dee2e6;">ID</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Автор</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Объект</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Оценка</th>
+                <th style="min-width: 260px; padding: var(--spacer-sm); border: 1px solid #dee2e6;">Отзыв</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Фото</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Обновлён</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews.items %}
+            <tr data-review-id="{{ review.id }}">
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ review.id }}</td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
+                    {% if review.user %}
+                        <a
+                            href="{{ url_for('admin.view_user', user_id=review.user.id) }}"
+                            style="color: #007bff; text-decoration: none;">
+                            {{ review.user.nickname }}
+                        </a>
+                        {% if review.user.email %}
+                            <br><small style="color: #6c757d;">{{ review.user.email }}</small>
+                        {% endif %}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
+                    {% if review.bikelane %}
+                        <small style="color: #6c757d;">Велодорожка</small><br>
+                        <a
+                            href="{{ url_for('admin.view_bikelane', bikelane_id=review.bikelane.id) }}"
+                            style="color: #007bff; text-decoration: none;">
+                            {{ review.bikelane.title }}
+                        </a>
+                    {% elif review.infrastructure_point %}
+                        <small style="color: #6c757d;">{{ review.infrastructure_point.type_display }}</small><br>
+                        <a
+                            href="{{ url_for(
+                                'main.edit_parking'
+                                if review.infrastructure_point.infrastructure_type == 'bicycle_parking'
+                                else 'main.edit_repair',
+                                infrastructure_id=review.infrastructure_point.id
+                            ) }}"
+                            style="color: #007bff; text-decoration: none;">
+                            {{ review.infrastructure_point.title }}
+                        </a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6; white-space: nowrap;">
+                    <strong>{{ review.rating }} / 5</strong>
+                </td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6; white-space: pre-wrap;">{{ review.text or '—' }}</td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6; text-align: center;">
+                    {% set review_photos = review.get_photos_list() %}
+                    {% if review_photos %}
+                        <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
+                            {% for photo in review_photos %}
+                                <a
+                                    href="{{ url_for('static', filename=photo) }}"
+                                    target="_blank"
+                                    rel="noopener">
+                                    <img
+                                        src="{{ url_for('static', filename=photo) }}"
+                                        alt="Фото к отзыву №{{ review.id }}"
+                                        style="width: 44px; height: 44px; border-radius: 4px; object-fit: cover;">
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6; white-space: nowrap;">
+                    {{ review.updated_at.strftime('%d.%m.%Y %H:%M') }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{{ render_pagination(reviews, 'admin.reviews') }}
+{% else %}
+<p>Отзывов пока нет.</p>
+{% endif %}
+{% endblock %}

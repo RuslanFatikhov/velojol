@@ -37,12 +37,27 @@
         </div>
     </div>
 
+    {% if bikelane.get_photos_list() %}
+    <div class="island">
+        <div class="photos-preview">
+            {% for photo_path in bikelane.get_photos_list() %}
+            <img src="{{ url_for('static', filename=photo_path) }}"
+                 alt="Фото {{ bikelane.title }}"
+                 style="width: 100%; border-radius: var(--spacer-m);">
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if bikelane.track_type != 'bus_lane' %}
     <!-- Описание -->
     <div class="island">
         <h3 class="prime100 island_heading">Описание</h3>
         <p class="secondary100" style="line-height: 1.5;">{{ bikelane.description }}</p>
     </div>
+    {% endif %}
 
+    {% if bikelane.track_type != 'bus_lane' %}
     <!-- Характеристики -->
     <div class="island">
         <h3 class="prime100 island_heading">Характеристики</h3>
@@ -55,11 +70,16 @@
             
             <div class="char-item">
                 <div class="char-label secondary100">Качество покрытия</div>
+                <div class="char-value prime100">{{ bikelane.quality_display }}</div>
+            </div>
+
+            <div class="char-item">
+                <div class="char-label secondary100">Итоговая оценка</div>
                 <div class="char-value prime100">
-                    {{ bikelane.quality_display }}
+                    {{ bikelane.overall_quality_display }}
                     <div class="quality-stars">
                         {% for i in range(1, 6) %}
-                            <span class="star {% if i <= bikelane.quality %}filled{% endif %}">★</span>
+                            <span class="star {% if i <= bikelane.effective_overall_quality %}filled{% endif %}">★</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -71,6 +91,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <!-- Действия -->
     <div class="island">

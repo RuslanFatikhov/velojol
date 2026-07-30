@@ -10,8 +10,8 @@
     <link rel="manifest" href="{{ url_for('static', filename='favicon_io/site.webmanifest') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon_io/favicon.ico') }}">
     
-    <!-- Leaflet CSS для карт -->
-    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <!-- Mapbox GL JS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.css" rel="stylesheet">
 
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
@@ -80,7 +80,7 @@
                 {% else %}
                 <!--Logged in-->
                     <p>
-                        <a href="{{ url_for('auth.register') }}" class="btn">Присоединиться</a>
+                        <a href="{{ url_for('auth.login') }}" class="btn">Войти</a>
                     </p>
                 {% endif %}
             {% endblock %}
@@ -95,7 +95,7 @@
         {% include 'components/footer.html' %}
     {% endif %}
 
-    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.js"></script>
     
     
     <!-- Основные скрипты приложения -->

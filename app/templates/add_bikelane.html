@@ -4,11 +4,15 @@
 {% extends "base.html" %}
 
 {% set is_edit_mode = is_edit_mode | default(false) %}
+{% set is_admin_edit_mode = is_admin_edit_mode | default(false) %}
+{% set is_admin_create_mode = is_admin_create_mode | default(false) %}
+{% set description_min_length = description_min_length | default(20) %}
 {% set page_title = 'Редактирование велодорожки' if is_edit_mode else 'Добавление велодорожки' %}
-{% set submit_label = 'Отправить на модерацию' if is_edit_mode else 'Отправить' %}
+{% set submit_label = 'Сохранить и опубликовать' if is_admin_edit_mode else ('Отправить на модерацию' if is_edit_mode else ('Опубликовать' if is_admin_create_mode else 'Отправить')) %}
 {% set form_action = form_action if form_action is defined else url_for('main.add_bikelane') %}
 {% set selected_city_value = form_data.city if form_data else (preselected_city | default('')) %}
-{% block title %}{{ page_title }} - OPEN-VELOJOL BETA 0.3.2{% endblock %}
+{% set show_admin_delete_actions = is_edit_mode and admin_delete_url is defined and admin_delete_url %}
+{% block title %}{{ page_title }} - OPEN-VELOJOL {{ app_version }}{% endblock %}
 
 {% block head %}
 <!-- Подключаем стили страницы -->
@@ -24,16 +28,20 @@
 {% endblock %}
 
 {% block content %}
+{% if not is_edit_mode %}
+    {% include 'components/add_object_tabs.html' %}
+{% endif %}
+
 <div class="page-header">
     <h1 class="prime100">{{ page_title }}</h1>
-    <a href="javascript:history.back()" class="button_square_icon">
+    <a href="{{ return_url if return_url is defined else 'javascript:history.back()' }}" class="button_square_icon">
         <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="Назад" class="icon-left">
     </a>
 </div>
 
 <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-<form method="POST" enctype="multipart/form-data" id="bikelane-form" action="{{ form_action }}">
+<form method="POST" enctype="multipart/form-data" id="bikelane-form" action="{{ form_action }}" class="{% if form_data and form_data.track_type == 'bus_lane' %}is-bus-lane{% endif %}" data-description-min-length="{{ description_min_length }}" data-admin-edit-mode="{{ 'true' if is_admin_edit_mode else 'false' }}">
     
     <!-- Выбор города -->
     <div class="island">
@@ -61,7 +69,7 @@
                     class="form-input">
             </div>
             
-            <div class="form-group">
+            <div class="form-group bikelane-only">
                 <textarea id="description" 
                         name="description" 
                         rows="4" 
@@ -70,8 +78,8 @@
                         aria-describedby="description-counter description-required">{{ form_data.description if form_data else '' }}</textarea>
                 <div class="description-meta">
                     <span id="description-counter" class="description-counter">0</span>
-                    <span id="description-required" class="description-required">/</span>
-                    <span id="description-required" class="description-required">20</span>
+                    <span class="description-required">/</span>
+                    <span id="description-required" class="description-required">{{ description_min_length }}</span>
                 </div>
             </div>
         </span>
@@ -81,18 +89,25 @@
     <div class="island{% if not selected_city_value %} hidden{% endif %}" id="map-section">
         <h3 class="prime100 island_heading">Карта</h3>
         <button type="button" id="open-map-drawer-btn" class="button__label btn_gray map-drawer-trigger">
-            Открыть карту для рисования
+            <span id="open-map-drawer-label">Открыть карту для рисования</span>
         </button>
         <div id="map-inline-anchor">
             <div id="map-drawer-content" class="map-drawer-content">
+                <div class="map-editor-summary" aria-live="polite">
+                    <span id="map-editor-state" class="map-editor-state">Линия не добавлена</span>
+                    <span id="map-editor-meta" class="map-editor-meta">Нажмите на карту, чтобы поставить первую точку</span>
+                </div>
                 <div id="map-container" class="map-container">
                     <div id="map"></div>
-                    <div id="map-controls" class="map-controls" style="display: none;">
-                        <button type="button" id="finish-line-btn" class="map-control-btn btn-finish">
+                    <div id="map-controls" class="map-controls">
+                        <button type="button" id="undo-line-point-btn" class="map-control-btn btn_gray" aria-label="Отменить последнюю точку" disabled>
+                            Отменить
+                        </button>
+                        <button type="button" id="finish-line-btn" class="map-control-btn btn-finish" disabled>
                             Готово
                         </button>
-                        <button type="button" id="reset-line-btn" class="map-control-btn btn-reset">
-                            Сброс
+                        <button type="button" id="reset-line-btn" class="map-control-btn btn-reset" disabled>
+                            Заново
                         </button>
                     </div>
                 </div>
@@ -103,12 +118,13 @@
         <input type="hidden" id="has_parking_hidden" name="has_parking" value="{{ 'true' if form_data and form_data.has_parking else 'false' }}">
         <input type="hidden" id="has_markings_hidden" name="has_markings" value="{{ 'true' if form_data and form_data.has_markings else 'false' }}">
         <input type="hidden" id="has_signs_hidden" name="has_signs" value="{{ 'true' if form_data and form_data.has_signs else 'false' }}">
+        <input type="hidden" id="is_one_way_hidden" name="is_one_way" value="{{ 'true' if form_data and form_data.is_one_way else 'false' }}">
         <input type="hidden" id="overall_quality" name="overall_quality" value="{{ form_data.overall_quality if form_data and form_data.overall_quality is not none else '' }}">
     </div>
 
-    <!-- Тип велодорожки -->
+    <!-- Тип инфраструктуры -->
     <div class="island">
-        <h3 class="prime100 island_heading">Тип велодорожки</h3>
+        <h3 class="prime100 island_heading">Тип инфраструктуры</h3>
         
         <div class="track-types">
             <div class="track-type-option">
@@ -146,11 +162,20 @@
                     <p class="track-title">Вело-пешеходная дорожка</p>
                 </label>
             </div>
+
+            <div class="track-type-option">
+                <input type="radio" id="track_bus_lane" name="track_type" value="bus_lane"
+                       {% if form_data and form_data.track_type == 'bus_lane' %}checked{% endif %}>
+                <label for="track_bus_lane" class="track-type-card">
+                    <img class="track-icon" src="{{ url_for('static', filename='img/icon/bikelane/5.png') }}" alt="Автобусная полоса">
+                    <p class="track-title">Автобусная полоса</p>
+                </label>
+            </div>
         </div>
     </div>
 
     <!-- Качество покрытия -->
-    <div class="island">
+    <div class="island bikelane-only">
         <h3 class="prime100 island_heading">Качество покрытия</h3>
         
         <div class="quality-rating">
@@ -211,25 +236,11 @@
         </div>
     </div>
 
-    <!-- Парковка автомобилей -->
-    <div class="island">
-        <h3 class="prime100 island_heading">Парковка автомобилей</h3>
-        
-        <div class="toggle-container">
-            <label class="toggle-label" for="has_parking">
-                <span class="toggle-text">На велодорожке паркуются авто?</span>
-                <div class="toggle-switch">
-                    <input type="checkbox" id="has_parking" name="has_parking" value="true"
-                           {% if form_data and form_data.has_parking %}checked{% endif %}>
-                    <span class="toggle-slider"></span>
-                </div>
-            </label>
-        </div>
-    </div>
+
 
     <!-- Наличие разметки -->
-    <div class="island">
-        <h3 class="prime100 island_heading">Наличие разметки</h3>
+    <div class="island bikelane-only">
+        <h3 class="prime100 island_heading">Разметка и знаки</h3>
         
         <div class="toggle-container">
             <label class="toggle-label" for="has_markings">
@@ -241,12 +252,7 @@
                 </div>
             </label>
         </div>
-    </div>
 
-    <!-- Наличие знаков -->
-    <div class="island">
-        <h3 class="prime100 island_heading">Наличие знаков</h3>
-        
         <div class="toggle-container">
             <label class="toggle-label" for="has_signs">
                 <span class="toggle-text">Есть дорожные знаки?</span>
@@ -259,8 +265,37 @@
         </div>
     </div>
 
+
+
+    <!-- Одностороннее движение -->
+    <div class="island bikelane-only">
+        <div class="toggle-container">
+            <label class="toggle-label" for="is_one_way">
+                <span class="toggle-text">Движение только в одну сторону?</span>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="is_one_way" name="is_one_way" value="true"
+                           {% if form_data and form_data.is_one_way %}checked{% endif %}>
+                    <span class="toggle-slider"></span>
+                </div>
+            </label>
+        </div>
+
+        <div class="toggle-container">
+            <label class="toggle-label" for="has_parking">
+                <span class="toggle-text">На велодорожке паркуются авто?</span>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="has_parking" name="has_parking" value="true"
+                           {% if form_data and form_data.has_parking %}checked{% endif %}>
+                    <span class="toggle-slider"></span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+
+
     <!-- Качество велодорожки (автоматический расчет) -->
-    <div class="island" id="quality-display-section" style="display: none;">
+    <div class="island bikelane-only" id="quality-display-section" style="display: none;">
         <h3 class="prime100 island_heading">Качество велодорожки</h3>
         
         <div class="quality-result">
@@ -302,7 +337,7 @@
         </div>
 
         <!-- Видео -->
-        <div class="form-group">
+        <div class="form-group bikelane-only">
             <input type="url" 
                    name="video_url" 
                    placeholder="Ссылка на видео"
@@ -310,21 +345,55 @@
                    value="{{ form_data.video_url if form_data else '' }}">
         </div>
 
-        {% if is_edit_mode %}
+        {% if is_edit_mode and not is_admin_edit_mode %}
         <p class="upload-subtext">После сохранения изменения снова уйдут на модерацию.</p>
+        {% elif is_admin_edit_mode %}
+        <p class="upload-subtext">Изменения будут сохранены и сразу опубликованы.</p>
+        {% elif is_admin_create_mode %}
+        <p class="upload-subtext">Запись будет опубликована сразу, без модерации.</p>
         {% endif %}
     </div>
 
     <!-- Кнопка отправки -->
+    {% if not show_admin_delete_actions %}
     <div class="submit-section">
-        <div class="submit-score" aria-live="polite">
+        <div class="submit-score bikelane-only" aria-live="polite">
             <div class="submit-score__progress" id="submit-score-progress" aria-label="Прогресс заполнения формы"></div>
         </div>
         <button type="submit" class="button__label btn_black" id="submit-bikelane-btn" data-default-label="{{ submit_label }}" disabled>
             {{ submit_label }}
         </button>
     </div>
+    {% endif %}
 </form>
+
+{% if show_admin_delete_actions %}
+<div class="submit-section" id="admin-delete-bikelane-section">
+    <div class="admin-edit-actions">
+        <button
+            type="submit"
+            form="bikelane-form"
+            class="button__label btn_black"
+            id="submit-bikelane-btn"
+            data-default-label="Сохранить">
+            Сохранить
+        </button>
+        <form
+            method="post"
+            action="{{ admin_delete_url }}"
+            class="admin-delete-bikelane-form"
+            onsubmit="return confirm('Удалить велодорожку? Это действие нельзя отменить.')">
+            <button
+            type="submit"
+            class="button__label"
+            id="admin-delete-bikelane-btn"
+            style="width: 100%; background: #dc3545; color: white;">
+                Удалить
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
 
 <div id="map-drawer" class="map-drawer" aria-hidden="true">
     <div id="map-drawer-overlay" class="map-drawer-overlay"></div>
@@ -333,7 +402,7 @@
         <div class="map-drawer-header">
             <div>
                 <h3 id="map-drawer-title" class="prime100">Карта</h3>
-                <p class="map-drawer-subtitle">Нажимайте по карте, чтобы построить линию велодорожки.</p>
+                <p id="map-drawer-subtitle" class="map-drawer-subtitle">Нажмите на карту, чтобы поставить первую точку.</p>
             </div>
             <button type="button" id="close-map-drawer-btn" class="button_square_icon map-drawer-close" aria-label="Закрыть карту">
                 <img src="{{ url_for('static', filename='img/icon/cross.svg') }}" alt="">

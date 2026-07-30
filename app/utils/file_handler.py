@@ -159,6 +159,115 @@ class FileHandler:
                 flash(f"Неподдерживаемый формат файла: {file.filename}", 'warning')
         
         return saved_files
+
+    @staticmethod
+    def save_infrastructure_photos(files, infrastructure_id):
+        """Сохранение фотографий велопарковки или ремонтной стойки."""
+        if not files:
+            return []
+
+        relative_directory = os.path.join(
+            'uploads',
+            'infrastructure',
+            str(infrastructure_id),
+        )
+        upload_path = os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            'infrastructure',
+            str(infrastructure_id),
+        )
+        os.makedirs(upload_path, exist_ok=True)
+
+        saved_files = []
+        max_files = current_app.config['MAX_PHOTOS_PER_BIKELANE']
+
+        for file in files[:max_files]:
+            if not file or not file.filename:
+                continue
+            if not FileHandler.allowed_file(file.filename):
+                flash(f"Неподдерживаемый формат файла: {file.filename}", 'warning')
+                continue
+
+            unique_filename = f"{uuid.uuid4().hex}.jpg"
+            file_path = os.path.join(upload_path, unique_filename)
+            try:
+                file.save(file_path)
+                if FileHandler.compress_image_to_jpeg(
+                    file_path,
+                    max_size_kb=120,
+                    max_width=1920,
+                    max_height=1080,
+                ):
+                    saved_files.append(
+                        os.path.join(relative_directory, unique_filename)
+                    )
+                else:
+                    os.remove(file_path)
+                    flash(f"Ошибка при обработке файла {file.filename}", 'warning')
+            except Exception as error:
+                current_app.logger.error(
+                    "Ошибка при сохранении файла %s: %s",
+                    file.filename,
+                    error,
+                )
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                flash(f"Ошибка при сохранении файла {file.filename}", 'error')
+
+        return saved_files
+
+    @staticmethod
+    def save_review_photos(files, review_id):
+        """Сохранение фотографий, приложенных к отзыву."""
+        if not files:
+            return []
+
+        relative_directory = os.path.join(
+            'uploads',
+            'reviews',
+            str(review_id),
+        )
+        upload_path = os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            'reviews',
+            str(review_id),
+        )
+        os.makedirs(upload_path, exist_ok=True)
+
+        saved_files = []
+        max_files = current_app.config.get('MAX_PHOTOS_PER_REVIEW', 5)
+
+        for file in files[:max_files]:
+            if not file or not file.filename:
+                continue
+            if not FileHandler.allowed_file(file.filename):
+                continue
+
+            unique_filename = f"{uuid.uuid4().hex}.jpg"
+            file_path = os.path.join(upload_path, unique_filename)
+            try:
+                file.save(file_path)
+                if FileHandler.compress_image_to_jpeg(
+                    file_path,
+                    max_size_kb=120,
+                    max_width=1920,
+                    max_height=1080,
+                ):
+                    saved_files.append(
+                        os.path.join(relative_directory, unique_filename)
+                    )
+                elif os.path.exists(file_path):
+                    os.remove(file_path)
+            except Exception as error:
+                current_app.logger.error(
+                    "Ошибка при сохранении фото отзыва %s: %s",
+                    file.filename,
+                    error,
+                )
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+
+        return saved_files
     
     @staticmethod
     def delete_file(file_path):

@@ -2,11 +2,22 @@
 
 ## Backups
 
+Production backups should be encrypted and stored outside the server. The
+recommended setup is:
+
+- `restic`
+- Cloudflare R2 or another S3-compatible object storage
+- `velojol-backup.timer` at 03:15 daily
+- retention: 14 daily, 8 weekly, 12 monthly
+
+See `docs/backup-restore.md`.
+
 Repository files:
 
-- `deploy/velojol-backup.sh`
-- `deploy/velojol-backup.service`
-- `deploy/velojol-backup.timer`
+- `deploy/backup-restic.sh`
+- `deploy/backup.env.example`
+- `deploy/systemd/velojol-backup.service`
+- `deploy/systemd/velojol-backup.timer`
 - `deploy/install-backup-timer.sh`
 
 Server paths:
@@ -14,15 +25,23 @@ Server paths:
 - project root: `/opt/open-velojol`
 - running app: `/opt/open-velojol/current`
 - SQLite database: `/opt/open-velojol/current/instance/velojol.db`
-- backup directory: `/opt/open-velojol/backups`
+- local backup staging directory: `/opt/open-velojol/backups/restic-staging`
+- backup secrets: `/opt/open-velojol/shared/backup.env`
 - Python env: `/opt/open-velojol/open-velojol-env`
 - gunicorn service: `velojol-gunicorn.service`
 
-Install daily backups on the server:
+Install daily encrypted off-server backups on the server:
 
 ```bash
 cd /opt/open-velojol/current
 bash deploy/install-backup-timer.sh
+```
+
+Fill `/opt/open-velojol/shared/backup.env`, then run the first test backup:
+
+```bash
+systemctl start velojol-backup.service
+journalctl -u velojol-backup.service -n 120 --no-pager
 ```
 
 Check that the timer works:
@@ -30,8 +49,6 @@ Check that the timer works:
 ```bash
 systemctl list-timers | grep velojol
 systemctl status velojol-backup.timer --no-pager -l
-systemctl start velojol-backup.service
-ls -lah /opt/open-velojol/backups
 ```
 
 Repair server runtime after the first deploy or after a broken virtualenv:

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set hide_header = true %}
 
-{% block title %}Главная - OPEN-VELOJOL BETA 0.3.2{% endblock %}
+{% block title %}Главная - OPEN-VELOJOL {{ app_version }}{% endblock %}
 
 {% block content %}
 
@@ -44,23 +44,6 @@
 
 <span class="spacer100"></span>
 <div class="cities-container">
-    <section class="bus-lanes-banner" id="bus-lanes-banner" aria-live="polite" hidden>
-        <div class="vstack gap-m" style="max-width: 390px;">
-                <h3 class="prime-invert100">Надо ли добавить автобусные полосы?</h3>
-                <p class="prime-invert100">Законы некоторых стран разрешают езду на велосипеде по автобусным полосам</p>
-
-
-            <div class="hstack gap-s" data-banner-actions>
-                <button type="button" class="button__label" data-banner-answer="yes">Да</button>
-                <button type="button" class="button__label" data-banner-answer="no">Нет</button>
-            </div>
-        </div>
-        <img
-            src="{{ url_for('static', filename='img/banner/bus-lanes.png') }}"
-            alt=""
-            aria-hidden="true">
-    </section>
-
     <!-- Список городов по странам -->
     {% if cities_by_country %}
         {% for country, cities in cities_by_country %}
@@ -121,14 +104,56 @@
     </div>
 
     <div class="tac" style="margin-top: var(--spacer-l);">
-        <a href="https://tally.so/r/3lO0pV"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="button__label btn_gray">
+        <a
+           href="#cityRequestModal"
+           id="openCityRequestModal"
+           class="button__label btn_gray"
+           aria-controls="cityRequestModal"
+           aria-expanded="false">
             Хочу свой город
         </a>
     </div>
 
+</div>
+
+<div id="cityRequestModal" class="modal-overlay" hidden style="display: none;">
+    <form
+        method="post"
+        action="{{ url_for('main.create_city_request') }}"
+        class="modal-middle">
+        <div class="modal-header">
+            <h3 class="prime100">Хочу свой город</h3>
+            <button
+                type="button"
+                id="closeCityRequestModal"
+                class="close button_square_label"
+                aria-label="Закрыть">
+                <img
+                    src="{{ url_for('static', filename='img/icon/cross.svg') }}"
+                    alt=""
+                    class="icon-small"
+                    aria-hidden="true">
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <p class="secondary100">Напишите какой город вы хотите увидеть на сайте.</p>
+            <input
+                type="text"
+                id="cityRequestInput"
+                name="city_name"
+                class="form-input search-input"
+                placeholder="Название города"
+                maxlength="120"
+                required>
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" class="button__label btn_accent">
+                Отправить
+            </button>
+        </div>
+    </form>
 </div>
 {% endblock %}
 

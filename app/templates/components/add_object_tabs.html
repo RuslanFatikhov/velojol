@@ -1,0 +1,23 @@
+<nav class="add-object-tabs" aria-label="Что добавить">
+    <a
+        href="{{ url_for('main.add_bikelane', city=selected_city_value or none) }}"
+        data-add-object-type="bikelane"
+        class="add-object-tab{% if add_object_type == 'bikelane' %} is-active{% endif %}"
+        {% if add_object_type == 'bikelane' %}aria-current="page"{% endif %}>
+        Дорожку
+    </a>
+    <a
+        href="{{ url_for('main.add_bikelane', type='parking', city=selected_city_value or none) }}"
+        data-add-object-type="parking"
+        class="add-object-tab{% if add_object_type == 'parking' %} is-active{% endif %}"
+        {% if add_object_type == 'parking' %}aria-current="page"{% endif %}>
+        Парковку
+    </a>
+    <a
+        href="{{ url_for('main.add_bikelane', type='repair', city=selected_city_value or none) }}"
+        data-add-object-type="repair"
+        class="add-object-tab{% if add_object_type == 'repair' %} is-active{% endif %}"
+        {% if add_object_type == 'repair' %}aria-current="page"{% endif %}>
+        Ремонтную стойку
+    </a>
+</nav>

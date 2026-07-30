@@ -51,6 +51,9 @@
     <div style="margin-bottom: 20px;">
         <label style="display: block; margin-bottom: 5px; font-weight: bold;">Статус:</label>
         <select name="status" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <option value="active" {% if (form_data.status or city.status) == 'active' %}selected{% endif %}>Активный</option>
+            <option value="inactive" {% if (form_data.status or city.status) == 'inactive' %}selected{% endif %}>Неактивный</option>
+        </select>
     </div>
     
     <div style="margin-bottom: 20px;">
@@ -59,6 +62,10 @@
             <div style="margin-bottom: 10px;">
                 <img src="{{ url_for('static', filename=city.coat_of_arms) }}" alt="Текущий герб" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
                 <small style="display: block; color: #666;">Текущий герб</small>
+                <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; color: #dc3545;">
+                    <input type="checkbox" name="remove_coat_of_arms" value="1">
+                    Удалить герб
+                </label>
             </div>
         {% endif %}
         <input type="file" name="coat_of_arms" accept=".jpg,.jpeg,.png,.webp"
@@ -70,19 +77,17 @@
         <label style="display: block; margin-bottom: 5px; font-weight: bold;">Фон города:</label>
         {% if city.background_image %}
             <div style="margin-bottom: 10px;">
-                <img src="{{ url_for('static', filename=city.background_image) }}" alt="Текущий фон" style="width: 200px; height: 1var(--spacer-sm); object-fit: cover; border-radius: 4px;">
+                <img src="{{ url_for('static', filename=city.background_image) }}" alt="Текущий фон" style="width: 200px; height: 120px; object-fit: cover; border-radius: 4px;">
                 <small style="display: block; color: #666;">Текущий фон</small>
+                <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; color: #dc3545;">
+                    <input type="checkbox" name="remove_background_image" value="1">
+                    Удалить фон
+                </label>
             </div>
         {% endif %}
         <input type="file" name="background_image" accept=".jpg,.jpeg,.png,.webp"
                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
         <small style="color: #666;">Оставьте пустым, чтобы не изменять. Будет сохранен как JPG до 50KB</small>
-    </div>
-    
-    <div style="margin-bottom: 20px;
-            <option value="active" {% if (form_data.status or city.status) == 'active' %}selected{% endif %}>Активный</option>
-            <option value="inactive" {% if (form_data.status or city.status) == 'inactive' %}selected{% endif %}>Неактивный</option>
-        </select>
     </div>
     
     <div style="display: flex; gap: 10px;">

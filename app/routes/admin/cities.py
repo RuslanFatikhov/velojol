@@ -30,12 +30,44 @@ def _save_city_image(uploaded_file, filename, max_width, max_height):
 
     return f'uploads/cities/{safe_filename}'
 
+
+def _delete_city_image(relative_path):
+    """Удаляет неиспользуемое изображение города из каталога загрузок."""
+    if not relative_path or not relative_path.startswith('uploads/cities/'):
+        return
+
+    if (
+        City.query.filter_by(coat_of_arms=relative_path).first()
+        or City.query.filter_by(background_image=relative_path).first()
+    ):
+        return
+
+    upload_root = os.path.abspath(
+        os.path.join(current_app.static_folder, 'uploads', 'cities')
+    )
+    file_path = os.path.abspath(
+        os.path.join(current_app.static_folder, relative_path)
+    )
+    if os.path.commonpath([upload_root, file_path]) != upload_root:
+        return
+
+    try:
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+    except OSError:
+        current_app.logger.warning(
+            'Не удалось удалить изображение города: %s',
+            file_path,
+            exc_info=True,
+        )
+
+
 @bp.route('/cities')
 @admin_required
 def cities():
     """Страница управления городами"""
     page = request.args.get('page', 1, type=int)
-    per_page = 20
+    per_page = 50
     
     cities = City.query.order_by(City.name).paginate(
         page=page, 
@@ -244,6 +276,9 @@ def edit_city(city_id):
     coords_lng = request.form.get('coords_lng', type=float)
     zoom = request.form.get('zoom', 12, type=int)
     status = request.form.get('status', 'active')
+    remove_coat_of_arms = request.form.get('remove_coat_of_arms') == '1'
+    remove_background_image = request.form.get('remove_background_image') == '1'
+    images_to_delete = []
     
     # Обработка загрузки новых файлов
     coat_of_arms_file = request.files.get('coat_of_arms')
@@ -256,11 +291,16 @@ def edit_city(city_id):
                 max_height=512
             )
             if coat_path:
+                if city.coat_of_arms and city.coat_of_arms != coat_path:
+                    images_to_delete.append(city.coat_of_arms)
                 city.coat_of_arms = coat_path
             else:
                 flash('Не удалось обработать герб города', 'error')
         else:
             flash('Герб должен быть изображением JPG, PNG или WebP', 'error')
+    elif remove_coat_of_arms and city.coat_of_arms:
+        images_to_delete.append(city.coat_of_arms)
+        city.coat_of_arms = None
     
     background_file = request.files.get('background_image')
     if background_file and background_file.filename:
@@ -272,11 +312,16 @@ def edit_city(city_id):
                 max_height=1080
             )
             if bg_path:
+                if city.background_image and city.background_image != bg_path:
+                    images_to_delete.append(city.background_image)
                 city.background_image = bg_path
             else:
                 flash('Не удалось обработать фон города', 'error')
         else:
             flash('Фон должен быть изображением JPG, PNG или WebP', 'error')
+    elif remove_background_image and city.background_image:
+        images_to_delete.append(city.background_image)
+        city.background_image = None
     
     # Обновляем основные данные
     city.name = name
@@ -288,6 +333,9 @@ def edit_city(city_id):
     
     try:
         db.session.commit()
+        update_cities_json()
+        for image_path in set(images_to_delete):
+            _delete_city_image(image_path)
         flash(f'Город "{name}" успешно обновлен!', 'success')
         return redirect(url_for('admin.cities'))
     except Exception as e:

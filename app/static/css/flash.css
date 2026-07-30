@@ -32,7 +32,7 @@
     }
     
     .flash-info {
-        background-color: var(--secondary20);
+        background-color: var(--prime-invert100);
         color: var(--prime100);
         border: 1px solid var(--secondary20);
     }

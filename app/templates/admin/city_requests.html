@@ -1,0 +1,76 @@
+{% extends "admin/base.html" %}
+{% from "admin/_pagination.html" import render_pagination %}
+
+{% block title %}Хочу свой город - VELOJOL{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px;">
+    <h2>Хочу свой город</h2>
+    <span style="color: #6c757d;">Всего: {{ city_requests.total }}</span>
+</div>
+
+{% if city_requests.items %}
+<div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f8f9fa;">
+                <th style="width: 70px; padding: var(--spacer-sm); border: 1px solid #dee2e6;">ID</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Город</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Флаг</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Локация</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Пользователь</th>
+                <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Отправлено</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for city_request in city_requests.items %}
+            <tr data-city-request-id="{{ city_request.id }}">
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ city_request.id }}</td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;"><strong>{{ city_request.city_name }}</strong></td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
+                    {% if city_request.location_fail %}
+                    <span class="badge_s">location-fail</span>
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6; white-space: nowrap;">
+                    {% if city_request.latitude is not none and city_request.longitude is not none %}
+                    <a
+                        href="https://www.openstreetmap.org/?mlat={{ city_request.latitude }}&mlon={{ city_request.longitude }}#map=14/{{ city_request.latitude }}/{{ city_request.longitude }}"
+                        target="_blank"
+                        rel="noopener">
+                        {{ '%.6f'|format(city_request.latitude) }}, {{ '%.6f'|format(city_request.longitude) }}
+                    </a>
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
+                    {% if city_request.user %}
+                        <a
+                            href="{{ url_for('admin.view_user', user_id=city_request.user.id) }}"
+                            style="color: #007bff; text-decoration: none;">
+                            {{ city_request.user.nickname }}
+                        </a>
+                        {% if city_request.user.email %}
+                            <br><small style="color: #6c757d;">{{ city_request.user.email }}</small>
+                        {% endif %}
+                    {% else %}
+                        Гость
+                    {% endif %}
+                </td>
+                <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6; white-space: nowrap;">
+                    {{ city_request.created_at.strftime('%d.%m.%Y %H:%M') }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{{ render_pagination(city_requests, 'admin.city_requests') }}
+{% else %}
+<p>Заявок пока нет.</p>
+{% endif %}
+{% endblock %}

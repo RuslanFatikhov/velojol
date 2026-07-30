@@ -1,4 +1,5 @@
 {% extends "admin/base.html" %}
+{% from "admin/_pagination.html" import render_pagination %}
 
 {% block content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -48,30 +49,7 @@
     </tbody>
 </table>
 
-<!-- Пагинация -->
-{% if cities.pages > 1 %}
-<div style="text-align: center; margin-top: 20px;">
-    {% if cities.has_prev %}
-        <a href="{{ url_for('admin.cities', page=cities.prev_num) }}" style="padding: 8px var(--spacer-sm); margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">← Предыдущая</a>
-    {% endif %}
-    
-    {% for page_num in cities.iter_pages() %}
-        {% if page_num %}
-            {% if page_num != cities.page %}
-                <a href="{{ url_for('admin.cities', page=page_num) }}" style="padding: 8px var(--spacer-sm); margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">{{ page_num }}</a>
-            {% else %}
-                <span style="padding: 8px var(--spacer-sm); margin: 0 2px; background: #007bff; color: white; border: 1px solid #007bff;">{{ page_num }}</span>
-            {% endif %}
-        {% else %}
-            <span style="padding: 8px var(--spacer-sm); margin: 0 2px;">…</span>
-        {% endif %}
-    {% endfor %}
-    
-    {% if cities.has_next %}
-        <a href="{{ url_for('admin.cities', page=cities.next_num) }}" style="padding: 8px var(--spacer-sm); margin: 0 2px; border: 1px solid #dee2e6; text-decoration: none; color: #495057;">Следующая →</a>
-    {% endif %}
-</div>
-{% endif %}
+{{ render_pagination(cities, 'admin.cities') }}
 
 {% else %}
 <p>Городов пока нет. <a href="{{ url_for('admin.add_city') }}">Добавить первый город</a></p>

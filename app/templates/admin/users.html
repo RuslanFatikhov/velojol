@@ -1,7 +1,22 @@
 {% extends "admin/base.html" %}
+{% from "admin/_pagination.html" import render_pagination %}
 
 {% block content %}
 <h2>Управление пользователями</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div style="display: grid; gap: 8px; margin: 16px 0;">
+            {% for category, message in messages %}
+                <div
+                    role="alert"
+                    style="padding: 10px 12px; border-radius: 4px; color: {% if category == 'error' %}#721c24{% else %}#155724{% endif %}; background: {% if category == 'error' %}#f8d7da{% else %}#d4edda{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
 
 <!-- Поиск -->
 <div style="margin-bottom: 20px;">
@@ -40,6 +55,12 @@
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr style="background: #f8f9fa;">
+            <th style="width: 44px; padding: var(--spacer-sm); border: 1px solid #dee2e6;">
+                <input
+                    type="checkbox"
+                    id="select-all-users"
+                    aria-label="Выбрать всех пользователей на странице">
+            </th>
             <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Пользователь</th>
             <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Email</th>
             <th style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">Статус</th>
@@ -52,6 +73,14 @@
     <tbody>
         {% for user in users.items %}
         <tr>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6; text-align: center;">
+                <input
+                    type="checkbox"
+                    class="user-row-selector"
+                    value="{{ user.id }}"
+                    aria-label="Выбрать пользователя {{ user.nickname }}"
+                    {% if user.id == current_user.id %}disabled title="Нельзя удалить текущего администратора"{% endif %}>
+            </td>
             <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <img src="{{ user.display_avatar }}" alt="Аватар" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
@@ -66,7 +95,7 @@
                     </div>
                 </div>
             </td>
-            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ user.email }}</td>
+            <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">{{ user.email or '—' }}</td>
             <td style="padding: var(--spacer-sm); border: 1px solid #dee2e6;">
                 {% if user.is_banned %}
                     <span style="color: #dc3545;">Заблокирован</span>
@@ -84,6 +113,118 @@
         {% endfor %}
     </tbody>
 </table>
+
+{{ render_pagination(users, 'admin.users', {'search': search}) }}
+
+<form
+    id="bulk-delete-users-form"
+    method="post"
+    action="{{ url_for('admin.bulk_delete_users') }}"
+    hidden>
+</form>
+
+<div
+    id="bulk-users-menu"
+    role="toolbar"
+    aria-label="Действия с выбранными пользователями"
+    hidden
+    style="position: fixed; left: 50%; bottom: 24px; z-index: 1000; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 8px; background: #212529; color: white; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);">
+    <strong><span id="selected-users-count">0</span> выбрано</strong>
+    <button
+        type="button"
+        id="delete-selected-users"
+        style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px;">
+        Удалить
+    </button>
+    <button
+        type="button"
+        id="clear-users-selection"
+        style="background: transparent; color: white; border: 1px solid #6c757d; padding: 8px 12px; border-radius: 4px;">
+        Отменить выбор
+    </button>
+</div>
+
+<script>
+const userSelectors = Array.from(
+    document.querySelectorAll('.user-row-selector:not(:disabled)')
+);
+const selectAllUsers = document.getElementById('select-all-users');
+const bulkUsersMenu = document.getElementById('bulk-users-menu');
+const selectedUsersCount = document.getElementById('selected-users-count');
+const bulkDeleteUsersForm = document.getElementById('bulk-delete-users-form');
+
+function selectedUserIds() {
+    return userSelectors
+        .filter((selector) => selector.checked)
+        .map((selector) => selector.value);
+}
+
+function updateUsersSelection() {
+    const selectedIds = selectedUserIds();
+    selectedUsersCount.textContent = selectedIds.length;
+    bulkUsersMenu.hidden = selectedIds.length === 0;
+    selectAllUsers.checked = userSelectors.length > 0
+        && selectedIds.length === userSelectors.length;
+    selectAllUsers.indeterminate = selectedIds.length > 0
+        && selectedIds.length < userSelectors.length;
+
+    userSelectors.forEach((selector) => {
+        selector.closest('tr').style.background = selector.checked
+            ? '#e7f1ff'
+            : '';
+    });
+}
+
+selectAllUsers.addEventListener('change', () => {
+    userSelectors.forEach((selector) => {
+        selector.checked = selectAllUsers.checked;
+    });
+    updateUsersSelection();
+});
+
+userSelectors.forEach((selector) => {
+    selector.addEventListener('change', updateUsersSelection);
+    selector.closest('tr').addEventListener('click', (event) => {
+        if (event.target.closest('a, button, input, form')) {
+            return;
+        }
+        selector.checked = !selector.checked;
+        updateUsersSelection();
+    });
+});
+
+document.getElementById('clear-users-selection').addEventListener('click', () => {
+    userSelectors.forEach((selector) => {
+        selector.checked = false;
+    });
+    updateUsersSelection();
+});
+
+document.getElementById('delete-selected-users').addEventListener('click', () => {
+    const selectedIds = selectedUserIds();
+    if (!selectedIds.length) {
+        return;
+    }
+    if (!confirm(
+        `Удалить выбранных пользователей (${selectedIds.length})? `
+        + 'Отзывы и уведомления будут удалены. Это действие нельзя отменить.'
+    )) {
+        return;
+    }
+
+    bulkDeleteUsersForm.querySelectorAll('input[name="user_ids"]').forEach(
+        (input) => input.remove()
+    );
+    selectedIds.forEach((id) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'user_ids';
+        input.value = id;
+        bulkDeleteUsersForm.appendChild(input);
+    });
+    bulkDeleteUsersForm.submit();
+});
+</script>
 
 {% else %}
 <p>Пользователи не найдены.</p>

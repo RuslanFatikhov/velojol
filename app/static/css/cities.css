@@ -9,39 +9,6 @@
     margin-right: auto;
 }
 
-.bus-lanes-banner {
-    width: 100%;
-    margin: 0 auto var(--spacer-l);
-    padding: 24px;
-    border-radius: 16px;
-    background: var(--prime100);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    overflow: hidden;
-    max-height: 220px;
-}
-
-.bus-lanes-banner img{
-    width: auto;
-    height: 100%;
-    max-height: 220px;
-    aspect-ratio: 1 / 1;
-
-}
-
-.bus-lanes-banner[hidden] {
-    display: none;
-}
-
-
-
-
-
-
-
-
 .cities-header {
     position: absolute;
     top: 60px;
@@ -102,11 +69,6 @@
 
 
 @media screen and (max-width: 700px) {
-    .bus-lanes-banner {
-        flex-direction: column-reverse;
-        min-height: 460px;
-    }
-
     /* Сетка городов */
     .cities-grid {
         display: grid;

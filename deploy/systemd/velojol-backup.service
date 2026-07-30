@@ -1,6 +1,7 @@
 [Unit]
-Description=Velojol Data Backup
+Description=Open Velojol encrypted off-server backup
 After=network.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
@@ -9,6 +10,8 @@ Group=root
 WorkingDirectory=/opt/open-velojol/current
 Environment=APP_ROOT=/opt/open-velojol
 Environment=PYTHONUNBUFFERED=1
-EnvironmentFile=-/opt/open-velojol/shared/.env
-ExecStart=/opt/open-velojol/open-velojol-env/bin/python /opt/open-velojol/current/scripts/backup_data.py
+EnvironmentFile=-/opt/open-velojol/shared/backup.env
+ExecStart=/usr/local/bin/velojol-backup-restic.sh
 
+# Keep backup runs from hanging forever if storage/network is unavailable.
+TimeoutStartSec=2h

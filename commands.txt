@@ -1,0 +1,20 @@
+# 1. Перейти в папку проекта
+cd "/Users/ruslanfatihov/Desktop/Projects/velojol-4.0"
+
+# 2. Один раз создать локальный deploy-конфиг
+test -f .deploy.env || cp .deploy.env.example .deploy.env
+sed -i '' 's|root@example.com|root@147.45.215.234|' .deploy.env
+
+# 3. Сначала безопасная проверка без изменений на сервере
+./deploy_velojol.sh --dry-run
+
+# 4. Если dry-run завершился успешно, загрузить приложение
+./deploy_velojol.sh --apply
+
+
+--
+# А что тут надо написать. Напомни
+Enter passphrase for key '/Users/ruslanfatihov/.ssh/id_ed25519':
+
+ssh-add --apple-load-keychain
+ssh-add -l
